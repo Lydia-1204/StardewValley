@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project>
+  <ProjectOutputs>
+    <ProjectOutput>
+      <FullPath>E:\cocos\cocos2d-x-3.17.2\cocos2d-x-3.17.2\projects\StardewValley0\proj.win32\Debug.win32\libcocos2d.dll</FullPath>
+    </ProjectOutput>
+    <ProjectOutput>
+      <FullPath>E:\cocos\cocos2d-x-3.17.2\cocos2d-x-3.17.2\projects\StardewValley0\proj.win32\Debug.win32\StardewValley0.exe</FullPath>
+    </ProjectOutput>
+  </ProjectOutputs>
+  <ContentFiles />
+  <SatelliteDlls />
+  <NonRecipeFileRefs />
+</Project>
