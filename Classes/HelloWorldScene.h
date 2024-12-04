@@ -22,7 +22,7 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-#ifndef __HELLOWORLD_SCENE_H__
+/*#ifndef __HELLOWORLD_SCENE_H__
 #define __HELLOWORLD_SCENE_H__
 
 #include "cocos2d.h"
@@ -41,4 +41,37 @@ public:
     CREATE_FUNC(HelloWorld);
 };
 
-#endif // __HELLOWORLD_SCENE_H__
+#endif // __HELLOWORLD_SCENE_H__*/
+/*
+#ifndef __HELLOWORLD_SCENE_H__
+#define __HELLOWORLD_SCENE_H__
+
+#include "cocos2d.h"
+#include "AnimalManager.h"
+
+class HelloWorld : public cocos2d::Scene
+{
+public:
+    static cocos2d::Scene* createScene();
+
+    virtual bool init();
+
+    // 更新动物信息
+    void updateAnimalInfo();
+
+    // 触摸事件处理喂养或收集操作
+    bool onTouchBegan(cocos2d::Touch* touch, cocos2d::Event* event);
+
+    // 关闭回调
+    void menuCloseCallback(cocos2d::Ref* pSender);
+
+    CREATE_FUNC(HelloWorld);
+
+private:
+    AnimalManager* animalManager;             // 动物管理器
+    cocos2d::Label* animalInfoLabel;          // 动物状态标签
+    cocos2d::Label* statusLabel;              // 操作状态标签
+    cocos2d::Map<std::string, cocos2d::Sprite*> animalSprites; // 动物图标
+};
+
+#endif // __HELLOWORLD_SCENE_H__*/
