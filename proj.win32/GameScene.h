@@ -25,7 +25,10 @@ private:
     UIManager* uiManager;         // UI 管理器
     std::string nickname;
     int selectedCharacter;
-    GameScene();                  // 构造函数设为私有
+
+    float gameTime;  //时间流逝 单位为秒
+    int currentHour;   //小时
+    int currentMinute;    //分钟
 
 public:
     static GameScene* getInstance(int selectedCharacter, const std::string& nickname);     // 获取单例实例
@@ -41,8 +44,8 @@ public:
 
     // 容器管理
     void replaceChild(Node* oldChild, Node* newChild);
-    GameScene() = default;
-    virtual~GameScene() = default;
+    GameScene();
+    virtual~GameScene()= default;
 };
 
 #endif // GAME_SCENE_Hwdas

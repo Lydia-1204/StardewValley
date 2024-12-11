@@ -1,115 +1,179 @@
-/****************************************************************
- * Project Name:  StardewValley
- * File Name:     SysttemScene.cpp
- * File Function: 实现UIManager类，展示游戏主界面和基本功能：实现游戏主界面 包括地图加载、移动 角色移动 系统更新 固定UI
- * Author:        王小萌 2351882
- * Update Date:   2024/12/10
- ****************************************************************/
 #include "UIManager.h"
-#include "GameScene.h"
+#include "cocos2d.h"
+
+USING_NS_CC;
 
 UIManager* UIManager::instance = nullptr;
 
-UIManager::UIManager() : uiLayer(nullptr), energyLabel(nullptr), clockLabel(nullptr), playerNameLabel(nullptr), toolBar(nullptr) {
-    setupUIElements();
-
-    // 注册键盘监听器
-    auto listener = EventListenerKeyboard::create();
-    listener->onKeyPressed = CC_CALLBACK_2(UIManager::handleShortcuts, this);
-    Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(listener, this);
-}
-
-UIManager* UIManager::getInstance() {
+UIManager::UIManager()
+    : dateLabel(nullptr), timeLabel(nullptr), moneyLabel(nullptr),
+    energyBar(nullptr), iron(nullptr),
+    shortcutKeysLabel(nullptr), money(0), selectedCharacter(0),
+    currentMonth(3), currentDay(1), currentWeekday(2), // 3月1日，周二
+    currentEnergy(100), timeElapsed(0.0f) {}
+UIManager* UIManager::getInstance(int selectedCharacter, const std::string& nickname) {
     if (!instance) {
         instance = new (std::nothrow) UIManager();
+        instance->init(selectedCharacter, nickname);
     }
     return instance;
 }
 
-Layer* UIManager::getLayer() {
-    return uiLayer;
+bool UIManager::init(int selectedCharacter, const std::string& nickname) {
+    if (!Node::init()) {
+        return false;
+    }
+
+    currentMonth = 12;                 // 当前月份
+    currentDay = 8;                    // 当前日期
+    currentWeekday = 6;                // 当前周几（0=周日，1=周一，...，6=周六）
+    currentHour = 8;                   // 当前小时
+   currentMinute =0;                 // 当前分钟
+    currentEnergy = 100;                 // 当前精力值（百分比）
+    auto visibleSize = Director::getInstance()->getVisibleSize();
+    this->nickname = nickname;
+    this->selectedCharacter = selectedCharacter;
+
+    // 日期和时间显示
+    dateLabel = Label::createWithTTF("December 8st, Tuesday", "../Resources/fonts/Marker Felt.ttf", 24);
+    dateLabel->setPosition(visibleSize.width - 200, visibleSize.height - 50);
+    this->addChild(dateLabel);
+
+    timeLabel = Label::createWithTTF("08:00", "../Resources/fonts/Marker Felt.ttf", 24);
+    timeLabel->setPosition(visibleSize.width - 200, visibleSize.height - 150);
+    this->addChild(timeLabel);
+
+    // 美观图标
+    
+    iron = Sprite::create("../Resources/LooseSprites-73/iron123.png");
+    if (!iron)
+        throw("iron created failed!!");
+    iron->setPosition(visibleSize.width - 200, visibleSize.height - 100);
+    this->addChild(iron);
+
+
+    // 资金显示
+    moneyLabel = Label::createWithTTF("Money: $0", "../Resources/fonts/Marker Felt.ttf", 24);
+    moneyLabel->setPosition(visibleSize.width - 200, visibleSize.height - 200);
+    this->addChild(moneyLabel);
+
+    // 精力条
+    energyBar = ProgressTimer::create(Sprite::create("../Resources/energyBar.png"));
+    if (!energyBar)
+        throw("energyBar created failed!!");
+    energyBar->setScale(0.4f);
+
+    energyBar->setType(ProgressTimer::Type::BAR);
+
+    energyBar->setMidpoint(Vec2(0, 0));
+    energyBar->setBarChangeRate(Vec2(1, 0));
+    energyBar->setPercentage(100);
+    energyBar->setPosition(visibleSize.width - 30, visibleSize.height*0.25);
+    this->addChild(energyBar);
+
+    // 快捷键提示框
+    shortcutKeysLabel = Label::createWithTTF("E: Exit\nC: Use Tool\nM: Mini Map\nF: Task List", "../Resources/fonts/Marker Felt.ttf", 18);
+    shortcutKeysLabel->setPosition(100, visibleSize.height - 100);
+    this->addChild(shortcutKeysLabel);
+
+    // 工具栏
+    auto tool1 = Sprite::create("../Resources/LooseSprites-73/textBox..png");
+    setToolBar({ tool1 }); // 初始化工具栏
+
+    return true;
 }
 
-void UIManager::setupUIElements() {
-    uiLayer = Layer::create();
+void UIManager::update(float delta) {
+    timeElapsed += delta;
 
-    // 初始化玩家昵称显示
-    playerNameLabel = Label::createWithTTF("Player: Xiao Yuan", "fonts/Marker Felt.ttf", 18);
-    playerNameLabel->setPosition(Vec2(100, 680));
-    uiLayer->addChild(playerNameLabel);
+    if (timeElapsed >= 1.0f) {
+        timeElapsed = 0.0f;
 
-    // 初始化时钟显示
-    clockLabel = Label::createWithTTF("Day 1, 08:00", "fonts/Marker Felt.ttf", 18);
-    clockLabel->setPosition(Vec2(1100, 680));
-    uiLayer->addChild(clockLabel);
+        currentMinute += 1;
 
-    // 初始化精力条显示
-    energyLabel = Label::createWithTTF("Energy: 100%", "fonts/Marker Felt.ttf", 18);
-    energyLabel->setPosition(Vec2(100, 650));
-    uiLayer->addChild(energyLabel);
+        if (currentMinute >= 60) {
+            currentMinute = 0;
+            currentHour += 1;
 
-    // 初始化工具栏
-    auto toolBarLabel = Label::createWithTTF("Toolbar (1-5)", "fonts/Marker Felt.ttf", 18);
-    toolBarLabel->setPosition(Vec2(640, 40));
-    uiLayer->addChild(toolBarLabel);
-}
+            if (currentHour >= 24) {
+                currentHour = 0;
+                currentDay += 1;
+                currentWeekday = (currentWeekday + 1) % 7;
 
-void UIManager::handleShortcuts(EventKeyboard::KeyCode keyCode, Event* event) {
-    auto director = Director::getInstance();
-    auto currentScene = director->getRunningScene();
+                if (currentDay > getDaysInMonth(currentMonth)) {
+                    currentDay = 1;
+                    currentMonth += 1;
 
-    switch (keyCode) {
-    case EventKeyboard::KeyCode::KEY_E: // E 或 ESC 打开暂停菜单
-    case EventKeyboard::KeyCode::KEY_ESCAPE:
-        togglePauseMenu();
-        break;
+                    if (currentMonth > 12) {
+                        currentMonth = 1;
+                    }
+                }
+            }
+        }
 
-    case EventKeyboard::KeyCode::KEY_M: // M 打开缩略地图
-        openMiniMap();
-        break;
-
-    case EventKeyboard::KeyCode::KEY_F: // F 打开人物状态
-        showPlayerStats();
-        break;
-
-    default:
-        log("Unhandled key: %d", static_cast<int>(keyCode));
-        break;
+        if (currentMinute % 10 == 0) {
+            currentEnergy = std::max(0, currentEnergy - 1);
+            setEnergy(currentEnergy);
+        }
+        //更新日期时间显示
+        updateDateAndTime();
     }
 }
 
-void UIManager::update(float dt) {
-    // 更新时钟
-    // 例如：假设每秒钟游戏时间过一分钟
-    static int gameMinutes = 0;
-    gameMinutes += static_cast<int>(dt * 60);
-    int hours = (gameMinutes / 60) % 24;
-    int minutes = gameMinutes % 60;
-
-    char buffer[32];
-    snprintf(buffer, sizeof(buffer), "Day 1, %02d:%02d", hours, minutes);
-    clockLabel->setString(buffer);
-
-    // 更新精力条等其他 UI
+void UIManager::setMoney(int money) {
+    this->money = money;
+    moneyLabel->setString("Money: $" + std::to_string(money));
 }
 
-void UIManager::togglePauseMenu() {
-    if (Director::getInstance()->isPaused()) {
-        Director::getInstance()->resume();
-        log("Game Resumed");
+void UIManager::setEnergy(int energy) {
+    energyBar->setPercentage(energy);
+}
+
+void UIManager::setDateAndTime(const std::string& date, const std::string& time) {
+    if (dateLabel) {
+        dateLabel->setString(date); // 更新日期显示
     }
-    else {
-        Director::getInstance()->pause();
-        log("Game Paused");
+    if (timeLabel) {
+        timeLabel->setString(time); // 更新时间显示
     }
 }
 
-void UIManager::openMiniMap() {
-    log("Opening Mini-Map...");
-    // 添加打开缩略地图的逻辑
+void UIManager::updateDateAndTime() {
+    static const char* months[] = { "January", "February", "March", "April", "May", "June",
+                                   "July", "August", "September", "October", "November", "December" };
+    static const char* weekdays[] = { "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" };
+
+    char dateStr[50];
+    snprintf(dateStr, sizeof(dateStr), "%s %d, %s", months[currentMonth - 1], currentDay, weekdays[currentWeekday]);
+
+    char timeStr[10];
+    snprintf(timeStr, sizeof(timeStr), "%02d:%02d", currentHour, currentMinute);
+
+    setDateAndTime(dateStr, timeStr);
 }
 
-void UIManager::showPlayerStats() {
-    log("Showing Player Stats...");
-    // 添加显示玩家状态的逻辑
+int UIManager::getDaysInMonth(int month) {
+    static const int daysInMonth[] = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
+    return daysInMonth[month - 1];
+}
+
+UIManager* UIManager::getLayer() {
+    return this;
+}
+
+void UIManager::setToolBar(const std::vector<Sprite*>& tools) {
+    // 清空当前工具栏
+    for (auto& child : getChildren()) {
+        if (child->getName() == "Tool") {
+            this->removeChild(child);
+        }
+    }
+
+    // 填充新的工具
+    const float startX = 600;  // 起始位置
+    for (size_t i = 0; i < tools.size(); ++i) {
+        tools[i]->setName("Tool");
+        tools[i]->setPosition(Vec2(startX + i * 10, 50)); // 每个工具的间距为 50
+        this->addChild(tools[i]);
+    }
 }

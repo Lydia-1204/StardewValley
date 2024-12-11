@@ -37,12 +37,11 @@ bool NewSelectScene::init() {
     auto backgroundSheet = Sprite::create("../Resources/LooseSprites-73/letterBG..png");
     const Size spriteSize = backgroundSheet->getContentSize();
 
-    auto background = Sprite::create("../Resources/LooseSprites-73/letterBG..png", Rect(0, 0, spriteSize.width * 0.9, spriteSize.height * 0.9));
+    auto background = Sprite::create("../Resources/LooseSprites-73/letterBG..png", Rect(0, 0, spriteSize.width , spriteSize.height ));
     if (background) {
-
-        //背景尺寸
-        const Size spriteSize = background->getContentSize();
-
+       
+        //背景尺寸 
+        const Size spriteSize = backgroundSheet->getContentSize();
         // 计算宽度和高度的缩放比例
         float scaleX = screenSize.width / spriteSize.width;
         float scaleY = screenSize.height / spriteSize.height;
@@ -97,15 +96,15 @@ bool NewSelectScene::init() {
    
     // 3. 添加角色 1
     //角色1
-    auto spriteSheet = Sprite::create("../Resources/Characters-102/Abigail..png");
+    auto spriteSheet = Sprite::create("../Resources/Amily.png");
     if(!spriteSheet)
         throw std::runtime_error("Failed to load Character 1 image for NewSelectScene!");
     //截取站立与跳跃人物外表
-        Size spriteSize2 = spriteSheet->getContentSize();
-        float characterwidth = spriteSize2.width / 4;
-        float characterheight = spriteSize2.height / 13;
+        Size spriteSize1 = spriteSheet->getContentSize();
+        float characterwidth = spriteSize1.width / 4;
+        float characterheight = spriteSize1.height / 14;
    
-    auto character1 = Sprite::create("../Resources/Characters-102/Abigail..png", Rect(0, 0, characterwidth, characterheight));
+    auto character1 = Sprite::create("../Resources/Amily.png", Rect(0, 0, characterwidth, characterheight));
     character1->setScale(2.5f);
     if (!character1) {
         CCLOG("Error: Failed to load Character 1 image!");
@@ -137,7 +136,7 @@ bool NewSelectScene::init() {
     // 4. 添加角色 2
     //站立与跳跃两个画面
    
-    auto character2 = Sprite::create("../Resources/Characters-102/Alex..png", Rect(0, 0, characterwidth, characterheight));
+    auto character2 = Sprite::create("../Resources/Harvey.png", Rect(0, 0, characterwidth, characterheight));
     character2->setScale(2.5f);
     if (!character2) {
         CCLOG("Error: Failed to load Character 2 image!");

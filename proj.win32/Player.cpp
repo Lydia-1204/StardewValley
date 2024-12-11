@@ -3,20 +3,45 @@
 USING_NS_CC;
 
 Player::Player()
-    : _sprite(nullptr), _velocity(Vec2::ZERO), _energy(100), _currentTool(0), _speed(100.0f), _isMoving(false) {}
+    : _sprite(nullptr), _velocity(Vec2::ZERO), _energy(100), _currentTool(0), _speed(100.0f), _isMoving(false), _nickname("Player"), _selectedCharacter(1) {}
 
 Player::~Player() {}
 
-bool Player::init() {
+Player* Player::create(int selectedCharacter, const std::string& nickname) {
+    Player* player = new (std::nothrow) Player();
+    if (player && player->init(selectedCharacter, nickname)) {
+        player->autorelease();
+        return player;
+    }
+    delete player;
+    return nullptr;
+}
+
+bool Player::init(int selectedCharacter, const std::string& nickname) {
     if (!Node::init()) {
         return false;
     }
 
-    // 创建玩家精灵
-    _sprite = Sprite::create("../Resources/Characters-102/Mariner..png");
-    if (_sprite) {
+    // 保存玩家昵称和选择的角色
+    _nickname = nickname;
+    _selectedCharacter = selectedCharacter;
+
+    //  Roles[1][d]->setPosition(visibleSize.width / 2, visibleSize.height / 2);
+
+
+    // 根据角色加载不同的资源
+    std::string texturePath = (_selectedCharacter == 1)
+        ?"../Resources/Amily.png"
+        :"../Resources/Harvey.png";
+
+    _sprite = Sprite::create(texturePath,Rect(0,0,18,38));
+    if (!_sprite) {
+        throw("Player created failed!!");
+    }
+    else {
         this->addChild(_sprite);
     }
+   
 
     // 初始化事件监听器
     auto keyboardListener = EventListenerKeyboard::create();
@@ -32,16 +57,6 @@ bool Player::init() {
     schedule(CC_SCHEDULE_SELECTOR(Player::update), 1.0f / 60.0f);
 
     return true;
-}
-
-Player* Player::create(int selectedCharacter) {
-    Player* player = new (std::nothrow) Player();
-    if (player && player->init()) {
-        player->autorelease();
-        return player;
-    }
-    delete player;
-    return nullptr;
 }
 
 void Player::setEnergy(int energy) {
@@ -118,4 +133,12 @@ void Player::updateEnergy(float delta) {
     if (_isMoving) {
         _energy = std::max(0, _energy - static_cast<int>(delta * 10));  // 移动减少精力
     }
+}
+
+const std::string& Player::getNickname() const {
+    return _nickname;
+}
+
+int Player::getSelectedCharacter() const {
+    return _selectedCharacter;
 }

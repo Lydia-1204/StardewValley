@@ -5,38 +5,61 @@
  * Author:        王小萌 2351882
  * Update Date:   2024/12/10
  ****************************************************************/
-#pragma once
 #ifndef UI_MANAGER_H
 #define UI_MANAGER_H
 
 #include "cocos2d.h"
+#include <string>
 
 USING_NS_CC;
 
 class UIManager : public Node {
 private:
-    static UIManager* instance;         // 单例实例
+    static UIManager* instance;
 
-    Layer* uiLayer;                     // 用于存放 UI 元素的层
-    Label* energyLabel;                 // 精力条显示
-    Label* clockLabel;                  // 时钟显示
-    Label* playerNameLabel;             // 玩家昵称显示
-    Menu* toolBar;                      // 工具栏菜单
+    // UI元素
+    Label* dateLabel;                  // 显示日期
+    Label* timeLabel;                  // 显示时间
+    Label* moneyLabel;                 // 显示农场资金
+    ProgressTimer* energyBar;          // 显示精力条
+    Sprite* iron;                      // 美观图标
+    Label* shortcutKeysLabel;          // 显示快捷键提示
 
-    UIManager();                        // 构造函数私有化
+    // 数据成员
+    std::string nickname;              // 玩家昵称
+    int selectedCharacter;             // 选择的角色
+    int money;                         // 当前农场资金
 
-    void setupUIElements();             // 初始化 UI 元素
-    void handleShortcuts(EventKeyboard::KeyCode keyCode, Event* event); // 快捷键处理
+    int currentMonth;                  // 当前月份
+    int currentDay;                    // 当前日期
+    int currentWeekday;                // 当前周几（0=周日，1=周一，...，6=周六）
+    int currentHour;                   // 当前小时
+    int currentMinute;                 // 当前分钟
+    int currentEnergy;                 // 当前精力值（百分比）
+
+    float timeElapsed;                 // 用于累积时间（秒）
+
+    UIManager();                       // 私有化构造函数
+
+    // 私有方法
+    void updateDateAndTime();          // 更新日期和时间标签
+    int getDaysInMonth(int month);     // 获取指定月份的天数
 
 public:
-    static UIManager* getInstance();    // 获取单例实例
+    static UIManager* getInstance(int selectedCharacter, const std::string& nickname);
 
-    Layer* getLayer();                  // 获取 UI 层
-    void update(float dt);              // 每帧更新 UI
+    bool init(int selectedCharacter, const std::string& nickname); // 初始化
 
-    void togglePauseMenu();             // 切换暂停菜单
-    void openMiniMap();                 // 打开缩略地图
-    void showPlayerStats();             // 显示玩家状态
+    void update(float delta);           // 每帧更新
+
+    // 设置 UI 显示内容
+    void setDateAndTime(const std::string& date, const std::string& time);
+
+    void setMoney(int money);
+    void setEnergy(int energy);
+
+    UIManager* getLayer();                  // 获取 UI 层
+    void setToolBar(const std::vector<Sprite*>& tools); // 设置工具栏
 };
 
 #endif // UI_MANAGER_H

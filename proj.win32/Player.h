@@ -1,57 +1,52 @@
-#pragma once
-
-
 #ifndef PLAYER_H
 #define PLAYER_H
 
 #include "cocos2d.h"
+#include <string>
+#include <set>
 
-class Player : public cocos2d::Node {
+USING_NS_CC;
+
+class Player : public Node {
+private:
+    Sprite* _sprite;                 // 玩家角色的精灵
+    Vec2 _velocity;                  // 移动速度方向
+    int _energy;                     // 玩家精力值
+    int _currentTool;                // 当前工具 ID
+    float _speed;                    // 移动速度
+    bool _isMoving;                  // 是否在移动
+    std::set<EventKeyboard::KeyCode> _keysPressed; // 按键集合
+    std::string _nickname;           // 玩家昵称
+    int _selectedCharacter;          // 玩家选择的角色（1或2）
+
+    Player();                        // 私有化构造函数
+    virtual ~Player();
+
+    void interactWithMap();          // 地图交互逻辑
+    void updateEnergy(float delta);  // 更新精力
+
 public:
-    // 构造函数和析构函数
-    Player();
-    ~Player();
+    static Player* create(int selectedCharacter, const std::string& nickname);
 
-    // 初始化玩家
-    virtual bool init();
+    bool init(int selectedCharacter, const std::string& nickname);
 
-    // 创建玩家实例
-    static Player* create(int selectedCharacterIndex);
-
-    // 设置玩家精力值
     void setEnergy(int energy);
     int getEnergy() const;
 
-    // 更新玩家状态
-    void update(float delta);
-
-    // 处理键盘输入
-    void onKeyPressed(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event* event);
-    void onKeyReleased(cocos2d::EventKeyboard::KeyCode keyCode, cocos2d::Event* event);
-
-    // 处理鼠标输入
-    void onMouseDown(cocos2d::Event* event);
-
-    // 移动逻辑
+    void setCurrentTool(int toolId);
     void move(float delta);
 
-    // 地图交互逻辑
-    void interactWithMap();
+    void onKeyPressed(EventKeyboard::KeyCode keyCode, Event* event);
+    void onKeyReleased(EventKeyboard::KeyCode keyCode, Event* event);
+    void onMouseDown(Event* event);
 
-    // 设置当前使用的工具
-    void setCurrentTool(int toolId);
+    void update(float delta);
 
-private:
-    cocos2d::Sprite* _sprite;  // 玩家角色的精灵
-    cocos2d::Vec2 _velocity;  // 移动速度
-    int _energy;              // 当前精力值
-    int _currentTool;         // 当前工具ID
-    float _speed;             // 玩家移动速度
+    // 获取昵称
+    const std::string& getNickname() const;
 
-    bool _isMoving;           // 玩家是否正在移动
-    std::set<cocos2d::EventKeyboard::KeyCode> _keysPressed;  // 记录按下的键
-
-    void updateEnergy(float delta);  // 更新精力值
+    // 获取选择的角色
+    int getSelectedCharacter() const;
 };
 
 #endif // PLAYER_H
