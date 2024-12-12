@@ -65,6 +65,7 @@ bool GameScene::init(int selectedCharacter,const std::string& nickname ) {
 
         // 初始化玩家 selectedCharacter
         player = Player::create(selectedCharacter, nickname);
+
         player->setPosition(mapManager->getPlayerStartPos()); // 初始位置
         this->addChild(player);
         CCLOG("Player created");
@@ -74,6 +75,34 @@ bool GameScene::init(int selectedCharacter,const std::string& nickname ) {
         uiManager = UIManager::getInstance(selectedCharacter, nickname);
         this->addChild(uiManager->getLayer());
         CCLOG("UIManager created");
+
+        //工具
+        
+        toolManager = ToolManager::create();
+        this->addChild(toolManager);
+        toolManager->addTool(Tool::ToolType::HOE);
+        toolManager->addTool(Tool::ToolType::AXE);
+        toolManager->addTool(Tool::ToolType::FISHING_ROD);
+        toolManager->addTool(Tool::ToolType::WATERING_CAN);
+       
+        auto keyboardListener = EventListenerKeyboard::create();
+        keyboardListener->onKeyPressed = [=](EventKeyboard::KeyCode keyCode, Event* event) {
+            if (keyCode == EventKeyboard::KeyCode::KEY_C) {
+                toolManager->useTool(); // 使用选中的工具
+            }
+            else if (keyCode == EventKeyboard::KeyCode::KEY_V) {
+                toolManager->discardTool(); // 丢弃选中的工具
+            }
+            };
+        _eventDispatcher->addEventListenerWithSceneGraphPriority(keyboardListener, this);
+
+        //植物
+
+
+        //动物
+
+
+
     }
     catch (const std::exception& e) {
         //捕获异常 记录日志
@@ -107,7 +136,6 @@ void GameScene::update(float dt) {
     */
 // 更新时间逻辑，1秒游戏时间变为1分钟
     gameTime += dt;  // 增加游戏时间（按秒计）
-    CCLOG("时间更新");
     
     // 传递 dt 参数给 uiManager
     if (gameTime >= 1.0f) {  // 每秒游戏时间增加一分钟
@@ -132,7 +160,7 @@ void GameScene::update(float dt) {
     if (uiManager) {
         uiManager->update(dt);
     }
-
+  
 }
 
 Player* GameScene::getPlayer() {

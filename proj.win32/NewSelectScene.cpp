@@ -174,8 +174,8 @@ bool NewSelectScene::init() {
             selectedCharacter = 1;
             check1->setVisible(true);
             check2->setVisible(false);
-            character1->setTexture("../Resources/Characters-102/Abigail..png");
-            Rect cropArea(0, characterheight * 7, characterwidth, characterheight);
+            character1->setTexture("../Resources/Amily.png");
+            Rect cropArea(characterwidth*3, characterheight * 4, characterwidth, characterheight);
             character1->setTextureRect(cropArea);
             CCLOG("Character 1 selected!");
             return true;
@@ -184,8 +184,8 @@ bool NewSelectScene::init() {
             selectedCharacter = 2;
             check1->setVisible(false);
             check2->setVisible(true);
-            character2->setTexture("../Resources/Characters-102/Alex..png");
-            Rect cropArea(characterwidth,0, characterwidth, characterheight);
+            character2->setTexture("../Resources/Harvey.png");
+            Rect cropArea(characterwidth*3, characterheight*5, characterwidth, characterheight);
             character2->setTextureRect(cropArea);
             CCLOG("Character 2 selected!");
             return true;

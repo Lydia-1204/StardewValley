@@ -10,10 +10,11 @@
 #define GAME_SCENE_H
 
 #include "cocos2d.h"
+
 #include "Player.h"
 #include "map.h"
 #include "UIManager.h"
-
+#include"tool.h"
 USING_NS_CC;
 
 class GameScene : public Scene {
@@ -23,8 +24,9 @@ private:
     Player* player;               // 玩家角色
     MapManager* mapManager;       // 地图管理器
     UIManager* uiManager;         // UI 管理器
-    std::string nickname;
-    int selectedCharacter;
+    ToolManager* toolManager;
+    std::string nickname;  //昵称
+    int selectedCharacter; // 1 -Amily/2-Harvey
 
     float gameTime;  //时间流逝 单位为秒
     int currentHour;   //小时
