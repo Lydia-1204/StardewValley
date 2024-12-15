@@ -13,6 +13,8 @@
 
 USING_NS_CC;
 
+class Player;  // 声明 Player 类
+
 class UIManager : public Node {
 private:
     static UIManager* instance;
@@ -46,7 +48,18 @@ private:
     int getDaysInMonth(int month);     // 获取指定月份的天数
 
 public:
+    friend class Player;
+
     static UIManager* getInstance(int selectedCharacter, const std::string& nickname);
+
+    // 添加 getter currentenergy方法（用于其他Classes中）
+    int getCurrentEnergy() const { return currentEnergy; }
+
+     // 添加 setter 方法（如果需要更新精力值）
+    void setCurrentEnergy(int energy) { 
+        currentEnergy = energy;
+        setEnergy(currentEnergy);  // 更新 UI
+    }
 
     bool init(int selectedCharacter, const std::string& nickname); // 初始化
 
@@ -57,6 +70,7 @@ public:
 
     void setMoney(int money);
     void setEnergy(int energy);
+    void increaseEnergy(float deltaEnergy);
 
     UIManager* getLayer();                  // 获取 UI 层
     void setToolBar(const std::vector<Sprite*>& tools); // 设置工具栏

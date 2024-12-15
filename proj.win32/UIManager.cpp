@@ -11,10 +11,16 @@ UIManager::UIManager()
     shortcutKeysLabel(nullptr), money(0), selectedCharacter(0),
     currentMonth(3), currentDay(1), currentWeekday(2), // 3月1日，周二
     currentEnergy(100), timeElapsed(0.0f) {}
+
 UIManager* UIManager::getInstance(int selectedCharacter, const std::string& nickname) {
     if (!instance) {
+        // 如果实例不存在，创建并初始化它
         instance = new (std::nothrow) UIManager();
-        instance->init(selectedCharacter, nickname);
+        if (instance && !instance->init(selectedCharacter, nickname)) {
+            // 如果初始化失败，释放实例并返回 nullptr
+            delete instance;
+            instance = nullptr;
+        }
     }
     return instance;
 }
@@ -28,7 +34,7 @@ bool UIManager::init(int selectedCharacter, const std::string& nickname) {
     currentDay = 8;                    // 当前日期
     currentWeekday = 6;                // 当前周几（0=周日，1=周一，...，6=周六）
     currentHour = 8;                   // 当前小时
-   currentMinute =0;                 // 当前分钟
+    currentMinute =0;                 // 当前分钟
     currentEnergy = 100;                 // 当前精力值（百分比）
     auto visibleSize = Director::getInstance()->getVisibleSize();
     this->nickname = nickname;
@@ -127,6 +133,24 @@ void UIManager::setMoney(int money) {
 
 void UIManager::setEnergy(int energy) {
     energyBar->setPercentage(energy);
+}
+
+void UIManager::increaseEnergy(float deltaEnergy) {
+    // currentEnergy 表示当前精力值（0-100之间）
+    currentEnergy += deltaEnergy;  
+
+    // 防止精力值小于0
+    if (currentEnergy < 0) {
+        currentEnergy = 0;
+    }
+
+    // 防止精力值大于100
+    else if (currentEnergy > 100) {
+        currentEnergy = 100;
+    }
+
+    // 更新精力条
+    setEnergy(currentEnergy);
 }
 
 void UIManager::setDateAndTime(const std::string& date, const std::string& time) {
