@@ -153,3 +153,20 @@ bool MapManager::isAtEdge(const Vec2& playerPos, Vec2& outDirection) {
 
     return false;
 }
+Size MapManager::getCurrentMapSize(bool inPixels) const {
+    if (!currentMap) {
+        throw std::runtime_error("No map loaded.");
+    }
+
+    const Size mapGridSize = currentMap->getMapSize();  // 地图的格子数
+    const Size tileSize = currentMap->getTileSize();    // 每个格子的大小
+
+    if (inPixels) {
+        // 返回以像素为单位的地图大小
+        return Size(mapGridSize.width * tileSize.width, mapGridSize.height * tileSize.height);
+    }
+    else {
+        // 返回以格子数为单位的地图大小
+        return mapGridSize;
+    }
+}

@@ -45,6 +45,7 @@ private:
     int selectedToolIndex;            // 当前选中的工具索引
     cocos2d::Sprite* selectionBox;    // 选中工具的高亮框
     void updateSelectionBox();        // 更新选中框位置
+    void initKeyboardListener();
 };
 
 #endif // TOOL_H

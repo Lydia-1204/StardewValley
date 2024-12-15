@@ -12,7 +12,7 @@ UIManager::UIManager()
     currentMonth(3), currentDay(1), currentWeekday(2), // 3月1日，周二
     currentEnergy(100), timeElapsed(0.0f) {}
 
-UIManager* UIManager::getInstance(int selectedCharacter, const std::string& nickname) {
+UIManager* UIManager::getInstance(int& selectedCharacter, const std::string& nickname) {
     if (!instance) {
         // 如果实例不存在，创建并初始化它
         instance = new (std::nothrow) UIManager();
@@ -76,15 +76,93 @@ bool UIManager::init(int selectedCharacter, const std::string& nickname) {
     energyBar->setPercentage(100);
     energyBar->setPosition(visibleSize.width - 30, visibleSize.height * 0.25);
     this->addChild(energyBar);
-
+    //精力条label
+    energyLabel = Label::createWithTTF("energy:100", "../Resources/fonts/Marker Felt.ttf", 18);
+    energyLabel->setPosition(visibleSize.width - 50, visibleSize.height * 0.12);
+    this->addChild(energyLabel);
     // 快捷键提示框
-    shortcutKeysLabel = Label::createWithTTF("E: Exit\nC: Use Tool\nM: Mini Map\nF: Task List", "../Resources/fonts/Marker Felt.ttf", 18);
+    shortcutKeysLabel = Label::createWithTTF("E: Exit\nC: Use Tool\nV: Discard Tool\nM: Mini Map\nF: Task List", "../Resources/fonts/Marker Felt.ttf", 18);
     shortcutKeysLabel->setPosition(100, visibleSize.height - 100);
     this->addChild(shortcutKeysLabel);
-
+    /*
     // 工具栏
     auto tool1 = Sprite::create("../Resources/LooseSprites-73/textBox..png");
     setToolBar({ tool1 }); // 初始化工具栏
+    */
+
+
+    // 初始化暂停面板
+    pausePanel = LayerColor::create(Color4B(20, 20, 20, 220)); // 深色且几乎不透明
+    pausePanel->setVisible(false);
+    this->addChild(pausePanel);
+
+    // 添加按钮 "Exit to Menu"
+    auto exitButton = MenuItemLabel::create(
+        Label::createWithTTF("Exit Game", "../Resources/fonts/Marker Felt.ttf", 24),
+        [](Ref* sender) {
+            CCLOG("Exit  clicked");
+            static bool isSwitchingScene = false;
+            if (isSwitchingScene) return;
+            isSwitchingScene = true;
+            Director::getInstance()->end();
+            /*
+            Director::getInstance()->resume(); // 恢复游戏状态
+            //this->clearResources();
+            // 执行返回主菜单的逻辑
+            auto menuScene = MenuScene::createScene();
+            Director::getInstance()->replaceScene(TransitionFade::create(0.5f, menuScene, Color3B::BLACK));
+            */
+        }
+    );
+    exitButton->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2 + 50));
+
+    // 添加按钮 "Save Progress"
+    auto saveButton = MenuItemLabel::create(
+        Label::createWithTTF("Save Progress", "../Resources/fonts/Marker Felt.ttf", 24),
+        [](Ref* sender) {
+            CCLOG("Save Progress clicked");
+            // 执行保存游戏进度的逻辑
+        }
+    );
+    saveButton->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2 - 50));
+
+    auto menu = Menu::create(exitButton, saveButton, nullptr);
+    menu->setPosition(Vec2::ZERO);
+    pausePanel->addChild(menu);
+
+    // 小地图
+    miniMap = Sprite::create("../Resources/UI/minimap.png");
+    if (!miniMap) throw std::runtime_error("Failed to load minimap texture!");
+    miniMap->setPosition(visibleSize.width / 2,visibleSize.height / 2);
+    miniMap->setVisible(false);
+    this->addChild(miniMap);
+
+    // 添加红点标注角色位置
+    playerMarker = Sprite::create("../Resources/UI/playerStar.png");
+    playerMarker->setPosition(Vec2(miniMap->getContentSize().width / 2, miniMap->getContentSize().height / 2)); // 默认居中
+    miniMap->addChild(playerMarker);
+
+    // 添加 "Your Position" 文本
+    auto positionLabel = Label::createWithTTF("Your Position", "../Resources/fonts/Marker Felt.ttf", 10);
+    positionLabel->setPosition(Vec2(miniMap->getContentSize().width / 2, 10)); // 放在小地图下方
+    miniMap->addChild(positionLabel);
+
+    // 任务面板
+    taskListPanel = LayerColor::create(Color4B(40, 40, 40, 200)); // 浅灰色背景
+    taskListPanel->setContentSize(Size(400, 300)); // 设置任务面板大小
+    taskListPanel->setPosition((visibleSize.width - taskListPanel->getContentSize().width) / 2,
+        (visibleSize.height - taskListPanel->getContentSize().height) / 2);
+    taskListPanel->setVisible(false);
+    this->addChild(taskListPanel);
+
+    // 初始化任务列表
+    for (int i = 0; i < 5; i++) {
+        auto taskLabel = Label::createWithTTF("Task  "+ std::to_string(i)+" :", "../Resources/fonts/Marker Felt.ttf", 20);
+        taskLabel->setAnchorPoint(Vec2(0, 0.5f));
+        taskLabel->setPosition(Vec2(20, taskListPanel->getContentSize().height - 30 * (i + 1)));
+        taskListPanel->addChild(taskLabel);
+        taskLabels.push_back(taskLabel);
+    }
 
     return true;
 }
@@ -133,6 +211,7 @@ void UIManager::setMoney(int money) {
 
 void UIManager::setEnergy(int energy) {
     energyBar->setPercentage(energy);
+    energyLabel->setString("energy: " + std::to_string(energy));
 }
 
 void UIManager::increaseEnergy(float deltaEnergy) {
@@ -184,7 +263,7 @@ int UIManager::getDaysInMonth(int month) {
 UIManager* UIManager::getLayer() {
     return this;
 }
-
+/*
 void UIManager::setToolBar(const std::vector<Sprite*>& tools) {
     // 清空当前工具栏
     for (auto& child : getChildren()) {
@@ -200,4 +279,57 @@ void UIManager::setToolBar(const std::vector<Sprite*>& tools) {
         tools[i]->setPosition(Vec2(startX + i * 10, 50)); // 每个工具的间距为 50
         this->addChild(tools[i]);
     }
+}*/
+void UIManager::toggleMiniMap(const Vec2& playerPos, const Size& mapSize) {
+    isMiniMapVisible = !isMiniMapVisible;
+    miniMap->setVisible(isMiniMapVisible);
+
+    if (isMiniMapVisible) {
+        Vec2 normalizedPos(playerPos.x / mapSize.width, playerPos.y / mapSize.height);
+        playerMarker->setPosition(Vec2(miniMap->getContentSize().width * normalizedPos.x,
+            miniMap->getContentSize().height * normalizedPos.y));
+    }
+}
+
+void UIManager::toggleTaskList() {
+    isTaskListVisible = !isTaskListVisible;
+    taskListPanel->setVisible(isTaskListVisible);
+}
+
+void UIManager::updateTaskList(const std::vector<std::string>& tasks) {
+    for (int i = 0; i < taskLabels.size(); i++) {
+        if (i < tasks.size()) {
+            taskLabels[i]->setString(tasks[i]);
+            taskLabels[i]->setVisible(true);
+
+            auto listener = EventListenerTouchOneByOne::create();
+            listener->onTouchBegan = [=](Touch* touch, Event* event) {
+                if (taskLabels[i]->getBoundingBox().containsPoint(touch->getLocation())) {
+                    auto detailBox = LayerColor::create(Color4B(0, 0, 0, 200), 250, 100);
+                    detailBox->setPosition(taskListPanel->getPosition() + Vec2(320, 30 * (4 - i)));
+                    auto detailLabel = Label::createWithTTF("Details: " + tasks[i],
+                        "../Resources/fonts/Marker Felt.ttf", 16);
+                    detailLabel->setPosition(detailBox->getContentSize() / 2);
+                    detailBox->addChild(detailLabel);
+                    this->addChild(detailBox);
+
+                    detailBox->runAction(Sequence::create(DelayTime::create(2.0f), RemoveSelf::create(), nullptr));
+                    return true;
+                }
+                return false;
+                };
+            _eventDispatcher->addEventListenerWithSceneGraphPriority(listener, taskLabels[i]);
+        }
+        else {
+            taskLabels[i]->setVisible(false);
+        }
+    }
+}
+
+void UIManager::showPausePanel() {
+    pausePanel->setVisible(true);
+}
+
+void UIManager::hidePausePanel() {
+    pausePanel->setVisible(false);
 }

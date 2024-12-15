@@ -95,19 +95,28 @@ bool ToolManager::init() {
     selectedToolIndex = -1;
 
     // 添加事件监听器
+   // 添加事件监听器
     auto mouseListener = EventListenerMouse::create();
     mouseListener->onMouseDown = [=](EventMouse* event) {
-        auto location = convertToNodeSpace(event->getLocation());
+        CCLOG("mouseDown");
+        auto locationInWorld = event->getLocationInView();  // 获取屏幕视图中的坐标
+        auto locationInToolsBg = this->convertToNodeSpace(locationInWorld); // 转换到 tools_bg 的坐标系
+        CCLOG("Mouse position in tools_bg space: %f, %f", locationInToolsBg.x, locationInToolsBg.y);
 
+        // 检测是否点击工具
+   
+        CCLOG("Adjusted Mouse Position: %f, %f", locationInToolsBg.x, locationInToolsBg.y);
+    
         // 判断鼠标是否点击工具栏
         for (int i = 0; i < tools.size(); i++) {
-            if (tools[i] && tools[i]->getBoundingBox().containsPoint(location)) {
+            if (tools[i] && tools[i]->getBoundingBox().containsPoint(locationInToolsBg)) {
                 if (event->getMouseButton() == EventMouse::MouseButton::BUTTON_LEFT) {
-                    CCLOG("tool[i] selected");
-                    selectTool(i); // 左键选中工具
+                    CCLOG("Tool[%d] selected and used", i);
+                    selectTool(i);  // 选中工具
+                    useTool();     // 直接使用工具
                 }
                 else if (event->getMouseButton() == EventMouse::MouseButton::BUTTON_RIGHT) {
-                    discardTool(); // 右键丢弃工具
+                    discardTool();  // 右键丢弃工具
                 }
                 return;
             }
@@ -115,7 +124,7 @@ bool ToolManager::init() {
         };
 
     _eventDispatcher->addEventListenerWithSceneGraphPriority(mouseListener, this);
-
+    initKeyboardListener();
     return true;
 }
 
@@ -128,8 +137,10 @@ void ToolManager::addTool(Tool::ToolType type) {
             float startY = Director::getInstance()->getVisibleSize().height * 0.1f;
 
             tool->setPosition(startX + i * gridWidth, startY);
-            this->addChild(tool);
             tools[i] = tool;
+            this->addChild(tools[i] );
+            auto location = tools[i]->getPosition();
+            CCLOG("tools [%d]: %f,%f", i,location.x, location.y);
             return;
         }
     }
@@ -169,7 +180,8 @@ void ToolManager::discardTool() {
     tools[selectedToolIndex] = nullptr;
     selectedToolIndex = -1;
     selectionBox->setVisible(false);
-    CCLOG("Tool discarded");
+    CCLOG("Tool discarded: %d", static_cast<int>(tool->getType()));
+    
 }
 
 void ToolManager::updateSelectionBox() {
@@ -179,4 +191,21 @@ void ToolManager::updateSelectionBox() {
     }
     selectionBox->setVisible(true);
     selectionBox->setPosition(tools[selectedToolIndex]->getPosition());
+}
+
+void ToolManager::initKeyboardListener() {
+    auto keyboardListener = EventListenerKeyboard::create();
+    keyboardListener->onKeyPressed = [=](EventKeyboard::KeyCode keyCode, Event* event) {
+        switch (keyCode) {
+        case EventKeyboard::KeyCode::KEY_C:
+            useTool(); // 使用当前工具
+            break;
+        case EventKeyboard::KeyCode::KEY_V:
+            discardTool(); // 丢弃当前工具
+            break;
+        default:
+            break;
+        }
+        };
+    _eventDispatcher->addEventListenerWithSceneGraphPriority(keyboardListener, this);
 }

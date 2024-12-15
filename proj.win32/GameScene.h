@@ -21,6 +21,7 @@ class GameScene : public Scene {
 private:
     static GameScene* instance;   // 单例实例
 
+    bool isGamePaused; //是否暂停
     Player* player;               // 玩家角色
     MapManager* mapManager;       // 地图管理器
     TMXTiledMap* currentMap; //当前地图快
@@ -34,12 +35,12 @@ private:
     int currentMinute;    //分钟
 
 public:
-    static GameScene* getInstance(int selectedCharacter, const std::string& nickname);     // 获取单例实例
-    static GameScene* createScene(int selectedCharacter, const std::string& nickname);     // 创建场景
+    static GameScene* getInstance(int& selectedCharacter, const std::string& nickname);     // 获取单例实例
+    static GameScene* createScene(int& selectedCharacter, const std::string& nickname);     // 创建场景
 
-    virtual bool init(int selectedCharacter, const std::string& nickname);        // 初始化
+    virtual bool init(int& selectedCharacter, const std::string& nickname);        // 初始化
     virtual void update(float dt) override; // 每帧更新
-
+    void togglePause();                    //切换暂停状态
     Player* getPlayer();                 // 获取玩家实例
 
     void pauseGame();                    // 暂停游戏
@@ -49,6 +50,7 @@ public:
     void replaceChild(Node* oldChild, Node* newChild);
     GameScene();
     virtual~GameScene()= default;
+    void initKeyboardListener();    //快捷键
 };
 
 #endif // GAME_SCENE_Hwdas

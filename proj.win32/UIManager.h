@@ -10,6 +10,8 @@
 
 #include "cocos2d.h"
 #include <string>
+#include"MenuScene.h"
+#include"Constant.h"
 
 USING_NS_CC;
 
@@ -26,6 +28,17 @@ private:
     ProgressTimer* energyBar;          // 显示精力条
     Sprite* iron;                      // 美观图标
     Label* shortcutKeysLabel;          // 显示快捷键提示
+    Label* energyLabel;                //精力条数据显示
+
+
+    cocos2d::LayerColor* pausePanel;    // 暂停面板
+    cocos2d::Sprite* miniMap;           // 小地图
+    cocos2d::Sprite* playerMarker;           // 小地图玩家标记
+    bool isMiniMapVisible;
+
+    LayerColor* taskListPanel;
+    std::vector<cocos2d::Label*> taskLabels;      // 任务列表中的任务标签
+    bool isTaskListVisible;                       // 任务列表显示状态
 
     // 数据成员
     std::string nickname;              // 玩家昵称
@@ -40,7 +53,7 @@ private:
     int currentEnergy;                 // 当前精力值（百分比）
 
     float timeElapsed;                 // 用于累积时间（秒）
-
+    
     UIManager();                       // 私有化构造函数
 
     // 私有方法
@@ -50,7 +63,7 @@ private:
 public:
     friend class Player;
 
-    static UIManager* getInstance(int selectedCharacter, const std::string& nickname);
+    static UIManager* getInstance(int& selectedCharacter, const std::string& nickname);
 
     // 添加 getter currentenergy方法（用于其他Classes中）
     int getCurrentEnergy() const { return currentEnergy; }
@@ -74,6 +87,16 @@ public:
 
     UIManager* getLayer();                  // 获取 UI 层
     void setToolBar(const std::vector<Sprite*>& tools); // 设置工具栏
+
+    // 小地图方法
+    void toggleMiniMap(const cocos2d::Vec2& playerPos, const cocos2d::Size& mapSize); // 显示/隐藏小地图
+    void updateMiniMapPosition(const cocos2d::Vec2& playerPos, const cocos2d::Size& mapSize); // 更新玩家在小地图的位置
+
+    // 任务面板方法
+    void toggleTaskList();                        // 显示/隐藏任务列表
+    void updateTaskList(const std::vector<std::string>& tasks); // 更新任务列表
+    void showPausePanel();              // 显示暂停面板
+    void hidePausePanel();              // 隐藏暂停面板
 };
 
 #endif // UI_MANAGER_H

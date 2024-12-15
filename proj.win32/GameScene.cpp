@@ -17,14 +17,14 @@ GameScene* GameScene::instance = nullptr;
 GameScene::GameScene()
     : player(nullptr), mapManager(nullptr), uiManager(nullptr) {}
 
-GameScene* GameScene::getInstance(int selectedCharacter, const std::string& nickname) {
+GameScene* GameScene::getInstance(int& selectedCharacter, const std::string& nickname) {
     if (instance == nullptr) {
         instance = GameScene::createScene(selectedCharacter, nickname);
     }
     return instance;
 }
 
- GameScene* GameScene::createScene(int selectedCharacter, const std::string& nickname) {
+ GameScene* GameScene::createScene(int& selectedCharacter, const std::string& nickname) {
     auto scene = new (std::nothrow) GameScene();
     if (scene && scene->init(selectedCharacter,nickname )) {
         scene->autorelease();
@@ -34,13 +34,13 @@ GameScene* GameScene::getInstance(int selectedCharacter, const std::string& nick
     return nullptr;
 }
 
-bool GameScene::init(int selectedCharacter,const std::string& nickname ) {
+bool GameScene::init(int& selectedCharacter,const std::string& nickname ) {
     screenSize = Director::getInstance()->getVisibleSize();
     if (!Scene::init()) {
         throw std::runtime_error ("GameScene create failed!!");
         return false;
     }
-    
+    isGamePaused = false;
     this->nickname = nickname;
     this->selectedCharacter = selectedCharacter;
 
@@ -70,6 +70,7 @@ bool GameScene::init(int selectedCharacter,const std::string& nickname ) {
         player = Player::create(selectedCharacter, nickname);
 
         player->setPosition(mapManager->getPlayerStartPos()); // 初始位置
+       // player->setPosition(500,500);
         this->addChild(player);
         CCLOG("Player created");
 
@@ -85,20 +86,11 @@ bool GameScene::init(int selectedCharacter,const std::string& nickname ) {
         this->addChild(toolManager);
         toolManager->addTool(Tool::ToolType::HOE);
         toolManager->addTool(Tool::ToolType::AXE);
-        toolManager->addTool(Tool::ToolType::FISHING_ROD);
         toolManager->addTool(Tool::ToolType::WATERING_CAN);
        
-        auto keyboardListener = EventListenerKeyboard::create();
-        keyboardListener->onKeyPressed = [=](EventKeyboard::KeyCode keyCode, Event* event) {
-            if (keyCode == EventKeyboard::KeyCode::KEY_C) {
-                toolManager->useTool(); // 使用选中的工具
-            }
-            else if (keyCode == EventKeyboard::KeyCode::KEY_V) {
-                toolManager->discardTool(); // 丢弃选中的工具
-            }
-            };
-        _eventDispatcher->addEventListenerWithSceneGraphPriority(keyboardListener, this);
-
+        toolManager->addTool(Tool::ToolType::FISHING_ROD);
+        
+        
         //植物
 
 
@@ -115,7 +107,7 @@ bool GameScene::init(int selectedCharacter,const std::string& nickname ) {
         Director::getInstance()->replaceScene(errorScene);
     }
 
-
+    initKeyboardListener();
     // 注册 update 方法
    this->scheduleUpdate();
 
@@ -124,19 +116,20 @@ bool GameScene::init(int selectedCharacter,const std::string& nickname ) {
 void GameScene::update(float dt) {
     // 更新游戏逻辑
 
-
     
     //地图切换
     if (mapManager && player&&currentMap) {
        Vec2 direction;
-      
-        if (mapManager->isAtEdge(player->getPosition(), direction)) {
-           // mapManager->switchToBlock(direction); // 切换地图
-           // this->removeChild(currentMap);
+       player->setPosition(screenSize.width/2, screenSize.height / 2);
+       CCLOG("player position %f,%f", player->getPosition().x, player->getPosition().y);
+      CCLOG("screenSize %f,%f", screenSize.width, screenSize.height);
+        if (mapManager->isAtEdge(player->getPlayerPosition(), direction)) {
+          // mapManager->switchToBlock(direction); // 切换地图
+          //  this->removeChild(currentMap);
            // currentMap = mapManager->getCurrentBlock();
            // this->addChild(currentMap);
             //重置位置
-            const Vec2 vec = player->getPosition();
+            const Vec2 vec = player->getPlayerPosition();
             if (direction == Vec2(-1, 0)) { // 左边界
                 
                 player->setPosition(screenSize.width-10, vec.y);
@@ -177,7 +170,6 @@ void GameScene::update(float dt) {
         uiManager->setDateAndTime("March 1st, Tuesday", timeStr);
         
     }
-   
     if (uiManager) {
         uiManager->update(dt);
     }
@@ -204,5 +196,42 @@ void GameScene::replaceChild(Node* oldChild, Node* newChild) {
     if (oldChild && newChild) {
         this->removeChild(oldChild);
         this->addChild(newChild);
+    }
+}
+void GameScene::initKeyboardListener() {
+    auto keyboardListener = EventListenerKeyboard::create();
+    keyboardListener->onKeyPressed = [=](EventKeyboard::KeyCode keyCode, Event* event) {
+        switch (keyCode) {
+        case EventKeyboard::KeyCode::KEY_E:
+            togglePause();
+            break;
+        case EventKeyboard::KeyCode::KEY_M:
+            if (uiManager) 
+                uiManager->toggleMiniMap(player->getPosition(),mapManager->getCurrentMapSize(1) ); // 显示或隐藏 Mini Map
+            break;
+        case EventKeyboard::KeyCode::KEY_F:
+            if (uiManager) 
+                uiManager->toggleTaskList(); // 显示或隐藏任务列表
+            break;
+        default:
+            break;
+        }
+        };
+    _eventDispatcher->addEventListenerWithSceneGraphPriority(keyboardListener, this);
+}
+void GameScene::togglePause() {
+    if (isGamePaused) {
+        // 恢复游戏
+        Director::getInstance()->resume();
+        uiManager->hidePausePanel(); // 隐藏暂停面板
+        isGamePaused = false;
+        CCLOG("Game Resumed");
+    }
+    else {
+        // 暂停游戏
+        Director::getInstance()->pause();
+        uiManager->showPausePanel(); // 显示暂停面板
+        isGamePaused = true;
+        CCLOG("Game Paused");
     }
 }
