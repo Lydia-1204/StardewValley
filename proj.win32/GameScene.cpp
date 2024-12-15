@@ -35,6 +35,7 @@ GameScene* GameScene::getInstance(int selectedCharacter, const std::string& nick
 }
 
 bool GameScene::init(int selectedCharacter,const std::string& nickname ) {
+    screenSize = Director::getInstance()->getVisibleSize();
     if (!Scene::init()) {
         throw std::runtime_error ("GameScene create failed!!");
         return false;
@@ -56,10 +57,12 @@ bool GameScene::init(int selectedCharacter,const std::string& nickname ) {
         CCLOG("MapManager getInstance");
 
         // 加载第一个地图块
-        auto currentMap = mapManager->getCurrentBlock();
-        this->addChild(mapManager);
 
-        CCLOG("currentMap : %p ", currentMap);
+       currentMap = mapManager->getCurrentBlock();
+        this->addChild(mapManager);
+        this->addChild(currentMap);
+
+        //CCLOG("currentMap : %p ", currentMap);
         CCLOG("currentMap getCurrentBlock  created");
 
 
@@ -122,18 +125,36 @@ void GameScene::update(float dt) {
     // 更新游戏逻辑
 
 
-    /*
+    
     //地图切换
-    if (mapManager && player) {
+    if (mapManager && player&&currentMap) {
        Vec2 direction;
       
         if (mapManager->isAtEdge(player->getPosition(), direction)) {
-            mapManager->switchToBlock(direction); // 切换地图
-            player->setPosition(mapManager->getPlayerStartPos()); // 重置玩家位置
+           // mapManager->switchToBlock(direction); // 切换地图
+           // this->removeChild(currentMap);
+           // currentMap = mapManager->getCurrentBlock();
+           // this->addChild(currentMap);
+            //重置位置
+            const Vec2 vec = player->getPosition();
+            if (direction == Vec2(-1, 0)) { // 左边界
+                
+                player->setPosition(screenSize.width-10, vec.y);
+            }
+            else if (direction == Vec2(1, 0)) { // 右边界
+                player->setPosition(10, vec.y);
+            }
+            else if (direction == Vec2(0, -1)) { // 下边界
+                player->setPosition(vec.x,screenSize.height-10);
+            }
+            else if (direction == Vec2(0, 1)) { // 上边界
+                player->setPosition(vec.x,10);
+            }
+          
         }
     }
 
-    */
+    
 // 更新时间逻辑，1秒游戏时间变为1分钟
     gameTime += dt;  // 增加游戏时间（按秒计）
     

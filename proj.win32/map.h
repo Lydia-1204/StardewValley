@@ -15,7 +15,9 @@ private:
     std::string nickname;            // 玩家昵称
     int selectedCharacter;           // 玩家选择的角色
     std::map<std::string, TMXTiledMap*> mapPool; // 地图缓存池
-
+    float scaleX;
+    float scaleY;
+    float scale; //缩放比例
    
 
 public:

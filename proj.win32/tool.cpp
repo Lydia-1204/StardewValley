@@ -1,3 +1,10 @@
+/********************************************************************************************************
+ * Project Name:  StardewValley
+ * File Name:     tool.cpp
+ * File Function: 实现tool类，实现工具的管理 升级
+ * Author:        王小萌 2351882
+ * Update Date:   2024/12/15
+ *********************************************************************************************************/
 #include "Tool.h"
 
 USING_NS_CC;
@@ -116,7 +123,7 @@ void ToolManager::addTool(Tool::ToolType type) {
     for (int i = 0; i < tools.size(); i++) {
         if (tools[i] == nullptr) {
             auto tool = Tool::create(type);
-            float gridWidth = 32.0f;
+            float gridWidth = 32.0f;//工具栏宽度
             float startX = (Director::getInstance()->getVisibleSize().width - gridWidth * 10) / 2.0f;
             float startY = Director::getInstance()->getVisibleSize().height * 0.1f;
 

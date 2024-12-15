@@ -23,11 +23,12 @@ private:
 
     Player* player;               // 玩家角色
     MapManager* mapManager;       // 地图管理器
+    TMXTiledMap* currentMap; //当前地图快
     UIManager* uiManager;         // UI 管理器
     ToolManager* toolManager;
     std::string nickname;  //昵称
     int selectedCharacter; // 1 -Amily/2-Harvey
-
+    Size screenSize;
     float gameTime;  //时间流逝 单位为秒
     int currentHour;   //小时
     int currentMinute;    //分钟
