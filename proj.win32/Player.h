@@ -44,16 +44,19 @@ private:
 
     void interactWithMap();          // 地图交互逻辑
     void updateEnergy(float delta);  // 更新精力
-
+    static Player* instance;     // 单例实例
 public:
+    static Player* getInstance(int selectedCharacter, const std::string& nickname);
     Player(UIManager* ui) : uiManager(ui) {}  // 构造函数初始化 uiManager
     Sprite* _sprite[4];              // 玩家角色的精灵 四个方向（上右后左）
-    static Player* create(int selectedCharacter, const std::string& nickname);
+    //static Player* create(int selectedCharacter, const std::string& nickname);
 
     bool init(int selectedCharacter, const std::string& nickname);
     void setEnergy(int energy);
     int getEnergy() const;
     void setCurrentTool(int toolId);
+
+    
     void move(float delta);
     void onKeyPressed(EventKeyboard::KeyCode keyCode, Event* event);
     void onKeyReleased(EventKeyboard::KeyCode keyCode, Event* event);

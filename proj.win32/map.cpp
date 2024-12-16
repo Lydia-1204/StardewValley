@@ -6,10 +6,17 @@ MapManager* MapManager::instance = nullptr;
 MapManager::MapManager() : currentMap(nullptr), playerStartPos(Vec2::ZERO), selectedCharacter(0) {}
 
 MapManager* MapManager::getInstance() {
-    if (!instance) {
-        instance = MapManager::create();
+  
+    if (instance == nullptr) {  // 如果实例不存在，则创建
+        instance = new (std::nothrow) MapManager();
+        if (instance && instance->init()) {
+            instance->autorelease();  // 添加到内存管理系统
+        }
+        else {
+            CC_SAFE_DELETE(instance);
+        }
     }
-    return instance;
+    return instance;  // 返回唯一实例
 }
 
 bool MapManager::init() {
@@ -22,13 +29,13 @@ bool MapManager::init() {
 void MapManager::loadMapBlocks(const std::string& mapFolder) {
     // 加载四个地图块
   
-    mapPool["upperLeft"] = TMXTiledMap::create("../Resources/map_block3.tmx");
-    mapPool["upperRight"] = TMXTiledMap::create("../Resources/map_block2.tmx");
-    mapPool["lowerLeft"] = TMXTiledMap::create("../Resources/map_block3.tmx");
-    mapPool["lowerRight"] = TMXTiledMap::create("../Resources/map_block4.tmx");
+    mapPool["upperLeft"] = TMXTiledMap::create("map_block1.tmx");
+    mapPool["upperRight"] = TMXTiledMap::create("map_block2.tmx");
+    mapPool["lowerLeft"] = TMXTiledMap::create("map_block3.tmx");
+    mapPool["lowerRight"] = TMXTiledMap::create("map_block4.tmx");
     
     // 默认加载左上地图块
-    currentMap = mapPool["upperRight"];
+    currentMap = mapPool["lowerLeft"];
 
     if (!currentMap) {
         CCLOG("Error:Faled to load map.tmx");
@@ -68,47 +75,51 @@ Vec2 MapManager::getPlayerStartPos() {
 
 void MapManager::switchToBlock(const Vec2& direction) {
     CCLOG("currentMap : %p ", currentMap);
-    // 根据方向切换地图块
-
-    if (!currentMap) {
-        CCLOG("Error: currentMap is nullptr");
-        return;
-    }
-    else
-        this->removeChild(currentMap);
+    
+    TMXTiledMap* newMap = nullptr;
 
     // 根据方向切换地图块
+    
     if (direction == Vec2(-1, 0)) { // 左边界
-        this->removeChild(currentMap);
-        currentMap = mapPool["upperLeft"];
+        newMap = mapPool["upperLeft"];
     }
     else if (direction == Vec2(1, 0)) { // 右边界
-        this->removeChild(currentMap);
-        currentMap = mapPool["upperRight"];
+        newMap = mapPool["upperRight"];
     }
     else if (direction == Vec2(0, -1)) { // 下边界
-        this->removeChild(currentMap);
-        currentMap = mapPool["lowerLeft"];
+        newMap = mapPool["lowerLeft"];
     }
     else if (direction == Vec2(0, 1)) { // 上边界
-        this->removeChild(currentMap);
-        currentMap = mapPool["lowerRight"];
+        newMap = mapPool["lowerRight"];
     }
-
+ 
     // 检查切换后的地图块是否有效
-    if (!currentMap) {
-        CCLOG("Error: Failed to switch map block");
-        return;
+    if (newMap) {
+        if (currentMap) {
+            this->removeChild(currentMap,false);
+            currentMap = nullptr;
+        }
+        this->addChild(newMap);
+
+        // 选择更大的缩放比例，确保图片覆盖整个屏幕
+        auto screenSize = Director::getInstance()->getVisibleSize();
+        const Size spriteSize = newMap->getContentSize();
+        scaleX = screenSize.width / spriteSize.width;
+        scaleY = screenSize.height / spriteSize.height;
+
+       
+        scale = std::max(scaleX, scaleY);
+        newMap->setPosition(Vec2(screenSize.width / 2, screenSize.height / 2));
+        newMap->setScale(scale); // 根据需要调整比例
+        newMap->setAnchorPoint(Vec2(0.5, 0.5)); // 设置锚点
+
+
+        currentMap = newMap;
+        CCLOG("currentMap : %p ", currentMap);
     }
     else
-        this->addChild(currentMap);
-   
-    CCLOG("after switch currentMap : %p ", currentMap);
-   
-    currentMap->setScale(scale); // 根据需要调整比例
-    currentMap->setAnchorPoint(Vec2(0.5, 0.5)); // 设置锚点
-
-    CCLOG("currentMap : %p ", currentMap);
+        CCLOG("newMap is Null!");
+  
 }
 
 bool MapManager::isAtEdge(const Vec2& playerPos, Vec2& outDirection) {

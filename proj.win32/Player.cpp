@@ -8,7 +8,7 @@
 #include "Player.h"
 
 USING_NS_CC;
-
+Player* Player:: instance=nullptr;     // 单例实例
 Player::Player()
     : _sprite{ nullptr }, _velocity(Vec2::ZERO), _energy(100), _currentTool(0),
     _speed(100.0f), _isMoving(false), _nickname("Player"), _selectedCharacter(1),
@@ -17,14 +17,17 @@ Player::Player()
 
 Player::~Player() {}
 
-Player* Player::create(int selectedCharacter, const std::string& nickname) {
-    Player* player = new (std::nothrow) Player();
-    if (player && player->init(selectedCharacter, nickname)) {
-        player->autorelease();
-        return player;
+Player* Player::getInstance(int selectedCharacter, const std::string& nickname) {
+    if (instance == nullptr) {  // 如果实例不存在，则创建
+        instance = new (std::nothrow) Player();
+        if (instance && instance->init(selectedCharacter, nickname)) {
+            instance->autorelease();  // 添加到内存管理系统
+        }
+        else {
+            CC_SAFE_DELETE(instance);
+        }
     }
-    delete player;
-    return nullptr;
+    return instance;  // 返回唯一实例
 }
 
 bool Player::init(int selectedCharacter, const std::string& nickname) {
@@ -32,6 +35,7 @@ bool Player::init(int selectedCharacter, const std::string& nickname) {
         return false;
     }
 
+  
     // 保存玩家昵称和选择的角色
     _nickname = nickname;
     _selectedCharacter = selectedCharacter;

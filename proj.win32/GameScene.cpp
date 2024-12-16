@@ -65,7 +65,7 @@ bool GameScene::init(int& selectedCharacter,const std::string& nickname ) {
 
 
         // 初始化玩家 selectedCharacter
-        player = Player::create(selectedCharacter, nickname);
+        player = Player::getInstance(selectedCharacter, nickname);
 
         player->setPlayerPosition(mapManager->getPlayerStartPos()); // 初始位置
        // player->setPosition(500,500);
@@ -80,14 +80,14 @@ bool GameScene::init(int& selectedCharacter,const std::string& nickname ) {
 
         //工具
         
-        toolManager = ToolManager::create();
+        toolManager = ToolManager::getInstance();
         this->addChild(toolManager);
         toolManager->addTool(Tool::ToolType::HOE);
         toolManager->addTool(Tool::ToolType::AXE);
         toolManager->addTool(Tool::ToolType::WATERING_CAN);
        
         toolManager->addTool(Tool::ToolType::FISHING_ROD);
-        
+       // player->setToolManager(toolManager);
         
         //植物
 
@@ -123,11 +123,7 @@ void GameScene::update(float dt) {
       // CCLOG("screenSize %f,%f", screenSize.width, screenSize.height);
 
         if (mapManager->isAtEdge(player->getPlayerPosition(), direction)) { 
-         // mapManager->switchToBlock(direction); // 切换地图
-          //  this->removeChild(currentMap);
-           // currentMap = mapManager->getCurrentBlock();
-           // this->addChild(currentMap);
-           
+             mapManager->switchToBlock(direction); // 切换地图
            
            //重置位置
             const Vec2 vec = player->getPlayerPosition();

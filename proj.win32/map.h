@@ -20,10 +20,10 @@ private:
     float scaleY;
     float scale; //缩放比例
    
-
+    MapManager() ;                  // 私有化构造函数
 public:
     static MapManager* getInstance(); // 获取单例实例
-    MapManager();                    // 私有化构造函数
+   
     bool init();                      // 初始化
 
     void loadMapBlocks(const std::string& mapFolder); // 加载所有地图
