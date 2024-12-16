@@ -1,3 +1,10 @@
+/********************************************************************************************************
+ * Project Name:  StardewValley
+ * File Name:     Player.cpp
+ * File Function: 实现Player类，实现玩家的行走、砍、精力更新等动作
+ * Author:        邓语乐 2351273
+ * Update Date:   2024/12/16
+ *********************************************************************************************************/
 #include "Player.h"
 
 USING_NS_CC;
@@ -6,7 +13,7 @@ Player::Player()
     : _sprite{ nullptr }, _velocity(Vec2::ZERO), _energy(100), _currentTool(0),
     _speed(100.0f), _isMoving(false), _nickname("Player"), _selectedCharacter(1),
     _toolSprite(nullptr), _fishing_rodSprite(nullptr), _watering_canSprite(nullptr),
-    _scytheSprite(nullptr), _hoeSprite(nullptr), _shiftKeyPressed(false), _isToolActive(false){}
+    _scytheSprite(nullptr), _hoeSprite(nullptr), _shiftKeyPressed(false), _isToolActive(false) {}
 
 Player::~Player() {}
 
@@ -24,7 +31,7 @@ bool Player::init(int selectedCharacter, const std::string& nickname) {
     if (!Node::init()) {
         return false;
     }
-    
+
     // 保存玩家昵称和选择的角色
     _nickname = nickname;
     _selectedCharacter = selectedCharacter;
@@ -75,6 +82,17 @@ bool Player::init(int selectedCharacter, const std::string& nickname) {
 
     return true;
 }
+
+void Player::setPlayerPosition(cocos2d::Vec2& position) {
+    _sprite[_currentDirection]->setPosition(position);
+    Node::setPosition(position);  // 调用父类的 setPosition 设置 Player 节点位置
+
+    // 同步当前方向的精灵位置到 Player 节点的位置
+    if (_sprite[_currentDirection]) {
+        _sprite[_currentDirection]->setPosition(Vec2::ZERO);  // 将精灵对齐到 Player 节点
+    }
+}
+
 
 void Player::setEnergy(int energy) {
     _energy = std::max(0, energy);
@@ -140,7 +158,7 @@ void Player::onMouseDown(Event* event) {
         // 设置tool精灵初始位置
         _toolSprite->setPosition(_sprite[_currentDirection]->getPosition());
         _toolSprite->setVisible(true);  // 显示斧头
-        
+
         // 开始定时显示和隐藏斧头精灵
         schedule([this](float dt) {
             if (_isToolActive) {
@@ -168,7 +186,7 @@ void Player::onMouseDown(Event* event) {
 
 void Player::onMouseUp(Event* event) {
     EventMouse* mouseEvent = static_cast<EventMouse*>(event);
-    if ( mouseEvent->getMouseButton() == EventMouse::MouseButton::BUTTON_LEFT) {
+    if (mouseEvent->getMouseButton() == EventMouse::MouseButton::BUTTON_LEFT) {
         // 鼠标释放时停止工具激活
         _isToolActive = false;
         // 停止斧头显示
@@ -178,9 +196,14 @@ void Player::onMouseUp(Event* event) {
     }
 }
 
-void Player::move(float delta) {
-    Vec2 currentPosition = _sprite[_currentDirection]->getPosition();
+Vec2 Player::getPlayerPosition() const {
+    // 返回第一个精灵的位置，假设玩家的位置由该精灵的位置来确定
+  //  CCLOG("before back position,%f,%f", currentPosition.x, currentPosition.y);
+    return this->getPosition();  // 直接返回 Player 节点的坐标
+}
 
+void Player::move(float delta) {
+    Vec2 currentPosition = getPlayerPosition();
     float moveSpeed = _shiftKeyPressed ? _speed / 2 : _speed;  // 如果Shift按下，速度减半
 
     if (_velocity != Vec2::ZERO) {
@@ -228,7 +251,7 @@ void Player::move(float delta) {
 
         // 移动精灵
         Vec2 displacement = _velocity.getNormalized() * moveSpeed * delta;
-        _sprite[_currentDirection]->setPosition(currentPosition + displacement);
+        setPlayerPosition(currentPosition + displacement);
 
         // 显示当前精灵
         if (_sprite[_currentDirection] && _sprite[_currentDirection]->getParent()) {
@@ -242,7 +265,7 @@ void Player::move(float delta) {
 
 void Player::interactWithMap() {
     // 地图交互逻辑实现
-    CCLOG("Interacting with map...");
+    //CCLOG("Interacting with map...");
 }
 
 void Player::setCurrentTool(int toolId) {

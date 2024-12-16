@@ -10,11 +10,12 @@ class MapManager : public Node {
 private:
     static MapManager* instance;     // 单例实例
 
-    TMXTiledMap* currentMap;         // 当前加载的地图
+    std::map<std::string, TMXTiledMap*> mapPool; // 地图缓存池
+    cocos2d::TMXTiledMap* currentMap;         // 当前加载的地图
     Vec2 playerStartPos;             // 玩家初始位置
     std::string nickname;            // 玩家昵称
     int selectedCharacter;           // 玩家选择的角色
-    std::map<std::string, TMXTiledMap*> mapPool; // 地图缓存池
+    
     float scaleX;
     float scaleY;
     float scale; //缩放比例

@@ -53,14 +53,12 @@ bool GameScene::init(int& selectedCharacter,const std::string& nickname ) {
         // 初始化地图管理器
         mapManager = MapManager::getInstance();
         //CCLOG("Map Manager created");
-        mapManager->loadMapBlocks("map");
+        mapManager->loadMapBlocks("map"); // 加载第一个地图块
         CCLOG("MapManager getInstance");
-
-        // 加载第一个地图块
-
-       currentMap = mapManager->getCurrentBlock();
         this->addChild(mapManager);
-        this->addChild(currentMap);
+       
+        
+        //this->addChild(currentMap); mapManager内add 不要重复add
 
         //CCLOG("currentMap : %p ", currentMap);
         CCLOG("currentMap getCurrentBlock  created");
@@ -69,7 +67,7 @@ bool GameScene::init(int& selectedCharacter,const std::string& nickname ) {
         // 初始化玩家 selectedCharacter
         player = Player::create(selectedCharacter, nickname);
 
-        player->setPosition(mapManager->getPlayerStartPos()); // 初始位置
+        player->setPlayerPosition(mapManager->getPlayerStartPos()); // 初始位置
        // player->setPosition(500,500);
         this->addChild(player);
         CCLOG("Player created");
@@ -120,35 +118,38 @@ void GameScene::update(float dt) {
     //地图切换
     if (mapManager && player&&currentMap) {
        Vec2 direction;
-       player->setPosition(screenSize.width/2, screenSize.height / 2);
-       CCLOG("player position %f,%f", player->getPosition().x, player->getPosition().y);
-      CCLOG("screenSize %f,%f", screenSize.width, screenSize.height);
-        if (mapManager->isAtEdge(player->getPlayerPosition(), direction)) {
-          // mapManager->switchToBlock(direction); // 切换地图
+      
+      // CCLOG("player position %f,%f", player->getPlayerPosition().x, player->getPlayerPosition().y);
+      // CCLOG("screenSize %f,%f", screenSize.width, screenSize.height);
+
+        if (mapManager->isAtEdge(player->getPlayerPosition(), direction)) { 
+         // mapManager->switchToBlock(direction); // 切换地图
           //  this->removeChild(currentMap);
            // currentMap = mapManager->getCurrentBlock();
            // this->addChild(currentMap);
-            //重置位置
+           
+           
+           //重置位置
             const Vec2 vec = player->getPlayerPosition();
             if (direction == Vec2(-1, 0)) { // 左边界
                 
-                player->setPosition(screenSize.width-10, vec.y);
+                player->setPlayerPosition(Vec2(screenSize.width-10, vec.y));
             }
             else if (direction == Vec2(1, 0)) { // 右边界
-                player->setPosition(10, vec.y);
+                player->setPlayerPosition(Vec2(10, vec.y));
             }
             else if (direction == Vec2(0, -1)) { // 下边界
-                player->setPosition(vec.x,screenSize.height-10);
+                player->setPlayerPosition(Vec2(vec.x,screenSize.height-10));
             }
             else if (direction == Vec2(0, 1)) { // 上边界
-                player->setPosition(vec.x,10);
+                player->setPlayerPosition(Vec2(vec.x,10));
             }
           
         }
     }
 
     
-// 更新时间逻辑，1秒游戏时间变为1分钟
+    // 更新时间逻辑，1秒游戏时间变为1分钟
     gameTime += dt;  // 增加游戏时间（按秒计）
     
     // 传递 dt 参数给 uiManager
@@ -207,7 +208,7 @@ void GameScene::initKeyboardListener() {
             break;
         case EventKeyboard::KeyCode::KEY_M:
             if (uiManager) 
-                uiManager->toggleMiniMap(player->getPosition(),mapManager->getCurrentMapSize(1) ); // 显示或隐藏 Mini Map
+                uiManager->toggleMiniMap(player->getPlayerPosition(),mapManager->getCurrentMapSize(1) ); // 显示或隐藏 Mini Map
             break;
         case EventKeyboard::KeyCode::KEY_F:
             if (uiManager) 
