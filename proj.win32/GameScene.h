@@ -15,6 +15,7 @@
 #include "map.h"
 #include "UIManager.h"
 #include"tool.h"
+#include"itemManager.h"
 USING_NS_CC;
 
 class GameScene : public Scene {
@@ -27,6 +28,9 @@ private:
     TMXTiledMap* currentMap; //当前地图快
     UIManager* uiManager;         // UI 管理器
     ToolManager* toolManager;
+    ItemManager* itemManager;
+
+
     std::string nickname;  //昵称
     int selectedCharacter; // 1 -Amily/2-Harvey
     Size screenSize;

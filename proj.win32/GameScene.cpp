@@ -80,14 +80,29 @@ bool GameScene::init(int& selectedCharacter,const std::string& nickname ) {
 
         //工具
         
-        toolManager = ToolManager::getInstance();
+        toolManager = ToolManager::getInstance(selectedCharacter, nickname);
         this->addChild(toolManager);
         toolManager->addTool(Tool::ToolType::HOE);
         toolManager->addTool(Tool::ToolType::AXE);
         toolManager->addTool(Tool::ToolType::WATERING_CAN);
        
         toolManager->addTool(Tool::ToolType::FISHING_ROD);
-       // player->setToolManager(toolManager);
+
+        //物品
+        itemManager = ItemManager::getInstance(selectedCharacter, nickname);
+        this->addChild(itemManager);
+        itemManager->addItem(Item::ItemType::FISH);
+        itemManager->addItem(Item::ItemType::FISH);
+        itemManager->addItem(Item::ItemType::FISH);
+        itemManager->addItem(Item::ItemType::WOOL);
+        for (int i = 0; i < 10; i++)
+            itemManager->addItem(Item::ItemType::SEED);
+        itemManager->addItem(Item::ItemType::MILK);
+        itemManager->addItem(Item::ItemType::BONE);
+        itemManager->addItem(Item::ItemType::EGG);
+        itemManager->addItem(Item::ItemType::EGG);
+        //toolManager->addTool(Tool::ToolType::HOE);二次相加
+       
         
         //植物
 
@@ -120,9 +135,11 @@ void GameScene::update(float dt) {
        Vec2 direction;
       
       // CCLOG("player position %f,%f", player->getPlayerPosition().x, player->getPlayerPosition().y);
-      // CCLOG("screenSize %f,%f", screenSize.width, screenSize.height);
+     //  CCLOG("screenSize %f,%f", screenSize.width, screenSize.height);
 
         if (mapManager->isAtEdge(player->getPlayerPosition(), direction)) { 
+         //   CCLOG("player position %f,%f", player->getPlayerPosition().x, player->getPlayerPosition().y);
+         //   CCLOG("screenSize %f,%f", screenSize.width, screenSize.height);
              mapManager->switchToBlock(direction); // 切换地图
            
            //重置位置

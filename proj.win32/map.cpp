@@ -36,7 +36,7 @@ void MapManager::loadMapBlocks(const std::string& mapFolder) {
     
     // 默认加载左上地图块
     currentMap = mapPool["lowerLeft"];
-
+    currentMapLabel = 3;
     if (!currentMap) {
         CCLOG("Error:Faled to load map.tmx");
         throw std::runtime_error("upperLeftMap created failed!!");
@@ -79,24 +79,42 @@ void MapManager::switchToBlock(const Vec2& direction) {
     TMXTiledMap* newMap = nullptr;
 
     // 根据方向切换地图块
-    
-    if (direction == Vec2(-1, 0)) { // 左边界
-        newMap = mapPool["upperLeft"];
+    if (direction == Vec2(-1, 0)&&currentMapLabel==2) { // 左边界
+        newMap = TMXTiledMap::create("map_block1.tmx");
+        currentMapLabel = 1;
     }
-    else if (direction == Vec2(1, 0)) { // 右边界
-        newMap = mapPool["upperRight"];
+    else if (direction == Vec2(-1, 0) && currentMapLabel == 4) { // 左边界
+        newMap = TMXTiledMap::create("map_block3.tmx");
+        currentMapLabel = 3;
     }
-    else if (direction == Vec2(0, -1)) { // 下边界
-        newMap = mapPool["lowerLeft"];
+    else if (direction == Vec2(1, 0)&&currentMapLabel==1) { // 右边界
+        newMap = TMXTiledMap::create("map_block2.tmx");
+        currentMapLabel = 2;
     }
-    else if (direction == Vec2(0, 1)) { // 上边界
-        newMap = mapPool["lowerRight"];
+    else if (direction == Vec2(1, 0) && currentMapLabel == 3) { // 右边界
+        newMap = TMXTiledMap::create("map_block4.tmx");
+        currentMapLabel = 4;
     }
- 
+    else if (direction == Vec2(0, -1) && currentMapLabel == 1) { // 下边界
+        newMap = TMXTiledMap::create("map_block3.tmx");
+        currentMapLabel = 3;
+    }
+    else if (direction == Vec2(0, -1) && currentMapLabel == 2) { // 下边界
+        newMap = TMXTiledMap::create("map_block4.tmx");
+        currentMapLabel = 4;
+    }
+    else if (direction == Vec2(0, 1) && currentMapLabel == 3) { // 上边界
+        newMap = TMXTiledMap::create("map_block1.tmx");
+        currentMapLabel = 1;
+    }
+    else if (direction == Vec2(0, 1) && currentMapLabel == 4) { // 上边界
+        newMap = TMXTiledMap::create("map_block2.tmx");
+        currentMapLabel = 2;
+    }
     // 检查切换后的地图块是否有效
     if (newMap) {
         if (currentMap) {
-            this->removeChild(currentMap,false);
+            currentMap->removeFromParentAndCleanup(true);
             currentMap = nullptr;
         }
         this->addChild(newMap);

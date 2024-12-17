@@ -12,6 +12,7 @@ private:
 
     std::map<std::string, TMXTiledMap*> mapPool; // 地图缓存池
     cocos2d::TMXTiledMap* currentMap;         // 当前加载的地图
+    int currentMapLabel;
     Vec2 playerStartPos;             // 玩家初始位置
     std::string nickname;            // 玩家昵称
     int selectedCharacter;           // 玩家选择的角色

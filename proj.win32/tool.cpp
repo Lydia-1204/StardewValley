@@ -1,7 +1,7 @@
 /********************************************************************************************************
  * Project Name:  StardewValley
  * File Name:     tool.cpp
- * File Function: 实现tool类，实现工具的管理 升级
+ * File Function: 实现tool类与toolmanager，实现工具的管理 升级
  * Author:        王小萌 2351882
  * Update Date:   2024/12/15
  *********************************************************************************************************/
@@ -9,6 +9,7 @@
 
 USING_NS_CC;
 
+ ToolManager* ToolManager:: instance=nullptr;
 Tool* Tool::create(ToolType type) {
     Tool* tool = new (std::nothrow) Tool();
     if (tool && tool->init(type)) {
@@ -49,21 +50,31 @@ Tool::ToolType Tool::getType() const {
 }
 
 // ----------------------------- ToolManager -----------------------------
-ToolManager* ToolManager::create() {
-    ToolManager* manager = new (std::nothrow) ToolManager();
-    if (manager && manager->init()) {
-        manager->autorelease();
-        return manager;
+
+
+ToolManager* ToolManager::getInstance(int selectedCharacter, const std::string& nickname) {
+    if (instance == nullptr) {  // 如果实例不存在，则创建
+        instance = new (std::nothrow) ToolManager();
+        if (instance && instance->init(selectedCharacter, nickname)) {
+            instance->autorelease();  // 添加到内存管理系统
+        }
+        else {
+            CC_SAFE_DELETE(instance);
+        }
     }
-    CC_SAFE_DELETE(manager);
-    return nullptr;
+    return instance;  // 返回唯一实例
 }
 
-bool ToolManager::init() {
+
+
+
+
+bool ToolManager::init(int _selectedCharacter, const std::string& _nickname) {
     if (!Node::init()) {
         return false;
     }
-
+    selectedCharacter = _selectedCharacter;
+    nickname = _nickname;
     auto visibleSize = Director::getInstance()->getVisibleSize();
 
     // 工具栏背景
@@ -129,12 +140,13 @@ bool ToolManager::init() {
 }
 
 void ToolManager::addTool(Tool::ToolType type) {
+    float gridWidth = 32.0f;//工具栏宽度
+    float startX = (Director::getInstance()->getVisibleSize().width - gridWidth * 10) / 2.0f;
+    float startY = Director::getInstance()->getVisibleSize().height * 0.1f;
     for (int i = 0; i < tools.size(); i++) {
         if (tools[i] == nullptr) {
             auto tool = Tool::create(type);
-            float gridWidth = 32.0f;//工具栏宽度
-            float startX = (Director::getInstance()->getVisibleSize().width - gridWidth * 10) / 2.0f;
-            float startY = Director::getInstance()->getVisibleSize().height * 0.1f;
+            
 
             tool->setPosition(startX + i * gridWidth, startY);
             tools[i] = tool;
@@ -145,7 +157,12 @@ void ToolManager::addTool(Tool::ToolType type) {
         }
     }
     CCLOG("ToolBar is full, cannot add more tools.");
+    auto fullLabel = Label::createWithTTF("ToolBar is full!", "fonts/Marker Felt.ttf", 24);
+    fullLabel->setPosition(startX, startY+64.0f);
+    this->addChild(fullLabel);
+    fullLabel->runAction(Sequence::create(FadeOut::create(2.0f), RemoveSelf::create(), nullptr));
 }
+
 
 void ToolManager::selectTool(int index) {
     if (index < 0 || index >= tools.size() || tools[index] == nullptr) {
@@ -167,6 +184,7 @@ void ToolManager::useTool() {
     auto tool = tools[selectedToolIndex];
     CCLOG("Using tool: %d", static_cast<int>(tool->getType()));
     // 添加工具使用逻辑
+    tool->usetool();
 }
 
 void ToolManager::discardTool() {
@@ -208,4 +226,92 @@ void ToolManager::initKeyboardListener() {
         }
         };
     _eventDispatcher->addEventListenerWithSceneGraphPriority(keyboardListener, this);
+}
+
+void Tool::usetool() {
+    auto playerPos = Player::getInstance(selectedCharacter, nickname)->getPosition();
+    auto direction = Player::getInstance(selectedCharacter, nickname)->_currentDirection;
+   Vec2 dstPos;
+    switch (direction) {
+         
+    case 0://下
+        dstPos = Vec2(playerPos.x, playerPos.y - 16);
+        break;
+    case 1://右
+        dstPos = Vec2(playerPos.x+16, playerPos.y);
+        break;
+    case 2 ://上
+        dstPos = Vec2(playerPos.x , playerPos.y-16);
+        break;
+    case 3://左
+        dstPos = Vec2(playerPos.x - 16, playerPos.y);
+        break;
+    }
+    switch (type) {
+    case ToolType::HOE: // 锄头功能：挖坑
+        CCLOG("Using HOE: Digging a hole...");
+      
+        /*
+                // 获取当前地图的地块坐标
+        Vec2 tileCoord = MapManager::getInstance()->convertToTileCoord(dstPos);
+                // 检查该地块是否可挖掘
+        if (MapManager::getInstance()->isDiggable(tileCoord)) {
+            MapManager::getInstance()->setTileState(tileCoord, "dug"); // 修改地块状态为“已挖掘”
+            CCLOG("Hole dug at: %f, %f", tileCoord.x, tileCoord.y);
+        }
+        else {
+            CCLOG("This tile cannot be dug.");
+        }*/
+        break;
+
+    case ToolType::AXE: // 斧头功能：砍树
+        CCLOG("Using AXE: Chopping a tree...");
+     
+      /*
+        auto tree = MapManager::getInstance()->getTreeAtPosition(dstPos);
+
+        if (tree) {
+            tree->decreaseHealth(10); // 砍树，减少生命值
+            if (tree->isFallen()) {
+                CCLOG("Tree has fallen!");
+                MapManager::getInstance()->removeTree(tree);
+            }
+        }
+        else {
+            CCLOG("No tree nearby.");
+        }
+     */
+        break;
+
+    case ToolType::WATERING_CAN: // 水壶功能：浇水
+        CCLOG("Using WATERING_CAN: Watering the crops...");
+       /*
+        auto crop = MapManager::getInstance()->getCropAtPosition(dstPos);
+        if (crop) {
+            crop->increaseWaterLevel(1); // 增加水分值
+            CCLOG("Crops watered successfully!");
+        }
+        else {
+            CCLOG("No crops nearby to water.");
+        }
+        */
+        break;
+
+    case ToolType::FISHING_ROD: // 鱼竿功能：钓鱼
+        CCLOG("Using FISHING_ROD: Fishing...");
+        /*
+            if (MapManager::getInstance()->isNearWater(dstPos)) {
+                FishingManager::getInstance()->startFishing();
+            }
+            else {
+                CCLOG("You are not near water.");
+            }
+            */
+        break;
+
+    default:
+        CCLOG("Invalid tool type or tool not equipped.");
+        break;
+    }
+    
 }
