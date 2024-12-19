@@ -10,6 +10,7 @@
 #include "MenuScene.h" // 菜单场景
 #include "CreateErrorScene.h"
 #include "AnimalManager.h"
+#include "Farm.h" 
 
 USING_NS_CC;
 
@@ -70,7 +71,7 @@ bool GameScene::init(int selectedCharacter,const std::string& nickname ) {
         this->addChild(player);
         CCLOG("Player created");
 
-        manager = AnimalManager::getInstance();
+        /*manager = AnimalManager::getInstance();
         // 初始化各类型的小动物
         chicken = Animal::create(1, "chicken");
         chicken->setPosition(mapManager->getChickenStartPos()); // 初始位置
@@ -112,10 +113,21 @@ bool GameScene::init(int selectedCharacter,const std::string& nickname ) {
         this->addChild(sheep);
         manager->addAnimal(sheep);
         CCLOG("Sheep created");
-        sheep->initialmove("Sheep.png");
+        sheep->initialmove("Sheep.png");*/
 
         // 初始化种植
+        // 创建一个新的 Crop 实例
+        //myCrop = Crop::create("crop");
+        myCrop = Crop::create(this, "crop");  // 传递this指针给Crop
+        myCrop->setPosition(mapManager->getCropStartPos());  // 设置作物的位置
+        this->addChild(myCrop);  // 将作物添加到场景中
+        CCLOG("Crop created");
+        isCropAlive = true;  // 初始化标志为 true
 
+        // 设置回调函数
+        myCrop->setTextureChangedCallback([this](const std::string& texturePath) {
+            onCropTextureChanged(texturePath);
+            });
 
         // 初始化 UI 管理器
         uiManager = UIManager::getInstance(selectedCharacter, nickname);
@@ -143,7 +155,7 @@ void GameScene::update(float dt) {
 
     // 更新时间逻辑，1秒游戏时间变为1分钟
     gameTime += dt;  // 增加游戏时间（按秒计）
-    CCLOG("时间更新");
+    //CCLOG("Time update!");
     
     // 传递 dt 参数给 uiManager
     if (gameTime >= 1.0f) {  // 每秒游戏时间增加一分钟
@@ -169,6 +181,29 @@ void GameScene::update(float dt) {
         uiManager->update(dt);
     }
 
+    if (isCropAlive && myCrop) {
+        myCrop->update(dt);
+    }
+
+}
+
+void GameScene::removeCrop() {
+    if (myCrop) {
+        myCrop->removeFromParentAndCleanup(true);
+        myCrop = nullptr;  // 将指针设置为 nullptr
+        isCropAlive = false;  // 更新标志为 false
+    }
+}
+
+void GameScene::onCropTextureChanged(const std::string& texturePath) {
+    // 根据 texturePath 更新 GameScene 中的显示
+    if (myCrop) {
+        auto texture = cocos2d::Director::getInstance()->getTextureCache()->addImage(texturePath);
+        if (texture) {
+            myCrop->setTexture(texture);  // 更新 myCrop 的纹理
+        }
+    }
+    CCLOG("Crop texture changed to: %s", texturePath.c_str());
 }
 
 Player* GameScene::getPlayer() {

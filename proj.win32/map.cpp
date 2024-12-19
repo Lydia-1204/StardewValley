@@ -3,7 +3,7 @@ USING_NS_CC;
 
 MapManager* MapManager::instance = nullptr;
 
-MapManager::MapManager() : currentMap(nullptr), playerStartPos(Vec2::ZERO), selectedCharacter(0), chickenStartPos(Vec2(100, 200)), catStartPos(Vec2(50, 200)), dogStartPos(Vec2(150, 200)), cowStartPos(Vec2(75, 200)), sheepStartPos(Vec2(125, 200)), pigStartPos(Vec2(175, 200)) {}
+MapManager::MapManager() : currentMap(nullptr), playerStartPos(Vec2::ZERO), selectedCharacter(0), chickenStartPos(Vec2(100, 200)), catStartPos(Vec2(50, 200)), dogStartPos(Vec2(150, 200)), cowStartPos(Vec2(75, 200)), sheepStartPos(Vec2(125, 200)), pigStartPos(Vec2(175, 200)), cropStartPos(Vec2(100, 200)) {}
 
 MapManager* MapManager::getInstance() {
     if (!instance) {
@@ -90,6 +90,9 @@ Vec2 MapManager::getPigStartPos() {
     return pigStartPos;
 }
 
+Vec2 MapManager::getCropStartPos() {
+    return cropStartPos;
+}
 
 
 void MapManager::switchToBlock(const Vec2& direction) {

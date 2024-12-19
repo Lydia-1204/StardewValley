@@ -23,6 +23,9 @@ private:
     Vec2 sheepStartPos;             // 小鸡初始位置
     Vec2 pigStartPos;             // 小鸡初始位置
 
+    Vec2 cropStartPos;             // 农作物初始位置
+
+
 
 
 public:
@@ -43,6 +46,8 @@ public:
     Vec2 getCowStartPos();         // 获取小鸡初始位置
     Vec2 getSheepStartPos();         // 获取小鸡初始位置
     Vec2 getPigStartPos();         // 获取小鸡初始位置
+
+    Vec2 getCropStartPos();         // 获取小鸡初始位置
 
     CREATE_FUNC(MapManager);
 };

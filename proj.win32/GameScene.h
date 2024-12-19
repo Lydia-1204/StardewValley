@@ -15,7 +15,7 @@
 #include "UIManager.h"
 #include "Animal.h"
 #include "AnimalManager.h"
-
+#include "Crop.h"
 USING_NS_CC;
 
 class GameScene : public Scene {
@@ -36,6 +36,8 @@ private:
     Animal* cow;            // 动物       
     AnimalManager* manager = new AnimalManager();
 
+    Crop* myCrop;  // 作物实例
+    bool isCropAlive;  // 跟踪 myCrop 是否存在
 
     float gameTime;  //时间流逝 单位为秒
     int currentHour;   //小时
@@ -47,6 +49,10 @@ public:
 
     virtual bool init(int selectedCharacter, const std::string& nickname);        // 初始化
     virtual void update(float dt) override; // 每帧更新
+
+    void removeCrop();
+    void onCropTextureChanged(const std::string& texturePath);  // 声明函数
+
 
     Player* getPlayer();                 // 获取玩家实例
 
