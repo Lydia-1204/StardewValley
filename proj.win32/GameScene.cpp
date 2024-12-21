@@ -9,7 +9,7 @@
 #include "GameScene.h"
 #include "MenuScene.h" // 菜单场景
 #include "CreateErrorScene.h"
-#include "AnimalManager.h"
+#include "Animal.h"
 #include "Farm.h" 
 
 USING_NS_CC;
@@ -71,54 +71,46 @@ bool GameScene::init(int selectedCharacter,const std::string& nickname ) {
         this->addChild(player);
         CCLOG("Player created");
 
-        /*manager = AnimalManager::getInstance();
         // 初始化各类型的小动物
-        chicken = Animal::create(1, "chicken");
+        chicken = Animal::create(1, this);
         chicken->setPosition(mapManager->getChickenStartPos()); // 初始位置
         this->addChild(chicken);
         CCLOG("Chicken created");
-        manager->addAnimal(chicken);
         chicken->initialmove("Chicken.png");
 
-        cow = Animal::create(2, "cow");
+        cow = Animal::create(2, this);
         cow->setPosition(mapManager->getCowStartPos()); // 初始位置
         this->addChild(cow);
-        manager->addAnimal(cow);
         CCLOG("Cow created");
         cow->initialmove("Cow.png");
 
-        cat = Animal::create(3, "cat");
+        cat = Animal::create(3, this);
         cat->setPosition(mapManager->getCatStartPos()); // 初始位置
         this->addChild(cat);
-        manager->addAnimal(cat);
         CCLOG("Cat created");
         cat->initialmove("Cat.png");
 
-        dog = Animal::create(4, "dog");
+        dog = Animal::create(4, this);
         dog->setPosition(mapManager->getDogStartPos()); // 初始位置
         this->addChild(dog);
-        manager->addAnimal(dog);
         CCLOG("Dog created");
         dog->initialmove("Dog.png");
 
-        pig = Animal::create(5, "pig");
+        pig = Animal::create(5, this);
         pig->setPosition(mapManager->getPigStartPos()); // 初始位置
         this->addChild(pig);
-        manager->addAnimal(pig);
         CCLOG("Pig created");
         pig->initialmove("Pig.png");
 
-        sheep = Animal::create(6, "sheep");
+        sheep = Animal::create(6, this);
         sheep->setPosition(mapManager->getSheepStartPos()); // 初始位置
         this->addChild(sheep);
-        manager->addAnimal(sheep);
         CCLOG("Sheep created");
-        sheep->initialmove("Sheep.png");*/
+        sheep->initialmove("Sheep.png");
 
         // 初始化种植
         // 创建一个新的 Crop 实例
-        //myCrop = Crop::create("crop");
-        myCrop = Crop::create(this, "crop");  // 传递this指针给Crop
+        /*myCrop = Crop::create(this, "crop");  // 传递this指针给Crop
         myCrop->setPosition(mapManager->getCropStartPos());  // 设置作物的位置
         this->addChild(myCrop);  // 将作物添加到场景中
         CCLOG("Crop created");
@@ -127,7 +119,7 @@ bool GameScene::init(int selectedCharacter,const std::string& nickname ) {
         // 设置回调函数
         myCrop->setTextureChangedCallback([this](const std::string& texturePath) {
             onCropTextureChanged(texturePath);
-            });
+            });*/
 
         // 初始化 UI 管理器
         uiManager = UIManager::getInstance(selectedCharacter, nickname);
@@ -181,9 +173,9 @@ void GameScene::update(float dt) {
         uiManager->update(dt);
     }
 
-    if (isCropAlive && myCrop) {
+    /*if (isCropAlive && myCrop) {
         myCrop->update(dt);
-    }
+    }*/
 
 }
 

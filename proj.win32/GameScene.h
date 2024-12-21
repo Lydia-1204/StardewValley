@@ -14,7 +14,6 @@
 #include "map.h"
 #include "UIManager.h"
 #include "Animal.h"
-#include "AnimalManager.h"
 #include "Crop.h"
 USING_NS_CC;
 
@@ -34,7 +33,7 @@ private:
     Animal* pig;            // 动物       
     Animal* sheep;            // 动物       
     Animal* cow;            // 动物       
-    AnimalManager* manager = new AnimalManager();
+    //AnimalManager* manager = new AnimalManager();
 
     Crop* myCrop;  // 作物实例
     bool isCropAlive;  // 跟踪 myCrop 是否存在
@@ -52,6 +51,14 @@ public:
 
     void removeCrop();
     void onCropTextureChanged(const std::string& texturePath);  // 声明函数
+
+    Animal* getChicken() { return chicken; }
+    Animal* getCow() { return cow; }
+    Animal* getCat() { return cat; }
+    Animal* getDog() { return dog; }
+    Animal* getPig() { return pig; }
+    Animal* getSheep() { return sheep; }
+
 
 
     Player* getPlayer();                 // 获取玩家实例

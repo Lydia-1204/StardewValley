@@ -11,7 +11,7 @@
 #include <string>
 #include "cocos2d.h"
 #include <chrono>
-
+class GameScene; // 前向声明 GameScene 类
 USING_NS_CC;
 
 class Animal : public cocos2d::Node {
@@ -41,7 +41,9 @@ private:
     int mood;          // 心情值
     int affection;     // 友谊值
     std::string product;  // 动物产物
+    cocos2d::Layer* menuLayer; // 添加一个成员变量来存储菜单层的引用
 
+    GameScene* gameScene;  // 用于存储对GameScene的引用
 
     bool hasWaterInBowl;  // 是否有水
 
@@ -57,15 +59,20 @@ public:
     Animal() : an_sprite(nullptr), health(0), mood(0), affection(0), hasWaterInBowl(false), lastPosition(100, 200) {
         // 默认构造函数，成员变量初始化为默认值
     }
-    static Animal* create(int targetAnimal, const std::string& nickname);
-    bool init(int targetAnimal, const std::string& nickname);
+    static Animal* create(int targetAnimal, GameScene* scene);
+    bool init(int targetAnimal);
     Vec2 getCurrentDirection();
     void updateDirection(float dt, const std::string& picturename);
     void moveAlongPath(const std::vector<Vec2>& path, const std::string& picturename);
     void update(float dt);
     void initialmove(const std::string& picturename);
-    void onMouseDown(Event* event, std::string animalName);
+    void onMouseDown(Event* event);
     void removeHappySprite(float dt);
+    void openAnimalMenu();
+    void closeAnimalMenu(cocos2d::Ref* sender);
+    void addAnimalInfoH(Animal* animal, const Vec2& position);
+    void addAnimalInfoM(Animal* animal, const Vec2& position);
+    void addAnimalInfoA(Animal* animal, const Vec2& position);
 
 
     void updateFavorability();
@@ -88,7 +95,7 @@ public:
 
     void placeWaterBowl(const Vec2& position);
     bool checkWaterBowlImage(Node* node);
-
+    void getGameScene(GameScene* scene);
 
     // 判断宠物是否达到1000点好感度
     bool isMaxAffection() {
