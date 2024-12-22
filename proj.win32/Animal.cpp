@@ -3,11 +3,12 @@
  * File Name:     Animal.cpp
  * File Function: 实现Animal类，完成动物养殖功能
  * Author:        刘彦含 2351591
- * Update Date:   2024/12/
+ * Update Date:   2024/12/22
  ****************************************************************/
 
 #include "Animal.h"
 #include "GameScene.h"
+#include"map.h"
 USING_NS_CC;
 
 
@@ -31,26 +32,37 @@ bool Animal::init(int targetAnimal) {
     if (targetAnimal == 1) {
         texturePath = "../Resources/Chicken.png";
         _picturename = "Chicken.png";
+        name = "chicken";
     }
     else if (targetAnimal == 2) {
         _picturename = "Cow.png";
         texturePath = "../Resources/Cow.png";
+        name = "cow";
+
     }
     else if (targetAnimal == 3) {
         _picturename = "Cat.png";
         texturePath = "../Resources/Cat.png";
+        name = "cat";
+
     }
     else if (targetAnimal == 4) {
         _picturename = "Dog.png";
         texturePath = "../Resources/Dog.png";
+        name = "dog";
+
     }
     else if (targetAnimal == 5) {
         _picturename = "Pig.png";
         texturePath = "../Resources/Pig.png";
+        name = "pig";
+
     }
     else if (targetAnimal == 6) {
         _picturename = "Sheep.png";
         texturePath = "../Resources/Sheep.png";
+        name = "sheep";
+
     }
     else {
         throw("This animal didn't exist!!");
@@ -104,6 +116,19 @@ Vec2 Animal::getCurrentDirection() {
 void Animal::update(float dt) {
     updateDirection(dt, _picturename);
     // 其他更新逻辑...
+    timeEscaped += dt;
+    if (timeEscaped >= 10.0f) { // health 随时间递减
+        timeEscaped = 0;
+        health--;
+    }
+    if (MapManager::getInstance()->currentMapLabel == 1) {
+
+        this->setVisible(true);
+    }
+    else {
+        this->setVisible(false);
+    }
+
 }
 
 void Animal::updateDirection(float dt, const std::string& picturename) {
@@ -141,7 +166,7 @@ void Animal::updateDirection(float dt, const std::string& picturename) {
         SpriteFrame* spriteFrameRight = SpriteFrame::createWithTexture(Director::getInstance()->getTextureCache()->getTextureForKey(picturename.c_str()), rectForRight);
         an_sprite->setSpriteFrame(spriteFrameRight);
         if (picturename == "Cow.png" || picturename == "Pig.png" || picturename == "Sheep.png") {
-            an_sprite->setFlippedX(false); 
+            an_sprite->setFlippedX(false);
         }
 
     }
@@ -196,7 +221,7 @@ void Animal::updateDirection(float dt, const std::string& picturename) {
         an_sprite->setSpriteFrame(spriteFrameDown);
     }
 
-    CCLOG("Direction: x = %f, y = %f", direction.x, direction.y);
+  //  CCLOG("Direction: x = %f, y = %f", direction.x, direction.y);
 }
 
 void Animal::moveAlongPath(const std::vector<Vec2>& path, const std::string& picturename) {
@@ -204,7 +229,7 @@ void Animal::moveAlongPath(const std::vector<Vec2>& path, const std::string& pic
     ActionInterval* action = nullptr;
     for (size_t i = 0; i < path.size() - 1; ++i) {
         // MoveTo::create 返回的是 FiniteTimeAction 类型，需要转换为 ActionInterval 类型
-        auto moveAction = static_cast<ActionInterval*>(MoveTo::create(1.0f, path[i + 1]));
+        auto moveAction = static_cast<ActionInterval*>(MoveTo::create(2.0f, path[i + 1]));
 
         // 使用 Sequence::createWithTwoActions 创建 Sequence，需要两个 FiniteTimeAction 参数
         action = (i == 0) ? moveAction : Sequence::createWithTwoActions(static_cast<FiniteTimeAction*>(action), static_cast<FiniteTimeAction*>(moveAction));
@@ -225,14 +250,25 @@ void Animal::initialmove(const std::string& picturename) {
     Vec2 startPosition = an_sprite->getPosition(); // 记录初始位置
     lastPosition = startPosition; // 设置lastPosition为初始位置
 
+    std::vector<Vec2> path;
     // 定义路径点
-    std::vector<Vec2> path = {
-        Vec2(startPosition.x, startPosition.y),
-        Vec2(startPosition.x + 50, startPosition.y),
-        Vec2(startPosition.x + 50, startPosition.y + 50),
-        Vec2(startPosition.x, startPosition.y + 50),
-        Vec2(startPosition.x, startPosition.y)
-    };
+    if (getAnimalType() == AnimalType::CAT || getAnimalType() == AnimalType::DOG) {
+        path = {
+         Vec2(startPosition.x, startPosition.y),
+         Vec2(startPosition.x + 50, startPosition.y),
+         Vec2(startPosition.x, startPosition.y)
+        };
+    }
+    else {
+        path = {
+         Vec2(startPosition.x, startPosition.y),
+         Vec2(startPosition.x + 50, startPosition.y),
+         Vec2(startPosition.x + 50, startPosition.y + 50),
+         Vec2(startPosition.x, startPosition.y + 50),
+         Vec2(startPosition.x, startPosition.y)
+        };
+
+    }
 
     // 沿着路径移动
     moveAlongPath(path, picturename);
@@ -250,61 +286,82 @@ Animal::AnimalType Animal::getAnimalType() const {
     return AnimalType::CHICKEN; // 默认类型
 }
 
-void Animal::onMouseDown(Event* event) {
+void Animal::onMouseDown(EventMouse* event) {
     // 获取鼠标点击的屏幕坐标
     EventMouse* mouseEvent = static_cast<EventMouse*>(event);
     Vec2 mouseLocation = mouseEvent->getLocation();
 
-    // 添加点击到动物的判断逻辑
+    // 添加点击到动物+人在旁边的判断逻辑
+    auto playerPos = Player::getInstance(1, "guest")->getPosition();
+    auto locationInWorld = event->getLocationInView();  // 获取屏幕视图中的坐标
     
+   // CCLOG("mouseDown");
+  //  CCLOG("locationInWorld Mouse Position: %f, %f", locationInWorld.x, locationInWorld.y);
+   // CCLOG("players locationInWorld: %f, %f", playerPos.x, playerPos.y);
+  //  CCLOG("animals locationInWorld: %f, %f", this->getPosition().x, this->getPosition().y);
+    // 玩家靠近动物并点击时，交互
+    if (locationInWorld.distance(this->getPosition()) < 100&& playerPos.distance(this->getPosition()) < 100) {
 
-    // 检查点击类型
-    if (mouseEvent->getMouseButton() == EventMouse::MouseButton::BUTTON_LEFT) {
-        // 获取当前时间点
-        auto now = std::chrono::steady_clock::now();
+        // 检查点击类型
+        if (mouseEvent->getMouseButton() == EventMouse::MouseButton::BUTTON_LEFT) {
 
-        // 添加判断是否携带食物的代码
+            // 获取当前时间点
 
-        // 检查是否是双击
-        if (wasDoubleClick) {
-            // 重置双击标记
-            wasDoubleClick = false;
-            // 执行喂食操作
-            feed();  // 假设feed函数不需要参数，或者传递适当的参数
-            CCLOG("Double left click on Animal, animal fed.");
-        }
-        else {
-            // 标记为双击可能
-            wasDoubleClick = true;
-            // 检查两次点击的时间间隔，确定是否为双击
-            if (std::chrono::duration_cast<std::chrono::milliseconds>(now - lastClickTime).count() < 500) {
-                // 时间间隔小于500毫秒，视为双击
-                wasDoubleClick = true;
+            auto now = std::chrono::steady_clock::now();
+
+            
+
+            // 检查是否是双击
+            if (wasDoubleClick) {
+               // 添加判断是否携带食物的代码
+                toolManager = ToolManager::getInstance(1,"guest");
+                if (toolManager && toolManager->selectedToolIndex >= 0 &&
+                    toolManager->selectedToolIndex < toolManager->tools.size() && toolManager->tools[toolManager->selectedToolIndex]->getType() == Tool::ToolType::ANIMALFOOD) {
+
+                    // 重置双击标记
+                    wasDoubleClick = false;
+                    // 执行喂食操作
+                    feed();  // 假设feed函数不需要参数，或者传递适当的参数
+                    CCLOG("Double left click on Animal, animal fed.");
+                }
             }
+
             else {
-                // 时间间隔大于500毫秒，不是双击，重置标记
-                wasDoubleClick = false;
-                // 检查健康、心情和好感度是否都达到了满值
-                if (health == 100 && mood == 300 && affection == 1000) {
-                    // 根据动物类型产生相应的产物
-                    std::string product = produceProduct();
-                    CCLOG("Produced product: %s", product.c_str());
+                // 标记为双击可能
+                wasDoubleClick = true;
+                // 检查两次点击的时间间隔，确定是否为双击
+                if (std::chrono::duration_cast<std::chrono::milliseconds>(now - lastClickTime).count() < 500) {
+                    // 时间间隔小于500毫秒，视为双击
+                    wasDoubleClick = true;
                 }
                 else {
-                    // 如果没有达到满值，更新好感度和心情
-                    updateFavorability();
-                    updateMood();
-                    CCLOG("Left click on Animal, favorability and mood updated.");
+
+                    // 时间间隔大于500毫秒，不是双击，重置标记
+                    wasDoubleClick = false;
+                    // 检查健康、心情和好感度是否都达到了满值
+                    if (health == 100 && mood == 300 ) {
+                        // 根据动物类型产生相应的产物
+                        Item::ItemType product = produceProduct();
+                        //CCLOG("Produced product: %s", product.c_str());
+                     
+                        ItemManager::getInstance(1,"guest")->addItem(product);
+                    }
+                    else {
+                        // 如果没有达到满值，更新好感度和心情
+                        updateFavorability();
+                        updateMood();
+                        CCLOG("Left click on Animal, favorability and mood updated.");
+                    }
                 }
+                // 更新上次点击时间
+                lastClickTime = now;
             }
-            // 更新上次点击时间
-            lastClickTime = now;
         }
-    }
-    else if (mouseEvent->getMouseButton() == EventMouse::MouseButton::BUTTON_RIGHT) {
-        // 鼠标右键点击
-        openAnimalMenu();
-        CCLOG("Right click on Animal, menu opened.");
+        else if (mouseEvent->getMouseButton() == EventMouse::MouseButton::BUTTON_RIGHT) {
+            // 鼠标右键点击
+            openAnimalMenu();
+            CCLOG("Right click on Animal, menu opened.");
+        }
     }
 }
 
@@ -333,7 +390,7 @@ void Animal::updateMood() {
             this->addChild(happySprite, 1, "happySprite"); // 设置标签"happySprite"
 
             // 设置一个延时来移除图片，防止它一直显示
-            this->scheduleOnce(CC_SCHEDULE_SELECTOR(Animal::removeHappySprite), 2.0f); // 2秒后移除图片
+            this->scheduleOnce(CC_SCHEDULE_SELECTOR(Animal::removeHappySprite), 1.0f); // 2秒后移除图片
         }
     }
 }
@@ -348,7 +405,7 @@ void Animal::removeHappySprite(float dt) {
 
 void Animal::feed() {
     health += 15;
-    if (health > 100) health = 100;  
+    if (health > 100) health = 100;
     CCLOG("Feeding the animal.");
     // 添加喂食逻辑
 }
@@ -420,22 +477,22 @@ bool Animal::checkWaterBowlImage(Node* node) {
     return false;
 }
 
-std::string Animal::produceProduct() {
+Item::ItemType Animal::produceProduct() {
     switch (getAnimalType()) {
-        case AnimalType::CHICKEN:
-            return "Egg";
-        case AnimalType::COW:
-            return "Milk";
-        case AnimalType::CAT:
-            return "Fish";
-        case AnimalType::DOG:
-            return "Bone";
-        case AnimalType::PIG:
-            return "Fat";
-        case AnimalType::SHEEP:
-            return "Wool";
-        default:
-            return "Unknown";
+    case AnimalType::CHICKEN:
+        return Item::ItemType:: EGG;
+    case AnimalType::COW:
+        return Item::ItemType::MILK;
+    case AnimalType::CAT:
+        return Item::ItemType::FISH;
+    case AnimalType::DOG:
+        return Item::ItemType::BONE;
+    case AnimalType::PIG:
+        return Item::ItemType::FAT;
+    case AnimalType::SHEEP:
+        return Item::ItemType::WOOL;
+    default:
+        return Item::ItemType::NONE;
     }
 }
 
@@ -569,21 +626,21 @@ void Animal::openAnimalMenu() {
     addAnimalInfoM(cat, Vec2(visibleSize.width / 4 - 133, visibleSize.height / 4 + 0));
     addAnimalInfoA(cat, Vec2(visibleSize.width / 4 - 131, visibleSize.height / 4 - 20));
 
-    addAnimalInfoH(dog, Vec2(visibleSize.width / 4 - 132, visibleSize.height / 4 - 80));
-    addAnimalInfoM(dog, Vec2(visibleSize.width / 4 - 133, visibleSize.height / 4 - 100));
-    addAnimalInfoA(dog, Vec2(visibleSize.width / 4 - 131, visibleSize.height / 4 - 120));
+    addAnimalInfoH(sheep, Vec2(visibleSize.width / 4 - 132, visibleSize.height / 4 - 80));
+    addAnimalInfoM(sheep, Vec2(visibleSize.width / 4 - 133, visibleSize.height / 4 - 100));
+    addAnimalInfoA(sheep, Vec2(visibleSize.width / 4 - 131, visibleSize.height / 4 - 120));
 
     addAnimalInfoH(pig, Vec2(visibleSize.width / 4 + 189, visibleSize.height / 4 + 120));
     addAnimalInfoM(pig, Vec2(visibleSize.width / 4 + 188, visibleSize.height / 4 + 100));
     addAnimalInfoA(pig, Vec2(visibleSize.width / 4 + 190, visibleSize.height / 4 + 80));
 
-    addAnimalInfoH(cow, Vec2(visibleSize.width / 4 + 189, visibleSize.height / 4 + 20));
-    addAnimalInfoM(cow, Vec2(visibleSize.width / 4 + 188, visibleSize.height / 4));
-    addAnimalInfoA(cow, Vec2(visibleSize.width / 4 + 190, visibleSize.height / 4 - 20));
+    addAnimalInfoH(dog, Vec2(visibleSize.width / 4 + 189, visibleSize.height / 4 + 20));
+    addAnimalInfoM(dog, Vec2(visibleSize.width / 4 + 188, visibleSize.height / 4));
+    addAnimalInfoA(dog, Vec2(visibleSize.width / 4 + 190, visibleSize.height / 4 - 20));
 
-    addAnimalInfoH(sheep, Vec2(visibleSize.width / 4 + 189, visibleSize.height / 4 - 80));
-    addAnimalInfoM(sheep, Vec2(visibleSize.width / 4 + 188, visibleSize.height / 4 - 100));
-    addAnimalInfoA(sheep, Vec2(visibleSize.width / 4 + 190, visibleSize.height / 4 - 120));
+    addAnimalInfoH(cow, Vec2(visibleSize.width / 4 + 189, visibleSize.height / 4 - 80));
+    addAnimalInfoM(cow, Vec2(visibleSize.width / 4 + 188, visibleSize.height / 4 - 100));
+    addAnimalInfoA(cow, Vec2(visibleSize.width / 4 + 190, visibleSize.height / 4 - 120));
 
     // 将菜单层添加到场景
     auto scene = Director::getInstance()->getRunningScene();
@@ -626,4 +683,3 @@ void Animal::closeAnimalMenu(cocos2d::Ref* sender) {
         menuLayer = nullptr; // 清除引用
     }
 }
-

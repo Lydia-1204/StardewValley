@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="105" height="65" tilewidth="16" tileheight="16" infinite="0" nextlayerid="11" nextobjectid="76">
+<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="52" height="32" tilewidth="16" tileheight="16" infinite="0" nextlayerid="12" nextobjectid="79">
  <properties>
   <property name="Arch" value="111 .01 113 .009"/>
   <property name="DayTiles" value="Buildings 35 6 510 Buildings 46 10 101 Buildings 54 6 77 Buildings 55 10 89 Front 61 37 907 Front 66 37 907 Front 69 17 907 Front 81 55 387"/>
@@ -128,22 +128,66 @@
    </properties>
   </tile>
   <tile id="183">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
    <animation>
     <frame tileid="183" duration="1000"/>
     <frame tileid="1182" duration="1000"/>
    </animation>
   </tile>
   <tile id="184">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
    <animation>
     <frame tileid="184" duration="1000"/>
     <frame tileid="1183" duration="1000"/>
    </animation>
   </tile>
   <tile id="185">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
    <animation>
     <frame tileid="185" duration="1000"/>
     <frame tileid="1184" duration="1000"/>
    </animation>
+  </tile>
+  <tile id="186">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="187">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="188">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="193">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="194">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="195">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="196">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
   </tile>
   <tile id="200">
    <properties>
@@ -193,16 +237,60 @@
     <property name="Diggable" value="T"/>
    </properties>
   </tile>
+  <tile id="208">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
   <tile id="209">
    <properties>
     <property name="Water" value="T"/>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="210">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
    </properties>
   </tile>
   <tile id="211">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
    <animation>
     <frame tileid="211" duration="1000"/>
     <frame tileid="1210" duration="1000"/>
    </animation>
+  </tile>
+  <tile id="212">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="213">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="218">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="219">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="220">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="221">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
   </tile>
   <tile id="225">
    <properties>
@@ -244,6 +332,9 @@
    </properties>
   </tile>
   <tile id="233">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
    <animation>
     <frame tileid="233" duration="1000"/>
     <frame tileid="1232" duration="1000"/>
@@ -252,19 +343,56 @@
   <tile id="234">
    <properties>
     <property name="Water" value="T"/>
+    <property name="obstacle" type="bool" value="true"/>
    </properties>
   </tile>
   <tile id="235">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
    <animation>
     <frame tileid="235" duration="1000"/>
     <frame tileid="1290" duration="1000"/>
    </animation>
   </tile>
+  <tile id="236">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
   <tile id="237">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
    <animation>
     <frame tileid="237" duration="1000"/>
     <frame tileid="1291" duration="1000"/>
    </animation>
+  </tile>
+  <tile id="238">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="243">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="244">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="245">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="246">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
   </tile>
   <tile id="250">
    <properties>
@@ -304,12 +432,23 @@
    </properties>
   </tile>
   <tile id="258">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
    <animation>
     <frame tileid="258" duration="1000"/>
     <frame tileid="1257" duration="1000"/>
    </animation>
   </tile>
+  <tile id="259">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
   <tile id="260">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
    <animation>
     <frame tileid="260" duration="1000"/>
     <frame tileid="1315" duration="1000"/>
@@ -318,6 +457,26 @@
   <tile id="261">
    <properties>
     <property name="Buildable" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="268">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="269">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="270">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="271">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
    </properties>
   </tile>
   <tile id="275">
@@ -379,6 +538,56 @@
     <property name="NoSpawn" value="All"/>
    </properties>
   </tile>
+  <tile id="290">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="291">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="292">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="293">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="294">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="295">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="296">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="297">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="298">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="299">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
   <tile id="300">
    <properties>
     <property name="Buildable" type="bool" value="true"/>
@@ -438,10 +647,56 @@
     <property name="Type" value="Wood"/>
    </properties>
   </tile>
+  <tile id="315">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="316">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="317">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="318">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="319">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="320">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="321">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
   <tile id="322">
    <properties>
     <property name="NoSpawn" value="All"/>
     <property name="Type" value="Wood"/>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="323">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="324">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
    </properties>
   </tile>
   <tile id="325">
@@ -497,10 +752,56 @@
     <property name="Type" value="Wood"/>
    </properties>
   </tile>
+  <tile id="340">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="341">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="342">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="343">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="344">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="345">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="346">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
   <tile id="347">
    <properties>
     <property name="NoSpawn" value="All"/>
     <property name="Type" value="Wood"/>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="348">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="349">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
    </properties>
   </tile>
   <tile id="350">
@@ -545,6 +846,76 @@
     <property name="Buildable" type="bool" value="true"/>
    </properties>
   </tile>
+  <tile id="358">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="359">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="360">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="361">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="365">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="366">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="367">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="368">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="369">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="370">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="371">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="372">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="373">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="374">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
   <tile id="375">
    <properties>
     <property name="Buildable" type="bool" value="true"/>
@@ -586,10 +957,71 @@
     <property name="Buildable" type="bool" value="true"/>
    </properties>
   </tile>
+  <tile id="383">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="384">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="385">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="386">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="391">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="392">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="393">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="394">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="395">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="396">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
   <tile id="397">
    <properties>
     <property name="NoSpawn" value="All"/>
     <property name="Type" value="Wood"/>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="398">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="399">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
    </properties>
   </tile>
   <tile id="400">
@@ -634,6 +1066,46 @@
     <property name="Buildable" type="bool" value="true"/>
    </properties>
   </tile>
+  <tile id="408">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="409">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="410">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="411">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="416">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="417">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="418">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="419">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
   <tile id="420">
    <properties>
     <property name="Buildable" type="bool" value="true"/>
@@ -654,9 +1126,40 @@
     <property name="Buildable" type="bool" value="true"/>
    </properties>
   </tile>
+  <tile id="434">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="435">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
   <tile id="436">
    <properties>
     <property name="Type" value="Wood"/>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="441">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="442">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="443">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="444">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
    </properties>
   </tile>
   <tile id="460">
@@ -667,6 +1170,41 @@
   <tile id="463">
    <properties>
     <property name="Diggable" value="T"/>
+   </properties>
+  </tile>
+  <tile id="464">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="465">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="466">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="467">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="468">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="469">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="470">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
    </properties>
   </tile>
   <tile id="471">
@@ -693,6 +1231,56 @@
     <property name="Type" value="Dirt"/>
    </properties>
   </tile>
+  <tile id="489">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="490">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="491">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="492">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="493">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="494">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="495">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="496">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="497">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="498">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
   <tile id="506">
    <properties>
     <property name="Type" value="Dirt"/>
@@ -715,6 +1303,56 @@
     <property name="Type" value="Dirt"/>
    </properties>
   </tile>
+  <tile id="514">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="515">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="516">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="517">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="518">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="519">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="520">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="521">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="522">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="523">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
   <tile id="534">
    <properties>
     <property name="NoSpawn" value="t"/>
@@ -735,6 +1373,56 @@
   <tile id="538">
    <properties>
     <property name="Buildable" value="T"/>
+   </properties>
+  </tile>
+  <tile id="539">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="540">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="541">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="542">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="543">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="544">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="545">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="546">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="547">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="548">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
    </properties>
   </tile>
   <tile id="556">
@@ -1016,16 +1704,42 @@
    </properties>
   </tile>
   <tile id="708">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
    <animation>
     <frame tileid="708" duration="1000"/>
     <frame tileid="1234" duration="1000"/>
    </animation>
   </tile>
+  <tile id="709">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
   <tile id="710">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
    <animation>
     <frame tileid="710" duration="1000"/>
     <frame tileid="1236" duration="1000"/>
    </animation>
+  </tile>
+  <tile id="733">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="734">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="735">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
   </tile>
   <tile id="756">
    <animation>
@@ -1040,12 +1754,23 @@
    </animation>
   </tile>
   <tile id="758">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
    <animation>
     <frame tileid="758" duration="1000"/>
     <frame tileid="1284" duration="1000"/>
    </animation>
   </tile>
+  <tile id="759">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
   <tile id="760">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
    <animation>
     <frame tileid="760" duration="1000"/>
     <frame tileid="1286" duration="1000"/>
@@ -1076,12 +1801,23 @@
    </properties>
   </tile>
   <tile id="783">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
    <animation>
     <frame tileid="783" duration="1000"/>
     <frame tileid="1309" duration="1000"/>
    </animation>
   </tile>
+  <tile id="784">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
   <tile id="785">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
    <animation>
     <frame tileid="785" duration="1000"/>
     <frame tileid="1311" duration="1000"/>
@@ -1130,14 +1866,36 @@
     <property name="Type" value="Wood"/>
    </properties>
   </tile>
+  <tile id="1182">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="1183">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="1184">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="1185">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
   <tile id="1186">
    <properties>
     <property name="Water" value="T"/>
+    <property name="obstacle" type="bool" value="true"/>
    </properties>
   </tile>
   <tile id="1187">
    <properties>
     <property name="Water" value="T"/>
+    <property name="obstacle" type="bool" value="true"/>
    </properties>
   </tile>
   <tile id="1188">
@@ -1145,14 +1903,36 @@
     <property name="Water" value="T"/>
    </properties>
   </tile>
+  <tile id="1207">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="1208">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="1209">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="1210">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
   <tile id="1211">
    <properties>
     <property name="Water" value="T"/>
+    <property name="obstacle" type="bool" value="true"/>
    </properties>
   </tile>
   <tile id="1212">
    <properties>
     <property name="Water" value="T"/>
+    <property name="obstacle" type="bool" value="true"/>
    </properties>
   </tile>
   <tile id="1213">
@@ -1185,9 +1965,35 @@
     <property name="Water" value="T"/>
    </properties>
   </tile>
+  <tile id="1232">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="1233">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="1234">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="1235">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="1236">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
   <tile id="1237">
    <properties>
     <property name="Water" value="T"/>
+    <property name="obstacle" type="bool" value="true"/>
    </properties>
   </tile>
   <tile id="1238">
@@ -1275,6 +2081,36 @@
   <tile id="1256">
    <properties>
     <property name="Water" value="T"/>
+   </properties>
+  </tile>
+  <tile id="1257">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="1258">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="1259">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="1260">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="1261">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="1262">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
    </properties>
   </tile>
   <tile id="1263">
@@ -1365,6 +2201,61 @@
     <property name="Water" value="T"/>
    </properties>
   </tile>
+  <tile id="1282">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="1283">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="1284">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="1285">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="1286">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="1287">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="1288">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="1289">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="1290">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="1291">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="1292">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
   <tile id="1293">
    <animation>
     <frame tileid="1293" duration="550"/>
@@ -1414,6 +2305,61 @@
     <property name="Water" value="T"/>
    </properties>
   </tile>
+  <tile id="1307">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="1308">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="1309">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="1310">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="1311">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="1312">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="1313">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="1314">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="1315">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="1316">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="1317">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
   <tile id="1322">
    <properties>
     <property name="Water" value="T"/>
@@ -1422,6 +2368,321 @@
   <tile id="1323">
    <properties>
     <property name="Water" value="T"/>
+   </properties>
+  </tile>
+  <tile id="1633">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="1634">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="1635">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="1658">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="1659">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="1660">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="1683">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="1684">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="1685">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="1708">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="1709">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="1710">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="1725">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="1726">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="1727">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="1728">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="1729">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="1730">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="1731">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="1732">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="1733">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="1734">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="1735">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="1736">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="1737">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="1738">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="1739">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="1740">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="1741">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="1750">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="1751">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="1752">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="1753">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="1754">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="1755">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="1756">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="1757">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="1758">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="1759">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="1760">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="1761">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="1762">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="1763">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="1764">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="1765">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="1766">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="1875">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="1876">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="1877">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="1878">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="1879">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="1880">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="1881">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="1882">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="1883">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="1884">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="1885">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="1886">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="1887">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="1888">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="1889">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="1890">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
+   </properties>
+  </tile>
+  <tile id="1891">
+   <properties>
+    <property name="obstacle" type="bool" value="true"/>
    </properties>
   </tile>
   <tile id="1937">
@@ -1471,426 +2732,126 @@
    </properties>
   </tile>
  </tileset>
- <layer id="1" name="Back" width="105" height="65">
+ <tileset firstgid="3992" source="titled tile sheet.tsx"/>
+ <layer id="1" name="Back" width="52" height="32">
+  <properties>
+   <property name="obstacle" value="false"/>
+  </properties>
   <data encoding="base64" compression="zlib">
-   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
+   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
   </data>
  </layer>
- <objectgroup id="2" name="Back">
-  <object id="1" name="TileData" x="544" y="80" width="16" height="16">
-   <properties>
-    <property name="NoFurniture" value="total"/>
-    <property name="NoSpawn" value="All"/>
-   </properties>
-  </object>
-  <object id="2" name="TileData" x="544" y="96" width="16" height="16">
-   <properties>
-    <property name="NoFurniture" value="total"/>
-    <property name="NoSpawn" value="All"/>
-   </properties>
-  </object>
-  <object id="3" name="TileData" x="544" y="112" width="16" height="16">
-   <properties>
-    <property name="NPCBarrier" value="T"/>
-    <property name="NoSpawn" value="All"/>
-   </properties>
-  </object>
-  <object id="4" name="TileData" x="624" y="112" width="16" height="16">
+ <objectgroup id="2" name="Back" visible="0">
+  <object id="49" name="TileData" x="560" y="352" width="16" height="16">
    <properties>
     <property name="NPCBarrier" value="t"/>
    </properties>
   </object>
-  <object id="5" name="TileData" x="640" y="112" width="16" height="16">
-   <properties>
-    <property name="NPCBarrier" value="t"/>
-   </properties>
-  </object>
-  <object id="6" name="TileData" x="656" y="112" width="16" height="16">
-   <properties>
-    <property name="NPCBarrier" value="t"/>
-   </properties>
-  </object>
-  <object id="7" name="TileData" x="672" y="112" width="16" height="16">
-   <properties>
-    <property name="NPCBarrier" value="t"/>
-   </properties>
-  </object>
-  <object id="8" name="TileData" x="848" y="112" width="16" height="16">
-   <properties>
-    <property name="NoFurniture" value="T"/>
-    <property name="Placeable" value="F"/>
-   </properties>
-  </object>
-  <object id="9" name="TileData" x="512" y="128" width="16" height="16">
-   <properties>
-    <property name="NoSpawn" value="Tree"/>
-   </properties>
-  </object>
-  <object id="10" name="TileData" x="528" y="128" width="16" height="16">
+  <object id="50" name="TileData" x="640" y="352" width="16" height="16">
    <properties>
     <property name="NoSpawn" value="All"/>
    </properties>
   </object>
-  <object id="11" name="TileData" x="544" y="128" width="16" height="16">
+  <object id="51" name="TileData" x="656" y="352" width="16" height="16">
    <properties>
     <property name="NoSpawn" value="All"/>
    </properties>
   </object>
-  <object id="12" name="TileData" x="560" y="128" width="16" height="16">
+  <object id="52" name="TileData" x="672" y="352" width="16" height="16">
    <properties>
     <property name="NoSpawn" value="All"/>
    </properties>
   </object>
-  <object id="13" name="TileData" x="848" y="128" width="16" height="16">
-   <properties>
-    <property name="NoFurniture" value="T"/>
-    <property name="Placeable" value="f"/>
-   </properties>
-  </object>
-  <object id="14" name="TileData" x="864" y="128" width="16" height="16">
-   <properties>
-    <property name="NoFurniture" value="T"/>
-    <property name="Placeable" value="F"/>
-   </properties>
-  </object>
-  <object id="15" name="TileData" x="528" y="144" width="16" height="16">
-   <properties>
-    <property name="NoSpawn" value="Tree"/>
-   </properties>
-  </object>
-  <object id="16" name="TileData" x="544" y="144" width="16" height="16">
-   <properties>
-    <property name="NoSpawn" value="Tree"/>
-   </properties>
-  </object>
-  <object id="17" name="TileData" x="560" y="144" width="16" height="16">
-   <properties>
-    <property name="NoSpawn" value="Tree"/>
-   </properties>
-  </object>
-  <object id="18" name="TileData" x="576" y="144" width="16" height="16">
-   <properties>
-    <property name="NoSpawn" value="Tree"/>
-   </properties>
-  </object>
-  <object id="19" name="TileData" x="512" y="160" width="16" height="16">
-   <properties>
-    <property name="NoSpawn" value="Tree"/>
-   </properties>
-  </object>
-  <object id="20" name="TileData" x="512" y="176" width="16" height="16">
-   <properties>
-    <property name="NoSpawn" value="Tree"/>
-   </properties>
-  </object>
-  <object id="21" name="TileData" x="960" y="224" width="16" height="16">
-   <properties>
-    <property name="NPCBarrier" value="t"/>
-   </properties>
-  </object>
-  <object id="22" name="TileData" x="976" y="224" width="16" height="16">
-   <properties>
-    <property name="NPCBarrier" value="T"/>
-   </properties>
-  </object>
-  <object id="23" name="TileData" x="992" y="224" width="16" height="16">
-   <properties>
-    <property name="NPCBarrier" value="T"/>
-   </properties>
-  </object>
-  <object id="24" name="TileData" x="1088" y="224" width="16" height="16">
-   <properties>
-    <property name="NoFurniture" value="T"/>
-    <property name="Spawnable" value="F"/>
-   </properties>
-  </object>
-  <object id="25" name="TileData" x="1008" y="240" width="16" height="16">
-   <properties>
-    <property name="NoFurniture" value="t"/>
-   </properties>
-  </object>
-  <object id="26" name="TileData" x="1024" y="240" width="16" height="16">
-   <properties>
-    <property name="NoFurniture" value="t"/>
-   </properties>
-  </object>
-  <object id="27" name="TileData" x="1040" y="240" width="16" height="16">
-   <properties>
-    <property name="NoFurniture" value="t"/>
-   </properties>
-  </object>
-  <object id="28" name="TileData" x="1056" y="240" width="16" height="16">
-   <properties>
-    <property name="NoFurniture" value="T"/>
-   </properties>
-  </object>
-  <object id="29" name="TileData" x="1248" y="240" width="16" height="16">
-   <properties>
-    <property name="NPCBarrier" value="t"/>
-   </properties>
-  </object>
-  <object id="30" name="TileData" x="1008" y="256" width="16" height="16">
-   <properties>
-    <property name="NPCBarrier" value="t"/>
-    <property name="NoFurniture" value="T"/>
-   </properties>
-  </object>
-  <object id="31" name="TileData" x="1024" y="256" width="16" height="16">
-   <properties>
-    <property name="NPCBarrier" value="t"/>
-    <property name="NoFurniture" value="t"/>
-   </properties>
-  </object>
-  <object id="32" name="TileData" x="1040" y="256" width="16" height="16">
-   <properties>
-    <property name="NPCBarrier" value="t"/>
-    <property name="NoFurniture" value="t"/>
-   </properties>
-  </object>
-  <object id="33" name="TileData" x="1248" y="256" width="16" height="16">
-   <properties>
-    <property name="NPCBarrier" value="t"/>
-   </properties>
-  </object>
-  <object id="34" name="TileData" x="1024" y="272" width="16" height="16">
-   <properties>
-    <property name="NoFurniture" value="t"/>
-    <property name="Spawnable" value="F"/>
-   </properties>
-  </object>
-  <object id="35" name="TileData" x="1248" y="272" width="16" height="16">
-   <properties>
-    <property name="NPCBarrier" value="T"/>
-   </properties>
-  </object>
-  <object id="36" name="TileData" x="1248" y="288" width="16" height="16">
-   <properties>
-    <property name="NPCBarrier" value="T"/>
-   </properties>
-  </object>
-  <object id="37" name="TileData" x="1248" y="304" width="16" height="16">
-   <properties>
-    <property name="NPCBarrier" value="t"/>
-   </properties>
-  </object>
-  <object id="38" name="TileData" x="832" y="336" width="16" height="16">
-   <properties>
-    <property name="WaterSource" value="t"/>
-   </properties>
-  </object>
-  <object id="39" name="TileData" x="848" y="336" width="16" height="16">
-   <properties>
-    <property name="WaterSource" value="t"/>
-   </properties>
-  </object>
-  <object id="40" name="TileData" x="544" y="416" width="16" height="16">
-   <properties>
-    <property name="NPCBarrier" value="t"/>
-   </properties>
-  </object>
-  <object id="41" name="TileData" x="752" y="416" width="16" height="16">
-   <properties>
-    <property name="WaterSource" value="t"/>
-   </properties>
-  </object>
-  <object id="42" name="TileData" x="768" y="416" width="16" height="16">
-   <properties>
-    <property name="WaterSource" value="t"/>
-   </properties>
-  </object>
-  <object id="43" name="TileData" x="544" y="432" width="16" height="16">
-   <properties>
-    <property name="NPCBarrier" value="t"/>
-   </properties>
-  </object>
-  <object id="44" name="TileData" x="544" y="448" width="16" height="16">
-   <properties>
-    <property name="NPCBarrier" value="t"/>
-   </properties>
-  </object>
-  <object id="45" name="TileData" x="544" y="464" width="16" height="16">
-   <properties>
-    <property name="NPCBarrier" value="t"/>
-   </properties>
-  </object>
-  <object id="46" name="TileData" x="544" y="480" width="16" height="16">
-   <properties>
-    <property name="NPCBarrier" value="t"/>
-   </properties>
-  </object>
-  <object id="47" name="TileData" x="1120" y="480" width="16" height="16">
-   <properties>
-    <property name="WaterSource" value="t"/>
-   </properties>
-  </object>
-  <object id="48" name="TileData" x="1136" y="480" width="16" height="16">
-   <properties>
-    <property name="WaterSource" value="t"/>
-   </properties>
-  </object>
-  <object id="49" name="TileData" x="1392" y="864" width="16" height="16">
-   <properties>
-    <property name="NPCBarrier" value="t"/>
-   </properties>
-  </object>
-  <object id="50" name="TileData" x="1472" y="864" width="16" height="16">
+  <object id="53" name="TileData" x="688" y="352" width="16" height="16">
    <properties>
     <property name="NoSpawn" value="All"/>
    </properties>
   </object>
-  <object id="51" name="TileData" x="1488" y="864" width="16" height="16">
-   <properties>
-    <property name="NoSpawn" value="All"/>
-   </properties>
-  </object>
-  <object id="52" name="TileData" x="1504" y="864" width="16" height="16">
-   <properties>
-    <property name="NoSpawn" value="All"/>
-   </properties>
-  </object>
-  <object id="53" name="TileData" x="1520" y="864" width="16" height="16">
-   <properties>
-    <property name="NoSpawn" value="All"/>
-   </properties>
-  </object>
-  <object id="54" name="TileData" x="1536" y="864" width="16" height="16">
+  <object id="54" name="TileData" x="704" y="352" width="16" height="16">
    <properties>
     <property name="NoSpawn" value="All"/>
     <property name="TouchAction" value="PoolExit"/>
    </properties>
   </object>
-  <object id="55" name="TileData" x="1552" y="864" width="16" height="16">
+  <object id="55" name="TileData" x="720" y="352" width="16" height="16">
    <properties>
     <property name="NoSpawn" value="All"/>
    </properties>
   </object>
-  <object id="56" name="TileData" x="1392" y="880" width="16" height="16">
+  <object id="56" name="TileData" x="560" y="368" width="16" height="16">
    <properties>
     <property name="NPCBarrier" value="t"/>
    </properties>
   </object>
-  <object id="57" name="TileData" x="1440" y="880" width="16" height="16">
+  <object id="57" name="TileData" x="608" y="368" width="16" height="16">
    <properties>
     <property name="NoSpawn" value="All"/>
     <property name="TouchAction" value="ChangeOutOfSwimsuit"/>
    </properties>
   </object>
-  <object id="58" name="TileData" x="1456" y="880" width="16" height="16">
+  <object id="58" name="TileData" x="624" y="368" width="16" height="16">
    <properties>
     <property name="NoSpawn" value="All"/>
     <property name="TouchAction" value="ChangeIntoSwimsuit"/>
    </properties>
   </object>
-  <object id="59" name="TileData" x="1472" y="880" width="16" height="16">
+  <object id="59" name="TileData" x="640" y="368" width="16" height="16">
    <properties>
     <property name="NoSpawn" value="All"/>
    </properties>
   </object>
-  <object id="60" name="TileData" x="1488" y="880" width="16" height="16">
+  <object id="60" name="TileData" x="656" y="368" width="16" height="16">
    <properties>
     <property name="NoSpawn" value="All"/>
    </properties>
   </object>
-  <object id="61" name="TileData" x="1504" y="880" width="16" height="16">
+  <object id="61" name="TileData" x="672" y="368" width="16" height="16">
    <properties>
     <property name="NoSpawn" value="All"/>
    </properties>
   </object>
-  <object id="62" name="TileData" x="1536" y="880" width="16" height="16">
+  <object id="62" name="TileData" x="704" y="368" width="16" height="16">
    <properties>
     <property name="TouchAction" value="PoolEntrance"/>
    </properties>
   </object>
-  <object id="63" name="TileData" x="1392" y="896" width="16" height="16">
+  <object id="63" name="TileData" x="560" y="384" width="16" height="16">
    <properties>
     <property name="NPCBarrier" value="t"/>
    </properties>
   </object>
-  <object id="64" name="TileData" x="1408" y="896" width="16" height="16">
+  <object id="64" name="TileData" x="576" y="384" width="16" height="16">
    <properties>
     <property name="NPCBarrier" value="t"/>
-   </properties>
-  </object>
-  <object id="65" name="TileData" x="624" y="992" width="16" height="16">
-   <properties>
-    <property name="NPCBarrier" value="T"/>
-   </properties>
-  </object>
-  <object id="66" name="TileData" x="672" y="992" width="16" height="16">
-   <properties>
-    <property name="NPCBarrier" value="T"/>
-   </properties>
-  </object>
-  <object id="67" name="TileData" x="624" y="1008" width="16" height="16">
-   <properties>
-    <property name="NoSpawn" value="All"/>
-   </properties>
-  </object>
-  <object id="68" name="TileData" x="640" y="1008" width="16" height="16">
-   <properties>
-    <property name="NPCBarrier" value="t"/>
-   </properties>
-  </object>
-  <object id="69" name="TileData" x="672" y="1008" width="16" height="16">
-   <properties>
-    <property name="NPCBarrier" value="t"/>
-    <property name="NoSpawn" value="All"/>
    </properties>
   </object>
  </objectgroup>
- <layer id="3" name="Buildings" width="105" height="65">
+ <layer id="3" name="Buildings" width="52" height="32">
+  <properties>
+   <property name="obstacle" value="true"/>
+  </properties>
   <data encoding="base64" compression="zlib">
-   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
+   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
   </data>
  </layer>
- <objectgroup id="4" name="Buildings">
-  <object id="70" name="TileData" x="128" y="112" width="16" height="16">
-   <properties>
-    <property name="Action" value="Message Grandpa's Shrine"/>
-   </properties>
-  </object>
-  <object id="71" name="TileData" x="960" y="224" width="16" height="16">
-   <properties>
-    <property name="Action" value="LumberPile"/>
-   </properties>
-  </object>
-  <object id="72" name="TileData" x="976" y="224" width="16" height="16">
-   <properties>
-    <property name="Action" value="LumberPile"/>
-   </properties>
-  </object>
-  <object id="73" name="TileData" x="1024" y="224" width="16" height="16">
-   <properties>
-    <property name="Action" value="Warp 3 11 FarmHouse"/>
-   </properties>
-  </object>
-  <object id="74" name="TileData" x="448" y="240" width="16" height="16">
-   <properties>
-    <property name="Action" value="WarpGreenhouse"/>
-   </properties>
-  </object>
-  <object id="75" name="TileData" x="1088" y="256" width="16" height="16">
-   <properties>
-    <property name="Action" value="Mailbox"/>
-   </properties>
-  </object>
- </objectgroup>
- <layer id="5" name="Paths" width="105" height="65">
+ <objectgroup id="4" name="Buildings" visible="0"/>
+ <objectgroup id="6" name="Paths" visible="0"/>
+ <layer id="7" name="Front" width="52" height="32">
+  <properties>
+   <property name="obstacle" value="true"/>
+  </properties>
   <data encoding="base64" compression="zlib">
-   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
+   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
   </data>
  </layer>
- <objectgroup id="6" name="Paths"/>
- <layer id="7" name="Front" width="105" height="65">
+ <objectgroup id="8" name="Front" visible="0"/>
+ <layer id="9" name="AlwaysFront" width="52" height="32">
+  <properties>
+   <property name="obstacle" value="true"/>
+  </properties>
   <data encoding="base64" compression="zlib">
-   eJztnE9sDUEcx6f6ktenWvGvHLQo2kb8qwMq/vVASyW0JByEtDSpvgiu4j8HEQk3vbhwEo4IEu4Sfw5aR0lLEycccPAvvpu3k87bzs7uvrezO/ve75N8s9t909nfzm9md3Z/M8MYY6Npxsagj1BdFWNzoXnQKmg11AqFTZ1Lnl7nk9m0XZG+B7/tDWh/PdI3QAvs/2vDdoO9vxjbJdBSqElDubjxC775Df1J55dBJ7QD2qnBllUueXqdT2bT4ZDtW4v81kHr7XxFP2/EdhO0GdoSoY9m4VyzoTkOv/RCfdCRCG3xImybvqBefoW+pfOP70H+3Y5ziO1pP7YHIiyX5TjXCmhljH65qfl8YvmKpHGsCsoIvw1g/xg06EhfyH0zTFT3dN08zDD2KJPbqghSdz9U5//tVr4LcWwR1Bjw+j+h3Y2nvdOFSdj39KiorvZOo4O/8M+/iHx0HnX3lkf9JSbD+7+EufD+b5IYorYYCVTMRJKZn2KsHmpIxW1J+LTFbQBBELHShQf0rjJ+SHfG9O5J5DPX3jq/y1j0Guqj7PS4LShvdqP890Dd5IfEc70ybgsILx54+Ogofk9BjeTL2HiFsl9cwdiSCvc0ft/7ZDFEt1iW6fSjXD5NYexSZb6CcgfXfldy/f12fvwcbr+r7OM2XbbT+SlrWQxRjGUV6q9zPuIVr2HnG2gEel+mbd5PXNYrhhg0tmv5hseTsmX87mYasvgz+ccsTsI/p8hHRqJ6Vl0xwEfPahh7DvteKO7VvH/glS4sojoPRzauj5PEdjTiUXbDIZStdY6D0BPUn6c1uWPjU4rP1w3ebxfhzyYT2hEx0W8X4c+mJLajUoT322VE0Y7uV8r3TcHtXdgUblM7MorT8McOh08ek4+MYExox30On7wlHxmFbCzxZ/KR0RyHfyqmxm0FYfFS0mfZR+2HIAifyMYr0BgGs5CNV/Aaw0AUjjWuoL9ycoxdpVcSf1jHguZTSCw/8PXZ/QYdc/vLHWs+Fo9rO7fOdx1ZWk6P7RuT5vaXEh0o685M7ltOpy3nNx1ZWrc0OhlS1KFSZdRlrHSHxAeyY3GQ1DFlfpDdq36FNJ5d9h6ri7DWn7DGjL2DhiMeM6Z6viyblkvTFPI8g6jqNZ/LnK1lrBXXsMbQ+RImEuW6Krw+7IR/ushHRhL3OjtJhY85+Q79gH5qXFdlsFZf3qUMH3NSA9VC0zXX86zgp3LpfxcLH3NirWXYDLVo9JHlH7d14koF2XzSsLDWMtwKtWtuR7I5HoQ/olrLsNB14ojJ4/F1IN7nqP8gRxyf7ORaBD6S3ef8zEMjoqOc73OymBRhHvdSE/MdaI2r+JGtofaywPXUdH5TFb8RE4Wj+xvaEbzTHa1Obj9OFouIqo/DYwW6Y0dn4J+z9I27aMYcfnKLYQXdWmR9th9VPmK9VcXYit2q2seJGPqiqu9mzZnw5AfV/7dk8ucTDmC/KWT7+L5q3uLVIupxkHujWAeT8N1sG+xsz+TPJ7yo8Vmgmrd4o4h11M4GaMsXBBtU75MzkG6mxrLwyyHbRyIDBtgVF/8BVxcDAQ==
+   eJztljtPAkEUhVcEdnkoBcREBSxApSPh0eGrAkt/gi0/gX+LMeFpoQgFxoRv4jbbzSS4u9zMSb5kcps5J9nZcx3HysrKSp7e3agd7Fe/wvKceVE72K+awvIMhOV5FZZHmj6F/d+ywr63mrA8PWF5rOItu4/+v1SHfMEKvmENG02fcdxHVYfkIA8ncAoFTZ9x3EdVh9ThGm7gFhqaPuO4j6oOuYN7eIBHeNL0afdRq0NWP/PHCJ4z4d//ovF+TPpgwnwKM5hH0G1DP8+Cu5fw4QbPSkZ9wPwIEnAc8r9mjN8333OSu1OQ9oJnJZM+OGd+AZdQDjnPliw/fp4Kd1fhyguelUz6oMW8DR3ohphHvZsilGAHdlksfA==
   </data>
  </layer>
- <objectgroup id="8" name="Front"/>
- <layer id="9" name="AlwaysFront" width="105" height="65">
-  <data encoding="base64" compression="zlib">
-   eJztnUdvE0EUxxcCpDiEA6H3zoHeQXSQSCiiHeAKJ+DGBRAfAYnmfAiKLVG+ASkS5QuAFA6E3jsHIMB/lH3ieTS72eKsn5X3k/5KPLO7tufvNzP7dtb2vOTcaPK8m9At6HZT8uN8qPW8j9CnWnf9Z5R/gb5C36Dv0I+AbbOgI+d5BagTeuwrDxWhtgFQGu7Cl3vQfehBCo9q6zyvDqqvc9c3oDwHNUIjoSZoVMC2WdDt+1PwZTy67KvN4VVXSPu76uyyNDyBLz3QU+hZCo+mo71nQDMD2n0WymdDc6C50DxofgU96vA9MrrINFDxlIafzJfeFB6dQXtfgk4HtPt6lG+ANkKboM3QlgrHUcHyhzwqBvjUX2yFxZoEtsLfbdD2FD5nSTva7Sp0nfV3ncwjSeNROemqr/QriA+NS53Mo7wVE2HxEVUS5knVCs3vCpZHUeYHYT7ajyXMk6qVbuYPeUTtWs65g4R5UrVC87ug8Sjo/7iSME+qViiO7L6O/Gho7FMbexzHGzrOYfUmMTzf0OmPI3mrfYPGmrC4svc5qR4lhucbXH1d0JyOx1PR367LUUc6px4lxo4ju6/jMWX7EqevU5LjiqO8w5+gPi7q/EJJjiuOirn/+aDz0KWICpurK8mx4+hirjTPYDy6EFG0r+kT7ZhTksPzDJRXpbg4b7W/6++FnDsnq3FUPni+Liw++vOIX4eiuV1RPSoL3X67FkL8uJLry5FfC/nL8+d5Pw55HEm5/lyN8DyDHSdGD6FHEeKAckqu2DKeSbn+XI20s3gIipE7ETzqdvhbYJJy/Xkw0255a18/lHL9WSmFzxkN0tZGKf/7P/JI2toopbT/M0hbG6WU8gx92nPoRa2OTVLphTd/oL86/ohlLOJlHDRe40Ysi+HNEmipeiSWFnjTCu1UjxQlEW91niCeYdq/iWeKeiSeVeqRePbCo3cYk97ruCSWY/BoODRC40kklKebCn+mqUcioTzdavizRj0SCeXp9kH71SORUJ7uOHRCPRIJ5ekUuRyBP0fVI0VJBa0FUuRCa4EUudBaoKxYi+dap5+JWND3JGXFATzXQfVIUZSMoZyqIhfKqWbB6Zpsnkciae53oJyqMrCkud+BcqrKwJLmfoescqp8zf9gPEdK812wWeVU+Zp/fo50ahCPUdLga/7P1JTGlSIDe82/3ksjEz7uVdO9NDvq+3QWaq3A9yZnuYaBxr3m+srfSxPnfOUlyl9Br6E3FYj7sDUMSc+7oq6nNHFl7gfg2/PHdl1Yvev3RMKOFet8BeVDoKFQTcafqSd4vT3QU6s9TVy3+LLfh4n1nY547/Ff+zC2npIf38ROj/X+TFzx7e397bqwetfviYQdK875ygSUT4QmQZMz9ugn2u4X9DvgMx/0PlzxRZj1/bSekh+f+8O949vb+9t1YfWu3xMJO1ac85VlKF8OrYBWZuiRGYdGQ83QmIDnDXofrn6CMOv7aT1l0PG5d3x7e3+7Lko9J8q2h+r6/07mXajfDe3JOIbMOLQAWggtgv4BUAM3qg==
-  </data>
- </layer>
- <objectgroup id="10" name="AlwaysFront"/>
+ <objectgroup id="10" name="AlwaysFront" visible="0" opacity="0.98"/>
 </map>

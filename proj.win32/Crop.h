@@ -3,7 +3,7 @@
  * File Name:     Crop.h
  * File Function: 实现Crop类，完成农作物种植功能
  * Author:        刘彦含 2351591
- * Update Date:   2024/12/
+ * Update Date:   2024/12/22
  ****************************************************************/
 
 #pragma once
@@ -27,7 +27,7 @@ public:
     static Crop* create(GameScene* scene, const std::string& nickname);
     void setGameScene(GameScene* scene);
     bool init(const std::string& nickname);
-    void onMouseDown(Event* event);
+    void onMouseDown(EventMouse* event);
 
     void grow();  // 更新生长状态
     void water();  // 浇水
@@ -44,7 +44,7 @@ public:
 
     // 设置回调函数
     void setTextureChangedCallback(const TextureChangedCallback& callback);
-
+   
 private:
     TextureChangedCallback textureChangedCallback;
     GameScene* gameScene;  // 用于存储对GameScene的引用

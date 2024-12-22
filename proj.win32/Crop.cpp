@@ -3,13 +3,14 @@
  * File Name:     Crop.cpp
  * File Function: 实现Crop类，完成农作物种植功能
  * Author:        刘彦含 2351591
- * Update Date:   2024/12/
+ * Update Date:   2024/12/22
  ****************************************************************/
 
 #include "Crop.h"
 USING_NS_CC;
 #include "GameScene.h" // 包含 GameScene 的完整定义
-
+#include "map.h"
+#include"ToolManager.h"
 Crop* Crop::create(GameScene* scene, const std::string& nickname) {
     Crop* crop = new (std::nothrow) Crop();
     crop->getGameScene(scene);  // 设置GameScene的引用
@@ -55,34 +56,57 @@ bool Crop::init(const std::string& nickname) {
     return true;
 }
 
-void Crop::onMouseDown(Event* event) {
+void Crop::onMouseDown(EventMouse* event) {
+   
     // 获取鼠标点击的屏幕坐标
     EventMouse* mouseEvent = static_cast<EventMouse*>(event);
     Vec2 mouseLocation = mouseEvent->getLocation();
 
+    // 添加点击到作物+人在作物旁边的判断逻辑
+    auto playerPos = Player::getInstance(1, "guest")->getPosition();
+    auto locationInWorld = event->getLocationInView();  // 获取屏幕视图中的坐标
 
-    // 检查点击类型
-    if (mouseEvent->getMouseButton() == EventMouse::MouseButton::BUTTON_LEFT) {
-        // 如果作物已成熟，点击作物时移除它
-        if (state == CropState::Mature) {
-            if (gameScene) {
-                gameScene->removeCrop();  // 调用 GameScene 的 removeCrop 方法
+    CCLOG("mouseDown");
+    CCLOG("locationInWorld Mouse Position: %f, %f", locationInWorld.x, locationInWorld.y);
+    CCLOG("players locationInWorld: %f, %f", playerPos.x, playerPos.y);
+    CCLOG("cropss locationInWorld: %f, %f", this->getPosition().x, this->getPosition().y);
+    // 玩家靠近动物并点击时，交互
+    if (locationInWorld.distance(this->getPosition()) < 30 && playerPos.distance(this->getPosition()) < 30) {
+        
+        // 检查点击类型
+        if (mouseEvent->getMouseButton() == EventMouse::MouseButton::BUTTON_LEFT) {
+            // 如果作物已成熟，点击作物时移除它
+            if (state == CropState::Mature) {
+                if (gameScene) {
+                    gameScene->removeCrop();  // 调用 GameScene 的 removeCrop 方法
+                }
+
+                // 添加收入背包的代码
             }
 
-            // 添加收入背包的代码
+            else {
+                ToolManager* toolManager = ToolManager::getInstance(1, "guest");
+                if (toolManager && toolManager->selectedToolIndex >= 0 &&
+                    toolManager->selectedToolIndex < toolManager->tools.size() 
+                    && (toolManager->tools[toolManager->selectedToolIndex]->getType() == Tool::ToolType::WATERING_CAN|| toolManager->tools[toolManager->selectedToolIndex]->getType() == Tool::ToolType::WATERING_CANPLUS)) {
+                    water();
+                }
+            }
         }
-        else {
-            water();
+        else if (mouseEvent->getMouseButton() == EventMouse::MouseButton::BUTTON_RIGHT) {
+            // 鼠标右键点击
+
+           ToolManager* toolManager = ToolManager::getInstance(1, "guest");
+            if (toolManager && toolManager->selectedToolIndex >= 0 &&
+                toolManager->selectedToolIndex < toolManager->tools.size() && toolManager->tools[toolManager->selectedToolIndex]->getType() == Tool::ToolType::FERTILIZER) {
+                fertilize();
+            }
         }
-    }
-    else if (mouseEvent->getMouseButton() == EventMouse::MouseButton::BUTTON_RIGHT) {
-        // 鼠标右键点击
-        fertilize();
     }
 }
 
 
-Crop::Crop() : state(CropState::Seed), age(0), watered(false), lastWateredTime(0), timeElapsed(0){
+Crop::Crop() : state(CropState::Seed), age(0), watered(false), lastWateredTime(0), timeElapsed(0) {
     // 初始化不同生长阶段的图片路径
     stageTextures = {
         "../Resources/seed.png",     // 种子阶段
@@ -99,27 +123,34 @@ int times = 0;
 void Crop::update(float dt) {
     // 每帧更新，根据时间更新生长状态和浇水状态
     timeElapsed += dt;
+    if (MapManager::getInstance()->currentMapLabel == 1 && this) {
 
+        this->setVisible(true);
+    }
+    else {
+        this->setVisible(false);
+    }
     if (timeElapsed >= 1.0f) {
         age += timeElapsed;  // 增加经过的时间（以秒为单位）
         lastWateredTime += timeElapsed;  // 增加自上次浇水以来的时间
         CCLOG("Crop time update!");
         CCLOG("Age: %d lastWateredTime: %d", age, lastWateredTime);
         timeElapsed = 0.0f;
-        if (lastWateredTime >= 5) {
+        if (lastWateredTime >= 150) {
             times++;
         }
-    }    
+    }
 
-    // 检查是否达到生长周期（10秒）
-    if (age >= 10) {  // 10秒等于生长周期
+    // 检查是否达到生长周期（50秒）
+    if (age >= 50) {  // 50秒等于生长周期
         CCLOG("Crop time !!!!");
         grow();  // 调用生长函数
         age = 0;  // 重置年龄计时器
     }
+
     // 检查是否已经超过30秒未浇水
     //CCLOG("%d", times);
-    if (lastWateredTime >= 30) {  // 30秒未浇水
+    if (lastWateredTime >= 150) {  // 150秒未浇水
         CCLOG("Crop will die!");
         state = CropState::Dead;
         changeTexture("../Resources/dead.png");  // 显示死亡阶段的图片
@@ -130,11 +161,11 @@ void Crop::update(float dt) {
         if (!deadSprite) {
             throw("Failed to create dead sprite!");
         }
-        deadSprite->setPosition(Vec2(10,10));  // 设置"dead"图片的位置与作物相同
+        deadSprite->setPosition(Vec2(10, 10));  // 设置"dead"图片的位置与作物相同
         this->addChild(deadSprite);  // 将"dead"图片添加为Crop的子节点
-       
+
         // 移除作物的逻辑
-        if (times > 3) {
+        if (times > 500) {
             // 立即从场景中移除作物
             CCLOG("Will remove crop!");
             if (deadSprite) {
@@ -147,6 +178,8 @@ void Crop::update(float dt) {
             }
         }
     }
+
+    
 }
 
 void Crop::grow() {
@@ -213,7 +246,7 @@ void Crop::water() {
     watered = true;  // 标记为已浇水
     std::string imagePath = "../Resources/watered.png";
     Sprite* happySprite = Sprite::create(imagePath);
-
+    lastWateredTime = 0;
     // 检查图片是否加载成功
     if (happySprite) {
         // 设置图片的位置，这里以动物精灵的中心为位置参考
