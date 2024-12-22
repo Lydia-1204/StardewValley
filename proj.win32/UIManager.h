@@ -12,7 +12,7 @@
 #include <string>
 #include"map.h"
 #include"toolManager.h"
-
+class ItemManager;
 
 USING_NS_CC;
 
@@ -23,6 +23,7 @@ private:
     static UIManager* instance;
     MapManager* mapManager;
     ToolManager* toolManager;
+    ItemManager* itemManager;
     // UI元素
     Label* dateLabel;                  // 显示日期
     Label* timeLabel;                  // 显示时间

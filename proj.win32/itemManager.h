@@ -29,6 +29,7 @@ public:
     Chest* chest;
     static ItemManager* getInstance(int selectedCharacter, const std::string& nickname);
     int selectedItemIndex;            // 当前选中的物品索引
+    int getItemQuantity(Item::ItemType type);
 
 private:
     friend class Chest;

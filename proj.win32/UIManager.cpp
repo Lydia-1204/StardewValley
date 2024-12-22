@@ -11,6 +11,7 @@
 #include"Constant.h"
 #include"Chest.h"
 #include"Player.h"
+#include "itemManager.h"
 
 USING_NS_CC;
 
@@ -21,7 +22,7 @@ UIManager::UIManager()
     energyBar(nullptr), iron(nullptr),
     shortcutKeysLabel(nullptr), money(0), selectedCharacter(0),
     currentMonth(3), currentDay(1), currentWeekday(2), // 3月1日，周二
-    currentEnergy(100), timeElapsed(0.0f) , isPriceBoardOpen(0){}
+    currentEnergy(100), timeElapsed(0.0f), isPriceBoardOpen(0) {}
 
 UIManager* UIManager::getInstance(int& selectedCharacter, const std::string& nickname) {
     if (!instance) {
@@ -58,7 +59,7 @@ bool UIManager::init(int selectedCharacter, const std::string& nickname) {
 
     timeLabel = Label::createWithTTF("08:00", "../Resources/fonts/Marker Felt.ttf", 24);
     timeLabel->setPosition(visibleSize.width - 200, visibleSize.height - 150);
-    this->addChild(timeLabel,20);
+    this->addChild(timeLabel, 20);
 
 
     // 初始化NPC*******************
@@ -101,19 +102,19 @@ bool UIManager::init(int selectedCharacter, const std::string& nickname) {
     if (!iron)
         throw("iron created failed!!");
     iron->setPosition(visibleSize.width - 200, visibleSize.height - 100);
-    this->addChild(iron,20);
+    this->addChild(iron, 20);
 
 
     // 资金显示
     moneyLabel = Label::createWithTTF("Money: $0", "../Resources/fonts/Marker Felt.ttf", 24);
     moneyLabel->setPosition(visibleSize.width - 200, visibleSize.height - 200);
-    this->addChild(moneyLabel,20);
+    this->addChild(moneyLabel, 20);
 
     //天气显示
-   weatherLabel = Label::createWithTTF("Sunny", "../Resources/fonts/Marker Felt.ttf", 24);
-   weatherLabel->setPosition(visibleSize.width - 200, visibleSize.height - 250);
-   this->addChild(weatherLabel,20);
-   
+    weatherLabel = Label::createWithTTF("Sunny", "../Resources/fonts/Marker Felt.ttf", 24);
+    weatherLabel->setPosition(visibleSize.width - 200, visibleSize.height - 250);
+    this->addChild(weatherLabel, 20);
+
 
     // 精力条
     energyBar = ProgressTimer::create(Sprite::create("../Resources/energyBar.png"));
@@ -127,15 +128,15 @@ bool UIManager::init(int selectedCharacter, const std::string& nickname) {
     energyBar->setBarChangeRate(Vec2(1, 0));
     energyBar->setPercentage(100);
     energyBar->setPosition(visibleSize.width - 30, visibleSize.height * 0.25);
-    this->addChild(energyBar,20);
+    this->addChild(energyBar, 20);
     //精力条label
     energyLabel = Label::createWithTTF("energy:100", "../Resources/fonts/Marker Felt.ttf", 18);
     energyLabel->setPosition(visibleSize.width - 50, visibleSize.height * 0.12);
-    this->addChild(energyLabel,20);
+    this->addChild(energyLabel, 20);
     // 快捷键提示框
     shortcutKeysLabel = Label::createWithTTF("E: Pause\nC: Use Tool\nV: Discard Tool\nM: Mini Map\nF: Task List\nP:sjill tree", "../Resources/fonts/Marker Felt.ttf", 18);
     shortcutKeysLabel->setPosition(100, visibleSize.height - 100);
-    this->addChild(shortcutKeysLabel,20);
+    this->addChild(shortcutKeysLabel, 20);
     /*
     // 工具栏
     auto tool1 = Sprite::create("../Resources/LooseSprites-73/textBox..png");
@@ -185,7 +186,7 @@ bool UIManager::init(int selectedCharacter, const std::string& nickname) {
     // 小地图
     miniMap = Sprite::create("../Resources/UI/miniMap.jpg");
     if (!miniMap) throw std::runtime_error("Failed to load minimap texture!");
-    miniMap->setPosition(visibleSize.width / 2,visibleSize.height / 2);
+    miniMap->setPosition(visibleSize.width / 2, visibleSize.height / 2);
     miniMap->setVisible(false);
     this->addChild(miniMap);
 
@@ -198,7 +199,7 @@ bool UIManager::init(int selectedCharacter, const std::string& nickname) {
     auto positionLabel = Label::createWithTTF("Your Position", "../Resources/fonts/Marker Felt.ttf", 10);
     positionLabel->setColor(Color3B::RED);
     positionLabel->setPosition(Vec2(playerMarker->getContentSize().width / 2, -10)); // 放在星星下方
-    playerMarker->addChild(positionLabel,10);
+    playerMarker->addChild(positionLabel, 10);
 
     // 任务面板
     taskListPanel = LayerColor::create(Color4B(40, 40, 40, 200)); // 浅灰色背景
@@ -213,16 +214,16 @@ bool UIManager::init(int selectedCharacter, const std::string& nickname) {
         Label* taskLabel;
         switch (i) {
         case 0:
-            taskLabel = Label::createWithTTF("Task  " + std::to_string(i+1) + " : plant a crop", "../Resources/fonts/Marker Felt.ttf", 20);
+            taskLabel = Label::createWithTTF("Task  " + std::to_string(i + 1) + " : plant a crop", "../Resources/fonts/Marker Felt.ttf", 20);
             break;
         case 1:
-            taskLabel = Label::createWithTTF("Task  " + std::to_string(i+1) + " : go mining ", "../Resources/fonts/Marker Felt.ttf", 20);
+            taskLabel = Label::createWithTTF("Task  " + std::to_string(i + 1) + " : go mining ", "../Resources/fonts/Marker Felt.ttf", 20);
             break;
         case 2:
-            taskLabel = Label::createWithTTF("Task  " + std::to_string(i+1) + " : send a gift to npc", "../Resources/fonts/Marker Felt.ttf", 20);
+            taskLabel = Label::createWithTTF("Task  " + std::to_string(i + 1) + " : send a gift to npc", "../Resources/fonts/Marker Felt.ttf", 20);
             break;
         case 3:
-            taskLabel = Label::createWithTTF("Task  " + std::to_string(i+1) + " : buy a upgrade tool", "../Resources/fonts/Marker Felt.ttf", 20);
+            taskLabel = Label::createWithTTF("Task  " + std::to_string(i + 1) + " : buy a upgrade tool", "../Resources/fonts/Marker Felt.ttf", 20);
             break;
         }
         taskLabel->setAnchorPoint(Vec2(0, 0.5f));
@@ -230,7 +231,7 @@ bool UIManager::init(int selectedCharacter, const std::string& nickname) {
         taskListPanel->addChild(taskLabel);
         taskLabels.push_back(taskLabel);
     }
-    
+
     // 创建显示对话精灵(从 emotes.png 中截取)
     std::string dialogTexture = "emotes.png";
     dialogSprite = Sprite::create(dialogTexture);
@@ -263,7 +264,7 @@ bool UIManager::init(int selectedCharacter, const std::string& nickname) {
 
     // 将对话框和文字添加到场景
     auto scene = Director::getInstance()->getRunningScene();
-    //showPriceBoard();   
+    //showPriceBoard();
     */
 
     return true;
@@ -388,8 +389,8 @@ void UIManager::toggleMiniMap(const Vec2& playerPos, const Size& mapSize) {
     if (isMiniMapVisible) {
 
         auto screenSize = Director::getInstance()->getVisibleSize();
-        
-        float addWidth=0, addHeight=0;
+
+        float addWidth = 0, addHeight = 0;
         CCLOG("currentMapLabel:%d", mapManager->currentMapLabel);
         if (mapManager->currentMapLabel >= 1 && mapManager->currentMapLabel <= 4) {
             if (mapManager->currentMapLabel == 2 || mapManager->currentMapLabel == 4) {
@@ -401,19 +402,19 @@ void UIManager::toggleMiniMap(const Vec2& playerPos, const Size& mapSize) {
             Vec2 normalizedPos((playerPos.x + addWidth) / (screenSize.width * 2), (playerPos.y + addHeight) / (screenSize.height * 2));
             playerMarker->setPosition(Vec2(miniMap->getContentSize().width * normalizedPos.x, miniMap->getContentSize().height * normalizedPos.y));
         }
-        else if(mapManager->currentMapLabel==5){
-            Vec2 normalizedPos(0.25, 0.8); 
+        else if (mapManager->currentMapLabel == 5) {
+            Vec2 normalizedPos(0.25, 0.8);
             playerMarker->setPosition(Vec2(miniMap->getContentSize().width * normalizedPos.x, miniMap->getContentSize().height * normalizedPos.y));
         }
         else if (mapManager->currentMapLabel == 6) {
-            Vec2 normalizedPos(4.0 / 10.5f, 1.0 / 6.5f); 
+            Vec2 normalizedPos(4.0 / 10.5f, 1.0 / 6.5f);
             playerMarker->setPosition(Vec2(miniMap->getContentSize().width * normalizedPos.x, miniMap->getContentSize().height * normalizedPos.y));
         }
         else if (mapManager->currentMapLabel == 7) {
-            Vec2 normalizedPos(7.2/10.5f, 5.8/6.5f); 
+            Vec2 normalizedPos(7.2 / 10.5f, 5.8 / 6.5f);
             playerMarker->setPosition(Vec2(miniMap->getContentSize().width * normalizedPos.x, miniMap->getContentSize().height * normalizedPos.y));
         }
-      
+
     }
 }
 
@@ -462,11 +463,19 @@ void UIManager::hidePausePanel() {
 
 void UIManager::showPriceBoard() {
     auto visibleSize = Director::getInstance()->getVisibleSize();
+    itemManager = ItemManager::getInstance(selectedCharacter, nickname);
 
     // 创建价格表背景图片
-    auto priceListBg = Sprite::create("../Resources/priceBoard.jpg");
+    Sprite* priceListBg;
+    if (itemManager->getItemQuantity(Item::ItemType::MINERAL) < 30) {
+        priceListBg = Sprite::create("../Resources/priceBoard.jpg");
+    }
+    else {
+        priceListBg = Sprite::create("../Resources/priceBoard_lower.jpg");
+    }
+
     priceListBg->setPosition(visibleSize.width / 2, visibleSize.height / 2);
-  
+
     priceListBg->setName("PriceBoard");
     this->addChild(priceListBg, 10);
     isPriceBoardOpen = 1;
@@ -478,7 +487,7 @@ void UIManager::showPriceBoard() {
     closeButton->setScale(4.0f);
     auto menu = Menu::create(closeButton, nullptr);
     menu->setPosition(priceListBg->getPositionX() + priceListBg->getContentSize().width / 4,
-        priceListBg->getPositionY() + priceListBg->getContentSize().height / 4 );
+        priceListBg->getPositionY() + priceListBg->getContentSize().height / 4);
     priceListBg->addChild(menu);
 }
 

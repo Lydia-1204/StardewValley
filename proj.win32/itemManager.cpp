@@ -32,10 +32,6 @@ ItemManager* ItemManager::getInstance(int selectedCharacter, const std::string& 
     return instance;  // 返回唯一实例
 }
 
-
-
-
-
 bool ItemManager::init(int _selectedCharacter, const std::string& _nickname) {
     if (!Node::init()) {
         return false;
@@ -90,12 +86,10 @@ bool ItemManager::init(int _selectedCharacter, const std::string& _nickname) {
         // 判断鼠标是否点击物品栏
 
         int x = 0;
-        bool isitemManaager = 0;
         for (int i = 0; i < Items.size(); i++) {
             if (Items[i] && Items[i]->getBoundingBox().containsPoint(locationInItemsBg)) {
                 if (event->getMouseButton() == EventMouse::MouseButton::BUTTON_LEFT) {
                     CCLOG("Item[%d] selected and used", i);
-                    isitemManaager = 1;
                     selectItem(i);  // 选中物品
                     if (chest->isOpen == 1) {//与箱子交互
                         chest->addItem(Items[i]);
@@ -108,22 +102,14 @@ bool ItemManager::init(int _selectedCharacter, const std::string& _nickname) {
                             UIManager::getInstance(x, "")->setMoney(Items[i]->price);
                         }
                     }
-                   
+                    else
+                        useitem();  // 直接使用物品
                 }
                 else if (event->getMouseButton() == EventMouse::MouseButton::BUTTON_RIGHT) {
                     discardItem();  // 右键丢弃物品
                 }
                 return;
             }
-        }
-        if (!isitemManaager) {//点击其他
-            if (this && selectedItemIndex >= 0 &&
-                selectedItemIndex < Items.size()) {
-                if (Items[selectedItemIndex]->quantity > 0)
-                    useitem();
-
-            }
-
         }
         };
 
@@ -132,10 +118,17 @@ bool ItemManager::init(int _selectedCharacter, const std::string& _nickname) {
     return true;
 }
 
+int ItemManager::getItemQuantity(Item::ItemType type) {
+    for (auto item : Items) {
+        if (item && item->getType() == type) {
+            return item->getQuantity();
+        }
+    }
+    return 0; // 如果没有找到该类型的物品，返回0
+}
+
 void ItemManager::addItem(Item::ItemType type) {
    
-  
-
     float gridWidth = 32.0f; // 物品栏宽度
     float startX = (Director::getInstance()->getVisibleSize().width - gridWidth * 10) / 2.0f;
     float startY = Director::getInstance()->getVisibleSize().height * 0.1f + 32.0f;
@@ -164,8 +157,7 @@ void ItemManager::addItem(Item::ItemType type) {
             return;
         }
     }
-
-   
+  
     CCLOG("ItemBar is full, cannot add more Items.");
     auto fullLabel = Label::createWithTTF("ItemBar is full!", "fonts/Marker Felt.ttf", 24);
     fullLabel->setPosition(startX, startY+32.0f);
@@ -213,8 +205,6 @@ void ItemManager::useitem() {
     // 添加物品使用逻辑
     Item->useitem();
 }
-
-
 
 void ItemManager::updateSelectionBox() {
     if (selectedItemIndex < 0 || selectedItemIndex >= Items.size() || Items[selectedItemIndex] == nullptr) {
