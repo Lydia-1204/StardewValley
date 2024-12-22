@@ -23,7 +23,8 @@ Player::Player()
     : _sprite{ nullptr }, _velocity(Vec2::ZERO), _energy(100), _currentTool(0),
     _speed(100.0f), _isMoving(false), _nickname("Player"), _selectedCharacter(1),
     _toolSprite(nullptr), _shiftKeyPressed(false), _isToolActive(false),
-    tool(nullptr), toolManager(nullptr)
+    tool(nullptr), toolManager(nullptr), Planting_Skills(0), Breeding_Skills(0),
+    Mining_Skills(0), Fishing_Skills(0)
 {}
 
 Player::~Player() {}
