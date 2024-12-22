@@ -9,7 +9,7 @@
 #include"Crop.h"
 #include "map.h"
 #include"GameScene.h"
-
+#include"NpcTemplate.h"
 USING_NS_CC;
 
 Item* Item::create(ItemType type) {
@@ -97,7 +97,12 @@ void Item::useitem() {
     auto playerPos = Player::getInstance(selectedCharacter, nickname)->getPosition();
     auto direction = Player::getInstance(selectedCharacter, nickname)->_currentDirection;
     Vec2 dstPos;
-
+    // 获取所有 NPC
+    std::vector<NpcTemplate*> npcs;
+    npcs.push_back(Elliott::getInstance());
+    npcs.push_back(Sam::getInstance());
+    npcs.push_back(Shane::getInstance());
+    npcs.push_back(Abigail::getInstance());
    
     switch (direction) {
     case 0://下
@@ -207,7 +212,13 @@ void Item::useitem() {
         displayItemAbovePlayer(Player::getInstance(1, " "), "../Resources/item/fat.png");
         break;
     case ItemType::GIFT: // 
-     //   decreaseQuantity(1);
+       
+        for (auto npc : npcs) {
+            if (playerPos.distance(npc->getNpcsPosition())<50){
+                npc->setAffection(npc->getAffection() + 10);
+                decreaseQuantity(1);
+            }
+        }
         CCLOG("Using GIFT: ...");
         displayItemAbovePlayer(Player::getInstance(1, " "), "../Resources/item/gift.png");
         break;

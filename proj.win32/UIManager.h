@@ -114,6 +114,10 @@ public:
     void showPausePanel();              // œ‘ æ‘›Õ£√Ê∞Â
 
     void hidePausePanel();              // “˛≤ÿ‘›Õ£√Ê∞Â
+
+
+    //npc…Ë÷√
+    void setNpcVision();
 };
 
 #endif // UI_MANAGER_H

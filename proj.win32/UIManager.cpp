@@ -60,8 +60,43 @@ bool UIManager::init(int selectedCharacter, const std::string& nickname) {
     timeLabel->setPosition(visibleSize.width - 200, visibleSize.height - 150);
     this->addChild(timeLabel,20);
 
-    // 美观图标
 
+    // 初始化NPC*******************
+    Elliott* elliott = Elliott::getInstance();
+    Sam* sam = Sam::getInstance();
+    Shane* shane = Shane::getInstance();
+    Abigail* abigail = Abigail::getInstance();
+
+    this->addChild(elliott);
+    elliott->setName("elliott");
+    this->addChild(sam);
+    sam->setName("sam");
+    this->addChild(abigail);
+    abigail->setName("abigail");
+    this->addChild(shane);
+    shane->setName("shane");
+    elliott->initialmove();
+    sam->initialmove();
+    abigail->initialmove();
+    shane->initialmove();
+
+    elliott->addGeneralDialogue();
+    sam->addGeneralDialogue();
+    abigail->addGeneralDialogue();
+    shane->addGeneralDialogue();
+
+    elliott->addTaskDialogues();
+    sam->addTaskDialogues();
+    abigail->addTaskDialogues();
+    shane->addTaskDialogues();
+
+    //初始只让Elliott显示
+    sam->setVisible(false);
+    abigail->setVisible(false);
+    shane->setVisible(false);
+
+
+    // 美观图标
     iron = Sprite::create("../Resources/LooseSprites-73/iron123.png");
     if (!iron)
         throw("iron created failed!!");
@@ -174,7 +209,7 @@ bool UIManager::init(int selectedCharacter, const std::string& nickname) {
     this->addChild(taskListPanel);
 
     // 初始化任务列表
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < 4; i++) {
         Label* taskLabel;
         switch (i) {
         case 0:
@@ -188,9 +223,6 @@ bool UIManager::init(int selectedCharacter, const std::string& nickname) {
             break;
         case 3:
             taskLabel = Label::createWithTTF("Task  " + std::to_string(i+1) + " : buy a upgrade tool", "../Resources/fonts/Marker Felt.ttf", 20);
-            break;
-        case 4:
-            taskLabel = Label::createWithTTF("Task  " + std::to_string(i+1) + " : attend an activity  ", "../Resources/fonts/Marker Felt.ttf", 20);
             break;
         }
         taskLabel->setAnchorPoint(Vec2(0, 0.5f));
@@ -221,8 +253,8 @@ bool UIManager::init(int selectedCharacter, const std::string& nickname) {
     chatSprite->setScale(3);
     chatSprite->setVisible(0); // 初始隐藏
     this->addChild(chatSprite, 999);
-
-    // 创建 dialogTextLabel，用于显示对话内容
+    /*
+     // 创建 dialogTextLabel，用于显示对话内容
     dialogTextLabel = Label::createWithTTF("i am NPC", "../Resources/fonts/Marker Felt.ttf", 18);
     dialogTextLabel->setTextColor(Color4B(0, 0, 0, 255));// black
     dialogTextLabel->setPosition(600, 680);
@@ -231,7 +263,9 @@ bool UIManager::init(int selectedCharacter, const std::string& nickname) {
 
     // 将对话框和文字添加到场景
     auto scene = Director::getInstance()->getRunningScene();
-    //showPriceBoard();
+    //showPriceBoard();   
+    */
+
     return true;
 }
 
@@ -454,4 +488,37 @@ void UIManager::closePriceBoard() {
         this->removeChild(priceList);
     }
     isPriceBoardOpen = 0;
+}
+
+
+
+void UIManager::setNpcVision() {
+    int label = MapManager::getInstance()->getCurrentBlockLabel();
+    //  先均不可见
+    this->getChildByName("sam")->setVisible(false);
+    this->getChildByName("elliott")->setVisible(false);
+    this->getChildByName("shane")->setVisible(false);
+    this->getChildByName("abigail")->setVisible(false);
+    switch (label) {
+    case 1:
+        // 1号地图——sam
+        this->getChildByName("sam")->setVisible(true);
+        break;
+    case 2:
+        // 2号地图——elliott
+        this->getChildByName("elliott")->setVisible(true);
+        break;
+
+    case 3:
+        // 3号地图——shane
+        this->getChildByName("shane")->setVisible(true);
+        break;
+
+    case 4:
+        // 4号地图——abigail
+        this->getChildByName("abigail")->setVisible(true);
+        break;
+    default:
+        break;
+    }
 }

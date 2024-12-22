@@ -14,7 +14,7 @@
 #include "cocos2d.h"
 #include "UIManager.h"  // 引入 UIManager 头文件
 #include "tool.h"
-#include "NPC.h"
+#include "npcTemplate.h"
 #include <string>
 #include <set>
 
@@ -82,8 +82,7 @@ public:
     Vec2 getPlayerPosition() const;       // 返回Player当前位置
     int _currentDirection = 0;       // 记录当时玩家精灵面对的方向
     void updateToolSprite();
-    void updateDialogPosition(NPC* npc);
-    void showDialogBox(NPC* npc, const std::string& category);
+    void updateDialogPosition(NpcTemplate* npc);
 
     std::chrono::steady_clock::time_point lastClickTime; // 用于记录上次点击的时间点
     bool wasDoubleClick = false; // 标记是否可能是双击

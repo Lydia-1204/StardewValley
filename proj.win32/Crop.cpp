@@ -11,6 +11,8 @@ USING_NS_CC;
 #include "GameScene.h" // 包含 GameScene 的完整定义
 #include "map.h"
 #include"ToolManager.h"
+#include"ItemManager.h"
+
 Crop* Crop::create(GameScene* scene, const std::string& nickname) {
     Crop* crop = new (std::nothrow) Crop();
     crop->getGameScene(scene);  // 设置GameScene的引用
@@ -79,6 +81,7 @@ void Crop::onMouseDown(EventMouse* event) {
             if (state == CropState::Mature) {
                 if (gameScene) {
                     gameScene->removeCrop();  // 调用 GameScene 的 removeCrop 方法
+                    ItemManager::getInstance(1,"")->addItem(Item::ItemType::FRUIT);
                 }
 
                 // 添加收入背包的代码
@@ -256,7 +259,7 @@ void Crop::water() {
         this->addChild(happySprite, 1, "watered"); // 设置标签"happySprite"
 
         // 设置一个延时来移除图片，防止它一直显示
-        this->scheduleOnce(CC_SCHEDULE_SELECTOR(Crop::removeSprite), 2.0f); // 2秒后移除图片
+        this->scheduleOnce(CC_SCHEDULE_SELECTOR(Crop::removeSprite), 1.0f); // 2秒后移除图片
     }
 }
 
@@ -273,7 +276,7 @@ void Crop::fertilize() {
         this->addChild(happySprite, 1, "fertilize"); // 设置标签"happySprite"
 
         // 设置一个延时来移除图片，防止它一直显示
-        this->scheduleOnce(CC_SCHEDULE_SELECTOR(Crop::removeSprite), 2.0f); // 2秒后移除图片
+        this->scheduleOnce(CC_SCHEDULE_SELECTOR(Crop::removeSprite), 1.0f); // 2秒后移除图片
     }
 }
 

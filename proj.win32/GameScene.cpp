@@ -9,6 +9,7 @@
 #include "GameScene.h"
 #include "MenuScene.h" // 菜单场景
 #include "CreateErrorScene.h"
+#include "npcTemplate.h"
 
 USING_NS_CC;
 
@@ -73,20 +74,23 @@ bool GameScene::init(int& selectedCharacter,const std::string& nickname ) {
         CCLOG("Player created");
 
 
-        /*
-        // 初始化NPC
-        npcs = NPC::getInstance();
-        this->addChild(npcs);
-        CCLOG("npcs created");
-
-
-        */
+        
         // 初始化 UI 管理器
         uiManager = UIManager::getInstance(selectedCharacter, nickname);
         this->addChild(uiManager->getLayer());
         CCLOG("UIManager created");
         
+
         //箱子
+        
+        iron = Sprite::create("../Resources/boxxx.png");
+        if (!iron)
+            throw("iron created failed!!");
+        iron->setPosition(Vec2(230,430));
+        this->addChild(iron, 20);
+        iron->setVisible(false);
+        //箱子lei
+
         auto chest = Chest::getInstance();
         if (chest == nullptr) {
             throw std::runtime_error("Chest create failed!!");
@@ -270,7 +274,13 @@ bool GameScene::init(int& selectedCharacter,const std::string& nickname ) {
 }
 void GameScene::update(float dt) {
     // 更新游戏逻辑
-
+    if (MapManager::getInstance()->currentMapLabel == 2)
+    {
+        iron->setVisible(true);
+    }
+    else{
+        iron->setVisible(false);
+    }
     
     //地图切换
     if (mapManager && player&&currentMap) {
@@ -283,7 +293,7 @@ void GameScene::update(float dt) {
          //   CCLOG("player position %f,%f", player->getPlayerPosition().x, player->getPlayerPosition().y);
          //   CCLOG("screenSize %f,%f", screenSize.width, screenSize.height);
              mapManager->switchToBlock(direction); // 切换地图
-           
+             uiManager->setNpcVision();
            //重置位置
             const Vec2 vec = player->getPlayerPosition();
             if (direction == Vec2(-1, 0)) { // 左边界
@@ -310,6 +320,7 @@ void GameScene::update(float dt) {
                 //进入的是家
                 CCLOG("player enter house!");
                 mapManager->switchToHouseOrOutside(5); // 切换家里地图
+                uiManager->setNpcVision();
                 //重置位置
                 player->setPlayerPosition(Vec2(748, 236));
             }
@@ -317,6 +328,7 @@ void GameScene::update(float dt) {
                 //进入的是商店
                 CCLOG("player enter shop!");
                 mapManager->switchToHouseOrOutside(6); // 切换商店地图
+                uiManager->setNpcVision();
                 //重置位置
                 player->setPlayerPosition(Vec2(748, 236));
             }
@@ -324,6 +336,7 @@ void GameScene::update(float dt) {
                 //进入的是矿井
                 CCLOG("player enter mine!");
                 mapManager->switchToHouseOrOutside(7); // 切换矿井地图
+                uiManager->setNpcVision();
                 //重置位置
                 player->setPlayerPosition(Vec2(748, 300));
             }
@@ -335,6 +348,7 @@ void GameScene::update(float dt) {
                 //离开的是商店
                 CCLOG("player exit shop!");
                 mapManager->switchToHouseOrOutside(3); // 切换三号外地图
+                uiManager->setNpcVision();
                 //重置位置
                 player->setPlayerPosition(Vec2(1000, 100));
             }
@@ -342,6 +356,7 @@ void GameScene::update(float dt) {
                 //离开的是家
                 CCLOG("player exit house!");
                 mapManager->switchToHouseOrOutside(1); // 切换一号外地图
+                uiManager->setNpcVision();
                 //重置位置
                 player->setPlayerPosition(Vec2(680, 200));
             }
@@ -349,6 +364,7 @@ void GameScene::update(float dt) {
                 //离开的是矿井
                 CCLOG("player exit mine!");
                 mapManager->switchToHouseOrOutside(2); // 切换二号外地图
+                uiManager->setNpcVision();
                 //重置位置
                 player->setPlayerPosition(Vec2(500, 500));
             }

@@ -1,15 +1,15 @@
 /********************************************************************************************************
- * Project Name:  StardewValley
- * File Name:     Player.cpp
- * File Function: 实现Player类，实现玩家的行走、砍、精力更新等动作
- * Author:        邓语乐 2351273
- * Update Date:   2024/12/22
- *********************************************************************************************************/
+* Project Name : StardewValley
+* File Name : Player.cpp
+* File Function : 实现Player类，实现玩家的行走、砍、精力更新等动作
+* Author : 邓语乐 2351273
+* Update Date : 2024 / 12 / 16
+* ********************************************************************************************************/
 #include "Player.h"
 #include "tool.h"
-#include "NPC.h"
 #include <random>
 #include <chrono>
+
 USING_NS_CC;
 
 std::random_device rd;
@@ -23,8 +23,7 @@ Player::Player()
     : _sprite{ nullptr }, _velocity(Vec2::ZERO), _energy(100), _currentTool(0),
     _speed(100.0f), _isMoving(false), _nickname("Player"), _selectedCharacter(1),
     _toolSprite(nullptr), _shiftKeyPressed(false), _isToolActive(false),
-    tool(nullptr), toolManager(nullptr), Planting_Skills(0), Breeding_Skills(0),
-    Mining_Skills(0), Fishing_Skills(0)
+    tool(nullptr), toolManager(nullptr)
 {}
 
 Player::~Player() {}
@@ -230,10 +229,24 @@ void Player::onKeyReleased(EventKeyboard::KeyCode keyCode, Event* event) {
     }
 }
 
+bool isNearDistance(Vec2 p1, Vec2 p2, double distance) {
+    if (p1.x > p2.x - distance && p1.x<p2.x + distance && p1.y>p2.y - distance && p1.y < p2.y + distance) {
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+
 void Player::onMouseDown(Event* event) {
     // 获取所有 NPC
-    auto npcManager = NPC::getInstance();
-    const auto& npcs = npcManager->getAllNPCs();
+    //auto npcManager = NpcTemplate::getInstance();
+    //const auto& npcs = npcManager->getAllNPCs();
+    std::vector<NpcTemplate*> npcs;
+    npcs.push_back(Elliott::getInstance());
+    npcs.push_back(Sam::getInstance());
+    npcs.push_back(Shane::getInstance());
+    npcs.push_back(Abigail::getInstance());
 
     updateToolSprite();
     // 获取 UIManager 实例
@@ -265,8 +278,13 @@ void Player::onMouseDown(Event* event) {
 
             // 如果时间间隔不超过500毫秒，执行送礼物逻辑
             if (wasDoubleClick) {
+                // 获取鼠标点击的位置
+                Vec2 mousePosition = mouseEvent->getLocation();
+                mousePosition.y = MapManager::getInstance()->getCurrentMapSize(1).height - mousePosition.y;
+                mousePosition.y *= -1;
                 for (auto npc : npcs) {
                     if (npc && npc->getAffection() < 100 &&
+                        //isNearDistance(mousePosition, npc->getPosition(), 40)) {
                         getPlayerPosition().distance(npc->getPosition()) < 50.0f) {
                         int currentAffection = npc->getAffection();
                         npc->setAffection(currentAffection + 10);
@@ -295,23 +313,26 @@ void Player::onMouseDown(Event* event) {
             }
         }
 
-    
+
         // 获取鼠标点击的位置
         Vec2 mousePosition = mouseEvent->getLocation();
+        mousePosition.y = MapManager::getInstance()->getCurrentMapSize(1).height - mousePosition.y;
+        mousePosition.y *= -1;
 
         // 检查是否点击了 NPC(单击聊天）
         for (auto npc : npcs) {
             if (!npc) continue;
 
             Rect npcBoundingBox = npc->getBoundingBox();
-            if (getPlayerPosition().distance(npc->getPosition()) < 50.0f) {
+            if (getPlayerPosition().distance(npc->getPosition()) < 50.0f && mousePosition.distance(npc->getPosition()) && npc->isOpenDialogueBox == false) {
+                //if(isNearDistance(mousePosition, npc->getPosition(), 40)){
                 CCLOG("click!!!");
-                showDialogBox(npc, "general");
+                npc->displayDialogueBox(0);
                 break;
             }
         }
 
- // 鼠标按下时开始工具激活
+        // 鼠标按下时开始工具激活
         _isToolActive = true;
         if (toolManager && toolManager->selectedToolIndex >= 0 &&
             toolManager->selectedToolIndex < toolManager->tools.size())
@@ -338,15 +359,17 @@ void Player::onMouseDown(Event* event) {
             }
             }, 0.4f, "toggle_axe_key"); // 每 0.4 秒切换一次
     }
-    //youjina
+    //右键
     if (mouseEvent->getMouseButton() == EventMouse::MouseButton::BUTTON_RIGHT) {
         // 获取鼠标点击的屏幕坐标（这是一个 Vec2 对象）
         Vec2 mousePosition = mouseEvent->getLocation();
-
+        mousePosition.y = MapManager::getInstance()->getCurrentMapSize(1).height - mousePosition.y;
+        mousePosition.y *= -1;
         // 判断是否点击了 NPC
-        for (NPC* npc : npcs) {
+        for (NpcTemplate* npc : npcs) {
             float distance = mousePosition.distance(npc->getPosition());
-            if (distance < 80.0f) {
+            //if (isNearDistance(mousePosition, npc->getPosition(), 40)) {
+            if (distance < 50.0f) {
                 // 点击到了 NPC，显示好感度面板
                 npc->showAffectionBox();
 
@@ -356,7 +379,7 @@ void Player::onMouseDown(Event* event) {
                 return;
             }
         }
-      
+
     }
     /***************************************************************************************/
 }
@@ -397,8 +420,11 @@ void Player::onMouseMove(Event* event) {
     bool foundNpcUnderMouse = false;
 
     // 获取所有 NPC
-    auto npcManager = NPC::getInstance();
-    const auto& npcs = npcManager->getAllNPCs();
+    std::vector<NpcTemplate*> npcs;
+    npcs.push_back(Elliott::getInstance());
+    npcs.push_back(Sam::getInstance());
+    npcs.push_back(Shane::getInstance());
+    npcs.push_back(Abigail::getInstance());
 
     for (auto npc : npcs) {
         if (!npc) continue;
@@ -523,7 +549,7 @@ int Player::getSelectedCharacter() const {
 }
 
 // 计算对话框的位置
-void Player::updateDialogPosition(NPC* npc) {
+void Player::updateDialogPosition(NpcTemplate* npc) {
     // 获取 NPC 的位置（世界坐标）
     Vec2 npcWorldPosition = npc->getParent()->convertToWorldSpace(npc->getPosition());
 
@@ -535,81 +561,6 @@ void Player::updateDialogPosition(NPC* npc) {
 
     // 如果对话框是相对于场景或地图的，直接设置对话框的位置
     uiManager->dialogSprite->setPosition(dialogPosition);
-}
-
-void Player::showDialogBox(NPC* npc, const std::string& category) {
-    // 获取 NPC 的位置（世界坐标）
-    Vec2 npcWorldPosition = npc->getParent()->convertToWorldSpace(npc->getPosition());
-
-    // 获取 NPC 的大小
-    Size npcSize = npc->getContentSize();
-
-    // 获取 UIManager 实例并确保它已初始化
-    if (!uiManager) {
-        uiManager = UIManager::getInstance(_selectedCharacter, _nickname);  // 获取 UIManager 实例
-    }
-
-    std::string finalCategory = category; // 默认使用传入的类别
-    std::string dialogue;                 // 对话内容
-
-    // 获取 NPC 的对话列表
-    const auto& taskDialogues = npc->getDialogues("task");
-    const auto& generalDialogues = npc->getDialogues("general");
-    const auto& relationshipFriendship = npc->getDialogues("relationship_friendship");
-    const auto& relationshipRomantic = npc->getDialogues("relationship_romantic");
-
-    // 动态决定对话类别
-    if (npc->getAffection() >= 90 && !relationshipRomantic.empty()) {
-        finalCategory = "relationship_romantic";
-        dialogue = npc->getRandomDialogue(finalCategory);
-    }
-    else if (npc->getAffection() >= 60 && !relationshipFriendship.empty()) {
-        finalCategory = "relationship_friendship";
-        dialogue = npc->getRandomDialogue(finalCategory);
-    }
-    else {
-        // 加权随机选择 "task" 或 "general"
-        float taskWeight = 0.8f;  // 任务对话的权重
-        srand(static_cast<unsigned>(time(0)));
-        float randomValue = dis(gen);  // 生成 [0, 1) 的随机值
-        CCLOG("random=%f", randomValue);
-        if (randomValue < taskWeight && !taskDialogues.empty()) {
-            finalCategory = "task";
-            dialogue = npc->getRandomDialogue(finalCategory);
-        }
-        else if (!generalDialogues.empty()) {
-            finalCategory = "general";
-            dialogue = npc->getRandomDialogue(finalCategory);
-        }
-        else if (!taskDialogues.empty()) {
-            // 如果 general 没有对话，但 task 存在，使用 task 对话
-            finalCategory = "task";
-            dialogue = npc->getRandomDialogue(finalCategory);
-        }
-        else {
-            dialogue = "I have nothing to say."; // 当无对话可用时的默认内容
-        }
-    }
-
-    // 如果是任务对话，移除已显示的任务
-    if (finalCategory == "task") {
-        CCLOG("remove");
-        CCLOG("text:%s", dialogue);
-        npc->removeDialogue("task", dialogue); // 从任务列表中移除当前任务
-    }
-
-    // 确保 uiManager 和 dialogSprite、dialogTextLabel 已正确初始化
-    if (uiManager && uiManager->dialogSprite && uiManager->dialogTextLabel) {
-        uiManager->chatSprite->setVisible(true); // 显示对话框
-
-        // 设置对话框文本
-        uiManager->dialogTextLabel->setString(dialogue);  // 使用 setString 更新文本
-        uiManager->dialogTextLabel->setVisible(true); // 显示文字
-    }
-    else {
-        // 如果 uiManager 或 dialogSprite 或 dialogTextLabel 没有初始化，输出日志
-        CCLOG("uiManager or dialogSprite or dialogTextLabel is not properly initialized!");
-    }
 }
 
 void Player::openPlayerMenu() {
@@ -706,3 +657,4 @@ void Player::closePlayerMenu(Ref* sender) {
         menuLayer = nullptr; // 清除引用
     }
 }
+

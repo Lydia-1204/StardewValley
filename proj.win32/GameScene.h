@@ -18,7 +18,7 @@
 #include"itemManager.h"
 #include "Animal.h"
 #include "Crop.h"
-#include "NPC.h"
+#include "npcTemplate.h"
 
 #include"Chest.h"
 USING_NS_CC;
@@ -35,7 +35,7 @@ private:
     UIManager* uiManager;         // UI 管理器
     ToolManager* toolManager;
     ItemManager* itemManager;
-    NPC* npcs;
+    NpcTemplate* npcs;
     std::string nickname;  //昵称
     int selectedCharacter; // 1 -Amily/2-Harvey
     Size screenSize;
@@ -56,7 +56,7 @@ private:
    
    std::vector<Crop*> myCrops;  // 作物实例
    bool isCropAlive;  // 跟踪 myCrop 是否存在
-
+   Sprite* iron;
    LayerColor* sleepPanel;
 public:
     static GameScene* getInstance(int& selectedCharacter, const std::string& nickname);     // 获取单例实例
