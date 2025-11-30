@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="win32">
+      <UniqueIdentifier>{84a8ebd7-7cf0-47f6-b75e-d441df67da40}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="resource">
+      <UniqueIdentifier>{715254bc-d70b-4ec5-bf29-467dd3ace079}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{bb6c862e-70e9-49d9-81b7-3829a6f50471}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\App">
+      <UniqueIdentifier>{0bf78c6b-515c-4c95-a0b9-2c9f7a8b0aa7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Animals">
+      <UniqueIdentifier>{7c078dd6-4e1c-47b0-9a31-6fbc9cf38d6c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Characters">
+      <UniqueIdentifier>{24e5f3db-05ff-4315-9e97-4b3a4a7a4b0d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Farming">
+      <UniqueIdentifier>{a5cd6938-9f64-44a8-9a96-0b7f558bf61c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Inventory">
+      <UniqueIdentifier>{d5d318f5-0998-4eeb-9349-2dd42e529fce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Scenes">
+      <UniqueIdentifier>{7be14e67-5f9f-46f0-85bd-3a1c784fb5b0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Systems">
+      <UniqueIdentifier>{0c8deac8-4f54-44e4-8fa0-08fefb22f87c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\World">
+      <UniqueIdentifier>{7dbd6a2f-2a05-4b4c-8c61-6bc2ce1ad61e}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\Classes\Animals\Animal.cpp">
+      <Filter>src\Animals</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Animals\AnimalManager.cpp">
+      <Filter>src\Animals</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\App\AppDelegate.cpp">
+      <Filter>src\App</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\App\main.cpp">
+      <Filter>src\App</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Characters\Abigail.cpp">
+      <Filter>src\Characters</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Characters\Elliott.cpp">
+      <Filter>src\Characters</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Characters\NPC.cpp">
+      <Filter>src\Characters</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Characters\Player.cpp">
+      <Filter>src\Characters</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Characters\Sam.cpp">
+      <Filter>src\Characters</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Characters\Shane.cpp">
+      <Filter>src\Characters</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Characters\npcTemplate.cpp">
+      <Filter>src\Characters</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Farming\Crop.cpp">
+      <Filter>src\Farming</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Inventory\Chest.cpp">
+      <Filter>src\Inventory</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Inventory\item.cpp">
+      <Filter>src\Inventory</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Inventory\itemManager.cpp">
+      <Filter>src\Inventory</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Inventory\tool.cpp">
+      <Filter>src\Inventory</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Inventory\toolManager.cpp">
+      <Filter>src\Inventory</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Scenes\CreateErrorScene.cpp">
+      <Filter>src\Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Scenes\GameScene.cpp">
+      <Filter>src\Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Scenes\LoadingScene.cpp">
+      <Filter>src\Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Scenes\MenuScene.cpp">
+      <Filter>src\Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Scenes\NewSelectScene.cpp">
+      <Filter>src\Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Scenes\SaveSelectScene.cpp">
+      <Filter>src\Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Systems\UIManager.cpp">
+      <Filter>src\Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Systems\system.cpp">
+      <Filter>src\Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\World\map.cpp">
+      <Filter>src\World</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\Classes\Animals\Animal.h">
+      <Filter>src\Animals</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Animals\AnimalManager.h">
+      <Filter>src\Animals</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\App\AppDelegate.h">
+      <Filter>src\App</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\App\Constant.h">
+      <Filter>src\App</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\App\main.h">
+      <Filter>src\App</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\App\resource.h">
+      <Filter>src\App</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\App\scaleSpriteToReference.h">
+      <Filter>src\App</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Characters\Abigail.h">
+      <Filter>src\Characters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Characters\Elliott.h">
+      <Filter>src\Characters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Characters\NPC.h">
+      <Filter>src\Characters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Characters\Player.h">
+      <Filter>src\Characters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Characters\Sam.h">
+      <Filter>src\Characters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Characters\Shane.h">
+      <Filter>src\Characters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Characters\npcTemplate.h">
+      <Filter>src\Characters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Farming\Crop.h">
+      <Filter>src\Farming</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Inventory\Chest.h">
+      <Filter>src\Inventory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Inventory\item.h">
+      <Filter>src\Inventory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Inventory\itemManager.h">
+      <Filter>src\Inventory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Inventory\tool.h">
+      <Filter>src\Inventory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Inventory\toolManager.h">
+      <Filter>src\Inventory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Scenes\CreateErrorScene.h">
+      <Filter>src\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Scenes\GameScene.h">
+      <Filter>src\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Scenes\LoadingScene.h">
+      <Filter>src\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Scenes\MenuScene.h">
+      <Filter>src\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Scenes\NewSelectScene.h">
+      <Filter>src\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Scenes\SaveSelectScene.h">
+      <Filter>src\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Systems\UIManager.h">
+      <Filter>src\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Systems\system.h">
+      <Filter>src\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\World\map.h">
+      <Filter>src\World</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="game.rc">
+      <Filter>resource</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>

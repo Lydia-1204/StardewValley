@@ -35,3 +35,10 @@ proj.win32/out/
 /build/
 proj.win32/Debug.win32/
 proj.win32/Release.win32/
+
+# 需要纳入版本控制的 VS 解决方案与配置
+!proj.win32/StardewValley0.sln
+!proj.win32/StardewValley0.vcxproj
+!proj.win32/StardewValley0.vcxproj.filters
+!proj.win32/StardewValley0.vcxproj.user
+!proj.win32/build-cfg.json
