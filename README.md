@@ -10,10 +10,10 @@
 
 | 角色 | 姓名 | 主要职责 | 占比 |
 | --- | --- | --- | --- |
-| 2351882 | 王小萌 | 总体架构、角色创建、背包与工具栏、NPC 交互、Mini 地图、资源/资金管理、异常处理 | 30% |
-| 2351591 | 刘彦含 | 动物与农作物系统、项目文档、Git 管理、资金面板、技能成长、市场价格、睡眠机制 | 30% |
-| 2354178 | 陈美希 | 地图与碰撞、场景切换、NPC 交互与任务联动 | 20% |
-| 2351273 | 邓语乐 | 工具交互、玩家系统、任务设计、角色动作表现 | 20% |
+| 2351882 | 王小萌 | 总体架构、角色创建、背包与工具栏、NPC 交互、Mini 地图、资源/资金管理、异常处理 | 32% |
+| 2351591 | 刘彦含 | 动物与农作物系统、项目文档、Git 管理、资金面板、技能成长、市场价格、睡眠机制 | 28% |
+| 2354178 | 陈美希 | 地图与碰撞、场景切换、NPC 交互与任务联动 | 25% |
+| 2351273 | 邓语乐 | 工具交互、玩家系统、任务设计、角色动作表现 | 15% |
 
 指导教师：赵钦佩  
 学院/专业：同济大学计算机科学与技术学院 · 软件工程  
@@ -101,6 +101,73 @@
 - IDE：Visual Studio 2022（含 C++ 桌面开发组件）
 - 引擎依赖：Cocos2d-x（仓库已包含相关源码）
 - 构建方式：打开 `proj.win32/StardewValley0.sln`，选择 Win32 Debug/Release 目标进行编译运行。
+
+## 本地环境搭建与运行步骤
+
+以下步骤假设你刚从远程仓库全新克隆此项目，且本机尚未进行任何配置（全部在 Windows 10/11 上测试通过）。
+
+### 1. 安装必备工具
+
+1. **Visual Studio 2022**（Community 版即可），安装时勾选“使用 C++ 的桌面开发”工作负载，确保包含：
+	- MSVC v143 工具集
+	- Windows 10/11 SDK（10.0.19041 及以上）
+	- CMake/ Ninja（VS 会自动安装，可供后续使用）
+2. **Git 2.40+**：用于克隆仓库。
+3. **Python 2.7.x**：`cocos2d\download-deps.py` 与 `cocos2d\setup.py` 仍依赖 Python 2 语法（如 `raw_input`），请安装官方 Python 2.7 并加入 PATH。
+	- 若机器上同时存在多版本 Python，可通过 `py -2 --version` 验证调用的是 2.7。
+
+### 2. 克隆仓库
+
+```powershell
+git clone https://github.com/Lydia-1204/StardewValley.git
+cd StardewValley
+```
+
+（仓库已内置 `cocos2d` 源码，无需额外拉取子模块。）
+
+### 3. 下载 Cocos2d-x 第三方依赖
+
+仓库中仅包含引擎源码，运行前需拉取外部二进制依赖：
+
+```powershell
+py -2 cocos2d\download-deps.py
+```
+
+脚本会自动将官方依赖包解压到 `cocos2d/external` 内，首次运行耗时较长；若下载失败，可切换网络或重试。
+
+### 4. 注册环境变量（可选但推荐）
+
+运行官方脚本为当前用户写入 `COCOS_X_ROOT`、`COCOS_CONSOLE_ROOT` 等环境变量，方便使用 cocos 命令行工具与后续脚本：
+
+```powershell
+py -2 cocos2d\setup.py
+```
+
+脚本将在 Windows 注册表（或 macOS/Linux 的 shell profile）中写入配置，并提示重启终端使之生效。若你只需 VS 工程，可跳过此步；需要运行 `cocos` 命令或构建 Android/iOS 平台时请务必执行。
+
+### 5. 打开解决方案并编译
+
+1. 双击 `proj.win32/StardewValley0.sln` 以 Visual Studio 打开解决方案。
+2. 在“解决方案资源管理器”中将 `StardewValley0` 设为启动项目（默认即为该项目）。
+3. 工具栏选择 **Win32** 平台，然后按需切换 `Debug` 或 `Release` 配置。
+4. 执行 **Build > Build Solution**（或快捷键 `Ctrl+Shift+B`）。
+	- 首次编译会在 `proj.win32/Debug.win32`（或 `Release.win32`）生成引擎 DLL、PDB 以及游戏可执行文件，并自动把 `Resources/` 目录复制到输出目录。
+
+### 6. 运行与调试
+
+- 在 Visual Studio 中按 `F5`（调试运行）或 `Ctrl+F5`（不调试运行）。
+- 也可在输出目录直接运行 `proj.win32/Debug.win32/StardewValley0.exe`。
+- 如果看到缺少 DLL/资源提示，重复执行 `build` 或手动删除输出目录后重新编译，确保 `download-deps.py` 成功拉取依赖。
+
+### 7. 常见问题
+
+| 问题 | 解决办法 |
+| --- | --- |
+| `fatal error C1083: Cannot open include file` | 确认已运行 `cocos2d\download-deps.py` 且 `external` 目录完整；必要时重新执行脚本。 |
+| `MSB8036: The Windows SDK version was not found` | 重新运行 Visual Studio Installer，勾选对应的 Windows 10/11 SDK。 |
+| 运行时报找不到资源 | 确认第一次构建是否成功，将 `Resources` 目录同步到 `proj.win32/Debug.win32/Resources`。 |
+
+完成以上步骤即可在本地构建并运行项目，后续只需保持仓库最新、必要时重新执行依赖下载脚本即可。
 
 ## 许可证与贡献
 
