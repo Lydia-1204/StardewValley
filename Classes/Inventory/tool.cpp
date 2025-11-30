@@ -5,11 +5,11 @@
  * Author:        王小萌 2351882
  * Update Date:   2024/12/21
  *********************************************************************************************************/
-#include "Inventory/tool.h"
+#include "Inventory/Tool.h"
 
-#include "World/map.h"
+#include "World/Map.h"
 #include "Characters/Player.h"
-#include "Inventory/itemManager.h"
+#include "Inventory/ItemManager.h"
 
 USING_NS_CC;
 

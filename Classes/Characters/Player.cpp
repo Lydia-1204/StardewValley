@@ -7,10 +7,10 @@
 * ********************************************************************************************************/
 #include "Characters/Player.h"
 #include "Systems/UIManager.h"
-#include "Inventory/tool.h"
-#include "Inventory/toolManager.h"
-#include "Characters/npcTemplate.h"
-#include "World/map.h"
+#include "Inventory/Tool.h"
+#include "Inventory/ToolManager.h"
+#include "Characters/NpcTemplate.h"
+#include "World/Map.h"
 #include <random>
 #include <chrono>
 

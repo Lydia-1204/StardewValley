@@ -1,4 +1,4 @@
-#include "npcTemplate.h"
+#include "NpcTemplate.h"
 #include <ctime>
 USING_NS_CC;
 

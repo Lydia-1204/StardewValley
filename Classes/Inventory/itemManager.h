@@ -11,7 +11,7 @@
 #include "cocos2d.h"
 
 #include "Characters/Player.h"
-#include "Inventory/item.h"
+#include "Inventory/Item.h"
 #include<vector>
 
 class ItemManager : public cocos2d::Node {

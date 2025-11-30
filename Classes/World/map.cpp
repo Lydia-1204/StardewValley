@@ -1,4 +1,4 @@
-#include "World/map.h"
+#include "World/Map.h"
 USING_NS_CC;
 
 MapManager* MapManager::instance = nullptr;

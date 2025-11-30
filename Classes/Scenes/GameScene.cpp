@@ -9,7 +9,7 @@
 #include "Scenes/GameScene.h"
 #include "Scenes/MenuScene.h" // �˵�����
 #include "Scenes/CreateErrorScene.h"
-#include "Characters/npcTemplate.h"
+#include "Characters/NpcTemplate.h"
 
 USING_NS_CC;
 

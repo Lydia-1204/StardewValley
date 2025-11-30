@@ -1,3 +1,3 @@
-#include "npcTemplate.h"
+#include "NpcTemplate.h"
 
 Sam* Sam::instance = nullptr;

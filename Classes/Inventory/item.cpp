@@ -5,11 +5,11 @@
  * Author:        王小萌 2351882
  * Update Date:   2024/12/21
  *********************************************************************************************************/
-#include "Inventory/item.h"
+#include "Inventory/Item.h"
 #include "Farming/Crop.h"
-#include "World/map.h"
+#include "World/Map.h"
 #include "Scenes/GameScene.h"
-#include "Characters/npcTemplate.h"
+#include "Characters/NpcTemplate.h"
 USING_NS_CC;
 
 Item* Item::create(ItemType type) {

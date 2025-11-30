@@ -22,7 +22,7 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-#include "main.h"
+#include "Main.h"
 #include "AppDelegate.h"
 #include "cocos2d.h"
 

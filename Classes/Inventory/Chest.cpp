@@ -6,8 +6,8 @@
  * Update Date:   2024/12/22
  *********************************************************************************************************/
 #include "Inventory/Chest.h"
-#include "Inventory/toolManager.h"
-#include "Inventory/itemManager.h"
+#include "Inventory/ToolManager.h"
+#include "Inventory/ItemManager.h"
 
 USING_NS_CC;
 Chest* Chest::instance = nullptr;

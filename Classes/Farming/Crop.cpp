@@ -9,9 +9,9 @@
 #include "Farming/Crop.h"
 USING_NS_CC;
 #include "Scenes/GameScene.h" // 包含 GameScene 的完整定义
-#include "World/map.h"
-#include "Inventory/toolManager.h"
-#include "Inventory/itemManager.h"
+#include "World/Map.h"
+#include "Inventory/ToolManager.h"
+#include "Inventory/ItemManager.h"
 
 Crop* Crop::create(GameScene* scene, const std::string& nickname) {
     Crop* crop = new (std::nothrow) Crop();

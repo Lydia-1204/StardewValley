@@ -45,7 +45,7 @@
     <ClCompile Include="..\Classes\App\AppDelegate.cpp">
       <Filter>src\App</Filter>
     </ClCompile>
-    <ClCompile Include="..\Classes\App\main.cpp">
+    <ClCompile Include="..\Classes\App\Main.cpp">
       <Filter>src\App</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\Characters\Abigail.cpp">
@@ -54,7 +54,7 @@
     <ClCompile Include="..\Classes\Characters\Elliott.cpp">
       <Filter>src\Characters</Filter>
     </ClCompile>
-    <ClCompile Include="..\Classes\Characters\NPC.cpp">
+    <ClCompile Include="..\Classes\Characters\Npc.cpp">
       <Filter>src\Characters</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\Characters\Player.cpp">
@@ -66,7 +66,7 @@
     <ClCompile Include="..\Classes\Characters\Shane.cpp">
       <Filter>src\Characters</Filter>
     </ClCompile>
-    <ClCompile Include="..\Classes\Characters\npcTemplate.cpp">
+    <ClCompile Include="..\Classes\Characters\NpcTemplate.cpp">
       <Filter>src\Characters</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\Farming\Crop.cpp">
@@ -75,16 +75,16 @@
     <ClCompile Include="..\Classes\Inventory\Chest.cpp">
       <Filter>src\Inventory</Filter>
     </ClCompile>
-    <ClCompile Include="..\Classes\Inventory\item.cpp">
+    <ClCompile Include="..\Classes\Inventory\Item.cpp">
       <Filter>src\Inventory</Filter>
     </ClCompile>
-    <ClCompile Include="..\Classes\Inventory\itemManager.cpp">
+    <ClCompile Include="..\Classes\Inventory\ItemManager.cpp">
       <Filter>src\Inventory</Filter>
     </ClCompile>
-    <ClCompile Include="..\Classes\Inventory\tool.cpp">
+    <ClCompile Include="..\Classes\Inventory\Tool.cpp">
       <Filter>src\Inventory</Filter>
     </ClCompile>
-    <ClCompile Include="..\Classes\Inventory\toolManager.cpp">
+    <ClCompile Include="..\Classes\Inventory\ToolManager.cpp">
       <Filter>src\Inventory</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\Scenes\CreateErrorScene.cpp">
@@ -108,10 +108,10 @@
     <ClCompile Include="..\Classes\Systems\UIManager.cpp">
       <Filter>src\Systems</Filter>
     </ClCompile>
-    <ClCompile Include="..\Classes\Systems\system.cpp">
+    <ClCompile Include="..\Classes\Systems\System.cpp">
       <Filter>src\Systems</Filter>
     </ClCompile>
-    <ClCompile Include="..\Classes\World\map.cpp">
+    <ClCompile Include="..\Classes\World\Map.cpp">
       <Filter>src\World</Filter>
     </ClCompile>
   </ItemGroup>
@@ -128,13 +128,13 @@
     <ClInclude Include="..\Classes\App\Constant.h">
       <Filter>src\App</Filter>
     </ClInclude>
-    <ClInclude Include="..\Classes\App\main.h">
+    <ClInclude Include="..\Classes\App\Main.h">
       <Filter>src\App</Filter>
     </ClInclude>
-    <ClInclude Include="..\Classes\App\resource.h">
+    <ClInclude Include="..\Classes\App\Resource.h">
       <Filter>src\App</Filter>
     </ClInclude>
-    <ClInclude Include="..\Classes\App\scaleSpriteToReference.h">
+    <ClInclude Include="..\Classes\App\ScaleSpriteToReference.h">
       <Filter>src\App</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\Characters\Abigail.h">
@@ -143,7 +143,7 @@
     <ClInclude Include="..\Classes\Characters\Elliott.h">
       <Filter>src\Characters</Filter>
     </ClInclude>
-    <ClInclude Include="..\Classes\Characters\NPC.h">
+    <ClInclude Include="..\Classes\Characters\Npc.h">
       <Filter>src\Characters</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\Characters\Player.h">
@@ -155,7 +155,7 @@
     <ClInclude Include="..\Classes\Characters\Shane.h">
       <Filter>src\Characters</Filter>
     </ClInclude>
-    <ClInclude Include="..\Classes\Characters\npcTemplate.h">
+    <ClInclude Include="..\Classes\Characters\NpcTemplate.h">
       <Filter>src\Characters</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\Farming\Crop.h">
@@ -164,16 +164,16 @@
     <ClInclude Include="..\Classes\Inventory\Chest.h">
       <Filter>src\Inventory</Filter>
     </ClInclude>
-    <ClInclude Include="..\Classes\Inventory\item.h">
+    <ClInclude Include="..\Classes\Inventory\Item.h">
       <Filter>src\Inventory</Filter>
     </ClInclude>
-    <ClInclude Include="..\Classes\Inventory\itemManager.h">
+    <ClInclude Include="..\Classes\Inventory\ItemManager.h">
       <Filter>src\Inventory</Filter>
     </ClInclude>
-    <ClInclude Include="..\Classes\Inventory\tool.h">
+    <ClInclude Include="..\Classes\Inventory\Tool.h">
       <Filter>src\Inventory</Filter>
     </ClInclude>
-    <ClInclude Include="..\Classes\Inventory\toolManager.h">
+    <ClInclude Include="..\Classes\Inventory\ToolManager.h">
       <Filter>src\Inventory</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\Scenes\CreateErrorScene.h">
@@ -197,10 +197,10 @@
     <ClInclude Include="..\Classes\Systems\UIManager.h">
       <Filter>src\Systems</Filter>
     </ClInclude>
-    <ClInclude Include="..\Classes\Systems\system.h">
+    <ClInclude Include="..\Classes\Systems\System.h">
       <Filter>src\Systems</Filter>
     </ClInclude>
-    <ClInclude Include="..\Classes\World\map.h">
+    <ClInclude Include="..\Classes\World\Map.h">
       <Filter>src\World</Filter>
     </ClInclude>
   </ItemGroup>

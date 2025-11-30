@@ -5,12 +5,12 @@
  * Author:        王小萌 2351882
  * Update Date:   2024/12/15
  *********************************************************************************************************/
-#include "Inventory/toolManager.h"
+#include "Inventory/ToolManager.h"
 #include "Characters/Player.h"
 #include "Inventory/Chest.h"
-#include "World/map.h"
+#include "World/Map.h"
 #include "Systems/UIManager.h"
-#include "Inventory/itemManager.h"
+#include "Inventory/ItemManager.h"
 USING_NS_CC;
 
 ToolManager* ToolManager::instance = nullptr;

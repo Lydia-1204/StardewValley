@@ -14,7 +14,7 @@
 #include "cocos2d.h"
 #include "Scenes/CreateErrorScene.h"
 #include "ui/CocosGUI.h"
-#include "App/scaleSpriteToReference.h" //��Է�������
+#include "App/ScaleSpriteToReference.h" //��Է�������
 USING_NS_CC;
 
 Scene* NewSelectScene::createScene() {

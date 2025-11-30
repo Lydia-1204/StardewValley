@@ -1,3 +1,3 @@
-#include "npcTemplate.h"
+#include "NpcTemplate.h"
 
 Shane* Shane::instance = nullptr;

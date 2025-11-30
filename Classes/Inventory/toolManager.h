@@ -9,7 +9,7 @@
 #ifndef TOOLMANAGER_H
 #define TOOLMANAGER_H
 #include "cocos2d.h"
-#include "Inventory/tool.h"
+#include "Inventory/Tool.h"
 #include "Characters/Player.h"
 #include<vector>
 class Chest;

@@ -11,10 +11,10 @@
 #include "App/Constant.h"
 #include "Inventory/Chest.h"
 #include "Characters/Player.h"
-#include "Inventory/itemManager.h"
-#include "Characters/npcTemplate.h"
-#include "World/map.h"
-#include "Inventory/toolManager.h"
+#include "Inventory/ItemManager.h"
+#include "Characters/NpcTemplate.h"
+#include "World/Map.h"
+#include "Inventory/ToolManager.h"
 
 USING_NS_CC;
 

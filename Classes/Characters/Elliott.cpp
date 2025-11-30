@@ -1,3 +1,3 @@
-#include "npcTemplate.h"
+#include "NpcTemplate.h"
 
 Elliott* Elliott::instance = nullptr;

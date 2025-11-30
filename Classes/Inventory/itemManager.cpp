@@ -7,9 +7,9 @@
  *********************************************************************************************************/
 
 
-#include "Inventory/item.h"
-#include "Inventory/itemManager.h"
-#include "World/map.h"
+#include "Inventory/Item.h"
+#include "Inventory/ItemManager.h"
+#include "World/Map.h"
 #include "Inventory/Chest.h"
 #include "Systems/UIManager.h"
 USING_NS_CC;

@@ -10,7 +10,7 @@
 #define CHEST_H
 
 #include "cocos2d.h"
-#include "World/map.h"
+#include "World/Map.h"
 
 class Tool;
 class Item;

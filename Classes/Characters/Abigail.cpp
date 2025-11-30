@@ -1,3 +1,3 @@
-#include "npcTemplate.h"
+#include "NpcTemplate.h"
 
 Abigail* Abigail::instance = nullptr;

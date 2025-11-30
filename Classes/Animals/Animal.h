@@ -11,8 +11,8 @@
 #include <string>
 #include "cocos2d.h"
 #include <chrono>
-#include "Inventory/itemManager.h"
-#include "Inventory/toolManager.h"
+#include "Inventory/ItemManager.h"
+#include "Inventory/ToolManager.h"
 class GameScene; // 前向声明 GameScene 类
 USING_NS_CC;
 

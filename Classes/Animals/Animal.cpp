@@ -8,7 +8,7 @@
 
 #include "Animals/Animal.h"
 #include "Scenes/GameScene.h"
-#include "World/map.h"
+#include "World/Map.h"
 USING_NS_CC;
 
 

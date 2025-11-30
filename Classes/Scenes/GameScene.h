@@ -12,13 +12,13 @@
 #include "cocos2d.h"
 #include <vector>
 #include "Characters/Player.h"
-#include "World/map.h"
+#include "World/Map.h"
 #include "Systems/UIManager.h"
-#include "Inventory/toolManager.h"
-#include "Inventory/itemManager.h"
+#include "Inventory/ToolManager.h"
+#include "Inventory/ItemManager.h"
 #include "Animals/Animal.h"
 #include "Farming/Crop.h"
-#include "Characters/npcTemplate.h"
+#include "Characters/NpcTemplate.h"
 #include "Inventory/Chest.h"
 USING_NS_CC;
 
