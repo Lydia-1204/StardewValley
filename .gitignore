@@ -1,0 +1,36 @@
+# Visual Studio workspace metadata和缓存
+.vs/
+*.suo
+*.user
+*.userosscache
+*.VC.db
+*.VC.opendb
+*.opendb
+*.ipch
+*.log
+
+# 预编译头/临时文件
+**/Debug.win32/*.pch
+*.FileListAbsolute.txt
+
+# Visual Studio工程文件（可自动生成）
+*.sln
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
+
+# 本地构建配置
+proj.win32/build-cfg.json
+**/CMakeCache.txt
+**/CMakeFiles/
+
+# MSBuild/VS输出目录
+**/Debug.win32/
+**/Release.win32/
+proj.win32/Debug/
+proj.win32/Release/
+
+# CMake/cocos构建目录
+/build/
+proj.win32/Debug.win32/
+proj.win32/Release.win32/
