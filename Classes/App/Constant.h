@@ -5,7 +5,6 @@
 
 #include <map>
 #include <string>
-#include "Scenes/SettingScene.h"
 #include "Scenes/MenuScene.h"
 constexpr int DESIGN_RESOLUTION_WIDTH = 1280;                               // 设计分辨率宽度
 constexpr int DESIGN_RESOLUTION_HEIGHT = 720;                               // 设计分辨率高度
