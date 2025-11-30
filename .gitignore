@@ -29,6 +29,7 @@ proj.win32/build-cfg.json
 **/Release.win32/
 proj.win32/Debug/
 proj.win32/Release/
+proj.win32/out/
 
 # CMake/cocos构建目录
 /build/
