@@ -1,11 +1,3 @@
-/****************************************************************
- * Project Name:  StardewValley
- * File Name:     Crop.h
- * File Function: 实现Crop类，完成农作物种植功能
- * Author:        刘彦含 2351591
- * Update Date:   2024/12/22
- ****************************************************************/
-
 #pragma once
 #ifndef CROP_H
 #define CROP_H
@@ -14,49 +6,70 @@
 #include <string>
 #include <vector>
 #include <functional>
+
+// 包含状态定义
+#include "CropState.h"
+
 USING_NS_CC;
-class GameScene; // 前向声明 GameScene 类
+
+class GameScene;
 
 class Crop : public Sprite {
 public:
-    enum class CropState {
-        Seed, Growing, Mature, Dead
-    };
+    Crop();
+    virtual ~Crop(); // 记得析构函数中释放 m_state
 
-    Crop();  // 默认构造函数
     static Crop* create(GameScene* scene, const std::string& nickname);
-    void setGameScene(GameScene* scene);
     bool init(const std::string& nickname);
+
+    // 核心循环
+    void update(float dt) override;
     void onMouseDown(EventMouse* event);
 
-    void grow();  // 更新生长状态
-    void water();  // 浇水
-    void fertilize();    // 施肥
-    void update(float dt);  // 每帧更新，根据时间更新生长状态
+    // 动作代理
+    void grow();
+    void water();
+    void fertilize();
+
+    // 状态机相关
+    void changeState(CropState* newState);
+
+    // 工具方法
     void changeTexture(const std::string& texturePath);
-    void removeSprite(float dt);
-    void deleteDead(Sprite* deadSprite);
+    void removeSprite(float dt); // 移除临时图标(如水滴)
+
+    // Getters / Setters
     void getGameScene(GameScene* scene);
-    CropState getState() const;
+    GameScene* getSceneRef() const { return gameScene; }
 
-    // 定义回调函数类型
+    // 回调
     using TextureChangedCallback = std::function<void(const std::string&)>;
-
-    // 设置回调函数
     void setTextureChangedCallback(const TextureChangedCallback& callback);
-   
+
+    // 声明友元，让状态类可以直接访问 Crop 的私有数据（简化代码）
+    friend class SeedState;
+    friend class GrowingState;
+    friend class MatureState;
+    friend class DeadState;
+
 private:
-    TextureChangedCallback textureChangedCallback;
-    GameScene* gameScene;  // 用于存储对GameScene的引用
+    CropState* m_state; // 当前状态指针
+
+    GameScene* gameScene;
     Sprite* myCrop;
-    CropState state;   // 当前状态
-    int age;           // 当前生长时间（以游戏中的秒为单位）
-    int newAge = 0;
-    int lastWateredTime;
-    float timeElapsed;
-    Sprite* deadSprite;
-    std::vector<std::string> stageTextures;  // 不同生长阶段的图片路径
-    bool watered;      // 是否浇水
+    Sprite* deadSprite; // 枯死时的额外精灵
+
+    // 数据变量
+    int age;             // 当前周期累积时间
+    int newAge;          // 总生长时间（决定阶段）
+    int lastWateredTime; // 缺水计时器
+    float timeElapsed;   // 帧时间累积
+    int deadTimes;       // 枯死后的移除倒计时 (替代原来的全局 times)
+
+    bool watered;        // 是否已浇水
+    std::vector<std::string> stageTextures;
+
+    TextureChangedCallback textureChangedCallback;
 };
 
 #endif // CROP_H

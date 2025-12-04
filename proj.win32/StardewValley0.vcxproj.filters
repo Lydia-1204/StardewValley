@@ -114,6 +114,9 @@
     <ClCompile Include="..\Classes\World\Map.cpp">
       <Filter>src\World</Filter>
     </ClCompile>
+    <ClCompile Include="..\Classes\Farming\States.cpp">
+      <Filter>src\Farming</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Classes\Animals\Animal.h">
@@ -202,6 +205,9 @@
     </ClInclude>
     <ClInclude Include="..\Classes\World\Map.h">
       <Filter>src\World</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Farming\CropState.h">
+      <Filter>src\Farming</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

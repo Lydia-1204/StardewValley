@@ -66,7 +66,7 @@ public:
     void togglePause();                    //切换暂停状态
     Player* getPlayer();                 // 获取玩家实例
 
-    void removeCrop();
+    void removeCrop(Crop* crop);
     void onCropTextureChanged(const std::string& texturePath);  // 声明函数
 
     Animal* getChicken() { return chicken; }
