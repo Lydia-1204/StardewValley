@@ -170,6 +170,7 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)\Resources\" /D /E /I /F /Y
     <ClCompile Include="..\Classes\Characters\Shane.cpp" />
     <ClCompile Include="..\Classes\Characters\NpcTemplate.cpp" />
     <ClCompile Include="..\Classes\Farming\Crop.cpp" />
+    <ClCompile Include="..\Classes\Farming\States.cpp" />
     <ClCompile Include="..\Classes\Inventory\Chest.cpp" />
     <ClCompile Include="..\Classes\Inventory\Item.cpp" />
     <ClCompile Include="..\Classes\Inventory\ItemManager.cpp" />
@@ -201,6 +202,7 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)\Resources\" /D /E /I /F /Y
     <ClInclude Include="..\Classes\Characters\Shane.h" />
     <ClInclude Include="..\Classes\Characters\NpcTemplate.h" />
     <ClInclude Include="..\Classes\Farming\Crop.h" />
+    <ClInclude Include="..\Classes\Farming\CropState.h" />
     <ClInclude Include="..\Classes\Inventory\Chest.h" />
     <ClInclude Include="..\Classes\Inventory\Item.h" />
     <ClInclude Include="..\Classes\Inventory\ItemManager.h" />

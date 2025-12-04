@@ -187,13 +187,13 @@ bool GameScene::init(int& selectedCharacter,const std::string& nickname ) {
                 crop->setPosition(mapManager->getCropStartPos().x + i * 16, mapManager->getCropStartPos().y - j * 16);  // 设置作物的位置
                 myCrops.push_back(crop); // 传递this指针给Crop
                 this->addChild(crop);  // 将作物添加到场景中 
-                // 设置回调函数
-                CCLOG("Crop %d created", i);
-                crop->setTextureChangedCallback([this](const std::string& texturePath) {
-                    onCropTextureChanged(texturePath);
-                    //  isCropAlive = true;  // 初始化标志为 true
+                //// 设置回调函数
+                //CCLOG("Crop %d created", i);
+                //crop->setTextureChangedCallback([this](const std::string& texturePath) {
+                //    onCropTextureChanged(texturePath);
+                //    //  isCropAlive = true;  // 初始化标志为 true
 
-                    });
+                //    });
             }
         }
       
@@ -400,37 +400,37 @@ void GameScene::update(float dt) {
         uiManager->update(dt);
     }
 
-    for (int i = 0; i < myCrops.size(); i++) {
+    /*for (int i = 0; i < myCrops.size(); i++) {
         if (myCrops[i]) {
             myCrops[i]->update(dt);
         }
-    }
+    }*/
   
 }
 
-void GameScene::removeCrop() {
-    for (int i = 0; i < myCrops.size(); i++) {
-        if (myCrops[i]) {
-            myCrops[i]->removeFromParentAndCleanup(true);
-            myCrops[i] = nullptr;  // 将指针设置为 nullptr
-           // isCropAlive = false;  // 更新标志为 false
-        }
+void GameScene::removeCrop(Crop* cropToRemove) {
+    if (!cropToRemove) return;
+
+    // 1. 从 myCrops 容器中找到并移除该指针
+    auto it = std::find(myCrops.begin(), myCrops.end(), cropToRemove);
+    if (it != myCrops.end()) {
+        myCrops.erase(it); // 从 vector 中移除
     }
+
+    // 2. 从场景中移除并清理内存
+    // 注意：Crop 内部的状态可能会调用 removeFromParent，
+    // 为了安全起见，检查一下 parent 是否还在
+    if (cropToRemove->getParent()) {
+        cropToRemove->removeFromParentAndCleanup(true);
+    }
+
+    CCLOG("A specific crop has been removed from GameScene.");
 }
 
 void GameScene::onCropTextureChanged(const std::string& texturePath) {
-    // 根据 texturePath 更新 GameScene 中的显示
-    // 根据 texturePath 更新 GameScene 中的显示
-    for (int i = 0; i < myCrops.size(); i++) {
-        if (myCrops[i]) {
-            auto texture = cocos2d::Director::getInstance()->getTextureCache()->addImage(texturePath);
-            if (texture) {
-                myCrops[i]->setTexture(texture);  // 更新 myCrop 的纹理
-            }
-        }
-    }
-    CCLOG("Crop texture changed to: %s", texturePath.c_str());
-    CCLOG("Crop texture changed to: %s", texturePath.c_str());
+    // 现在的 Crop 类自己管理纹理，GameScene 不需要干涉。
+    // 函数体留空即可，或者为了调试保留一句 Log
+    CCLOG("Legacy callback ignored: Texture changed to %s", texturePath.c_str());
 }
 
 Player* GameScene::getPlayer() {

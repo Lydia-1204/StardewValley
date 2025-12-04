@@ -30,12 +30,15 @@ public:
     Chest* chest;
     static ToolManager* getInstance(int selectedCharacter, const std::string& nickname);
     ToolManager() :chest() {}
+
+    std::vector<Tool*> tools;
+    int selectedToolIndex;
 private:
 
     static ToolManager* instance;
     Player* player;
-    std::vector<Tool*> tools;         // 工具栏中的工具
-    int selectedToolIndex;            // 当前选中的工具索引
+    //std::vector<Tool*> tools;         // 工具栏中的工具
+    //int selectedToolIndex;            // 当前选中的工具索引
     cocos2d::Sprite* selectionBox;    // 选中工具的高亮框
     void updateSelectionBox();        // 更新选中框位置
     void initKeyboardListener();
