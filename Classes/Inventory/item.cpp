@@ -10,6 +10,10 @@
 #include "World/Map.h"
 #include "Scenes/GameScene.h"
 #include "Characters/NpcTemplate.h"
+#include "Characters/Elliott.h"
+#include "Characters/Sam.h"
+#include "Characters/Shane.h"
+#include "Characters/Abigail.h"
 USING_NS_CC;
 
 Item* Item::create(ItemType type) {

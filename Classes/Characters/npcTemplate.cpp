@@ -1,7 +1,33 @@
 #include "NpcTemplate.h"
+#include "Elliott.h"
+#include "Sam.h"
+#include "Shane.h"
+#include "Abigail.h"
 #include <ctime>
 USING_NS_CC;
 
+class PatrolStrategy : public NpcMoveStrategy {
+public:
+    explicit PatrolStrategy(float segmentSeconds = 3.5f) : duration(segmentSeconds) {}
+    void apply(NpcTemplate* npc) override {
+        Vec2 startPosition = npc->getPosition();
+        std::vector<Vec2> path = {
+            Vec2(startPosition.x, startPosition.y),
+            Vec2(startPosition.x + 100, startPosition.y),
+            Vec2(startPosition.x + 50, startPosition.y),
+            Vec2(startPosition.x, startPosition.y)
+        };
+        npc->moveAlongPath(path);
+    }
+private:
+    float duration;
+};
+
+class StandStillStrategy : public NpcMoveStrategy {
+public:
+    void apply(NpcTemplate* npc) override {
+    }
+};
 
 // 析构函数
 NpcTemplate::~NpcTemplate() {
@@ -57,8 +83,13 @@ bool NpcTemplate::init(NPCType type, Vec2 position) {
         this->setTextureRect(Rect(0, 0, widthSegment, heightSegment));
     }
 
+    float npcScale = (type == NPCType::SAM || type == NPCType::ELLIOTT) ? 1.3f : 1.5f;
+    this->setScale(npcScale);
+
     this->setPosition(position);
     this->scheduleUpdate();
+
+    setMoveStrategy(std::make_shared<PatrolStrategy>());
 
     //// 创建显示好感度的框
     //showAffectionBox();
@@ -69,66 +100,6 @@ bool NpcTemplate::init(NPCType type, Vec2 position) {
 NPCType NpcTemplate::getType() const {
     return type;
 }
-
-/*
-NpcTemplate* NpcTemplate::create(NPCType npcType, Vec2 startPoint) {
-    NpcTemplate* npc = new (std::nothrow) NpcTemplate(npcType, startPoint);
-    if (npc && npc->init()) {
-        npc->autorelease();  // 确保对象在不再使用时能够自动释放
-        return npc;
-    }
-    CC_SAFE_DELETE(npc);  // 如果初始化失败，则删除对象
-    return nullptr;
-}
-*/
-
-
-/***********************************************
-NpcTemplate* NpcTemplate::getNpcInstance(NPCType npcType, Vec2 startPoint = cocos2d::Vec2(0, 0)) {
-    // 检查是否已有该类型的 NPC 实例
-    for (NpcTemplate* npc : npcInstances) {
-        if (npc->getType() == npcType) {
-            return npc;
-        }
-    }
-
-    // 如果没有找到该类型的实例，创建新的 NPC 实例
-    NpcTemplate* newNpc = NpcTemplate::create(npcType, startPoint);
-    npcInstances.push_back(newNpc);  // 将新创建的 NPC 加入 npcInstances 向量中
-    return newNpc;
-    /*
-    if (npcInstances.find(npcType) == npcInstances.end()) {
-        // 如果该类型的实例还没有创建
-        NpcTemplate* instance = nullptr;
-        switch (npcType) {
-        case NPCType::ELLIOTT:
-            instance = Elliott::getInstance(startPoint);
-            break;
-        case NPCType::SAM:
-            instance = Sam::getInstance(startPoint);
-            break;
-        case NPCType::ABIGAIL:
-            instance = Abigail::getInstance(startPoint);
-            break;
-        case NPCType::SHANE:
-            instance = Shane::getInstance(startPoint);
-            break;
-        }
-        npcInstances[npcType] = instance;
-    }
-    return npcInstances[npcType];    
-}
-*/
-
-
-/*
-NpcTemplate* NpcTemplate::getInstance() {
-    if (instance == nullptr) { // 如果实例不存在，则创建
-        instance = NpcTemplate::create();
-    }
-    return instance; // 返回唯一实例
-}
-*/
 
 void NpcTemplate::addGeneralDialogue() {
     this->addDialogue("general", "The sun feels nice today.");
@@ -141,60 +112,9 @@ void NpcTemplate::addGeneralDialogue() {
     this->addDialogue("general", "Every day is a new adventure in this little town.");
 }
 
-/*
-
-void NpcTemplate::createAndPositionNPCs() {
-    //NpcTemplate* npc = NpcTemplate::create(type, movePathStartPoint);
-    //npc->setPosition(movePathStartPoint);
-    npc->setScale(1.4f);
-    this->addChild(npc);
-    npcInstances.push_back(npc);
-    CCLOG("Added NPC : [%s] at position: (%f, %f)", type, movePathStartPoint.x,movePathStartPoint.y);
-
-    // 初始化对话
-    npc->addDialogue("general", "The sun feels nice today.");
-    npc->addDialogue("general", "Did you know the market is open?");
-    npc->addDialogue("general", "What a beautiful day to be outside, don't you think?");
-    npc->addDialogue("general", "The flowers are blooming wonderfully this season.");
-    npc->addDialogue("general", "Farming must keep you busy. Do you ever get a day off?");
-    npc->addDialogue("general", "The town feels livelier with you around!");
-    npc->addDialogue("general", "Sometimes I wonder what lies beyond the mountains.");
-    npc->addDialogue("general", "Every day is a new adventure in this little town.");
-    
-    npc->addDialogue("general", "The weather looks perfect for fishing today!");
-    npc->addDialogue("general", "It’s amazing how quickly the seasons change, isn’t it?");
-    npc->addDialogue("general", "I heard someone found an old treasure map in the attic!");
-    npc->addDialogue("general", "Nothing beats the smell of freshly baked bread in the morning.");
-    npc->addDialogue("general", "I wonder how deep the mines go. Have you explored them yet?");
-    
-
-
-    
-    npc->addDialogue("task", "Could you plant a crop for me?\n I need it for a recipe.\n$350");
-    npc->addDialogue("task", "The mines hold many secrets. \nCan you explore them and bring back something interesting?\n$1000");
-    npc->addDialogue("task", "Could you send a gift to [NPC]? she is around your home, \nHe or she will be happy!\n$450");
-    npc->addDialogue("task", "Your tools are looking a bit worn. \nMaybe it's time to buy an upgrade?\n$100");
-    npc->addDialogue("task", "There’s an event happening in town. \nCan you attend and represent us?\n$500");            
-    
-
-
-    srand(static_cast<unsigned>(time(0)));
-
-    // 调用initialmove让NPC开始移动
-    npc->initialmove();
-
-    // 如果需要在这里设置NPC子图Rect，也可以直接调用setNPCDisplayRect
-    // 例如：
-    // npc->setNPCDisplayRect(Rect(0, 0, 32, 48)); // 截取32x48区域
-}
-*/
-
-
 // NPC的update函数，每帧调用，用于更新方向和其他状态
 void NpcTemplate::update(float dt) {
-    // 更新好感度及对应对话
-    if (affection >= 30 && affection < 70) {
-        //30~69——friendship
+    if (affection >= 30 && affection < 70 && !friendshipInjected) {
         addDialogue("relationship_friendship", "I always enjoy spending time with you. Thanks for being here.");
         addDialogue("relationship_friendship", "You’re such a reliable person! The town is lucky to have you.");
         addDialogue("relationship_friendship", "I feel like I can always count on you. It means a lot.");
@@ -202,9 +122,10 @@ void NpcTemplate::update(float dt) {
         addDialogue("relationship_friendship", "I hope you know how much your support means to me.");
         addDialogue("relationship_friendship", "Every time I see you, my day feels brighter.");
         relationship = "friendship";
+        friendshipInjected = true;
+        romanticInjected = false;
     }
-    else if (affection >= 70 ) {
-        //30~69——friendship
+    else if (affection >= 70 && !romanticInjected) {
         addDialogue("relationship_romantic", "I feel so at ease when I’m with you, like everything is just right.");
         addDialogue("relationship_romantic", "You’re always on my mind. It’s a little embarrassing, but I’m glad.");
         addDialogue("relationship_romantic", "I think we share something really special. It’s hard to put into words.");
@@ -212,14 +133,12 @@ void NpcTemplate::update(float dt) {
         addDialogue("relationship_romantic", "Being with you makes me feel like I’m the luckiest person in the world.");
         addDialogue("relationship_romantic", "You’ve stolen my heart completely, and I wouldn’t want it any other way.");
         addDialogue("relationship_romantic", "Thank you for always believing in me. You’re my everything.");
-        //并删除friendship的对话
         removeDialogues("relationship_friendship");
-
         relationship = "romantic";
-        //setRelationship("romantic");
+        romanticInjected = true;
+        friendshipInjected = false;
     }
-
-
+    
     // 更新方向，这里可以加逻辑决定贴图帧变化
     updateDirection(dt);
 }
@@ -230,56 +149,32 @@ void NpcTemplate::updateDirection(float dt) {
     Vec2 direction = currentPosition - lastPosition;
     lastPosition = currentPosition;
 
-    // 根据direction确定方向帧
-    // 下(down): col=0
-    // 左(left): col=1
-    // 右(right):col=2
-    // 上(up):   col=3
-
-    Rect rectForDirection;
-
-    int col = 0; // 默认向下
-    // 若NPC静止，不修改贴图
+    int col = 0;
     if (direction.x > 0) {
-        // 向右移动
-        rectForDirection = Rect(0, heightSegment, widthSegment, heightSegment); // 假设右移动方向在第2列
+        col = 2;
     }
     else if (direction.x < 0) {
-        // 向左移动
-        rectForDirection = Rect(0, heightSegment * 3, widthSegment, heightSegment); // 假设左移动方向在第3列
+        col = 1;
     }
     else if (direction.y > 0) {
-        // 向上移动
-        rectForDirection = Rect(0, heightSegment * 2, widthSegment, heightSegment); // 假设上移动方向在第4列
+        col = 3;
     }
     else if (direction.y < 0) {
-        // 向下移动
-        rectForDirection = Rect(0, 0, widthSegment, heightSegment); // 假设下移动方向在第1列
+        col = 0;
     }
 
-    // 我们用第一行(row=0)的帧作为静态方向显示
     int row = 0;
     float x = col * widthSegment;
     float y = row * heightSegment;
-    // 设置对应方向的Frame区域
-// 更新NPC的纹理区域
-    this->setTextureRect(rectForDirection);
+    this->setTextureRect(Rect(x, y, widthSegment, heightSegment));
 }
 
 // 初始化NPC自动移动。定义一条循环路径并沿其移动
 void NpcTemplate::initialmove() {
-    Vec2 startPosition = this->getPosition();
-    lastPosition = startPosition;
-
-    // 定义一条循环移动路径
-    std::vector<Vec2> path = {
-        Vec2(startPosition.x, startPosition.y),
-        Vec2(startPosition.x + 100, startPosition.y),
-        Vec2(startPosition.x + 50, startPosition.y),
-        Vec2(startPosition.x, startPosition.y)
-    };
-
-    moveAlongPath(path);
+    lastPosition = this->getPosition();
+    if (moveStrategy) {
+        moveStrategy->apply(this);
+    }
 }
 
 // NPC沿路径移动的函数
@@ -299,6 +194,18 @@ void NpcTemplate::moveAlongPath(const std::vector<Vec2>& path) {
 
     auto repeatAction = RepeatForever::create((ActionInterval*)sequence);
     this->runAction(repeatAction);
+}
+
+void NpcTemplate::setMoveStrategy(std::shared_ptr<NpcMoveStrategy> strategy) {
+    moveStrategy = std::move(strategy);
+}
+
+void NpcTemplate::usePatrolStrategy(float segmentSeconds) {
+    setMoveStrategy(std::make_shared<PatrolStrategy>(segmentSeconds));
+}
+
+void NpcTemplate::useStandStillStrategy() {
+    setMoveStrategy(std::make_shared<StandStillStrategy>());
 }
 
 void NpcTemplate::setAffection(int affection) {
@@ -388,45 +295,38 @@ void NpcTemplate::showAffectionBox() {
 
 }
 
-//*********************************************************************************88888
 void NpcTemplate::addDialogue(const std::string& category, const std::string& dialogue) {
     categorizedDialogues[category].push_back(dialogue);
 }
 
-//***************************************************************************
 std::string NpcTemplate::getRandomDialogue()  {
+    static std::mt19937 rng{ std::random_device{}() };
 
-    // 使用随机数生成器
-    std::srand(std::time(0));  // 设置随机种子
-
-    // 1. 随机选择一个分类（键）
     std::vector<std::string> categories;
     for (const auto& pair : categorizedDialogues) {
-        categories.push_back(pair.first);  // 将所有分类名称（键）添加到一个 vector 中
+        if (pair.first != "task") {
+            categories.push_back(pair.first);
+        }
     }
 
-    // 随机选择一个分类的索引
-    int categoryIndex = std::rand() % categories.size();
-    std::string randomCategory = categories[categoryIndex];
-    while (randomCategory == "task") {
-        //如果随机到了task则重新来
-        categoryIndex = std::rand() % categories.size();
-        randomCategory = categories[categoryIndex];
+    if (categories.empty()) {
+        auto itTask = categorizedDialogues.find("task");
+        if (itTask != categorizedDialogues.end() && !itTask->second.empty()) {
+            return itTask->second.front();
+        }
+        return std::string();
     }
 
-    // 2. 从该分类对应的 vector 中随机选择一个对话
+    std::uniform_int_distribution<size_t> distCat(0, categories.size() - 1);
+    std::string randomCategory = categories[distCat(rng)];
     const std::vector<std::string>& dialogues = categorizedDialogues[randomCategory];
-
-    // 随机选择一个对话的索引
-    int dialogueIndex = std::rand() % dialogues.size();
-    std::string randomDialogue = dialogues[dialogueIndex];
-    
-    //返回随机对话
-    return randomDialogue;
+    if (dialogues.empty()) {
+        return std::string();
+    }
+    std::uniform_int_distribution<size_t> distDlg(0, dialogues.size() - 1);
+    return dialogues[distDlg(rng)];
 }
 
-
-//******************************************************************88888
 void NpcTemplate::displayDialogueBox(int index) {
     isOpenDialogueBox = true;
     std::string dialogue, npcDialogue;
@@ -534,13 +434,6 @@ void NpcTemplate::taskFinish() {
     displayDialogueBox(1);  //task的索引1存放完成语句
     //****************可以增加经验、金钱等等*********************
     taskFinishReward();
-}
-
-void NpcTemplate::taskFinishReward(){
-    //******************************************************************
-    int x;
-    UIManager::getInstance(x, "")->setMoney(1000);
-    this->affection += 40;
 }
 
 
