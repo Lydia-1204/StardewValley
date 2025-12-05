@@ -164,11 +164,10 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)\Resources\" /D /E /I /F /Y
     <ClCompile Include="..\Classes\App\Main.cpp" />
     <ClCompile Include="..\Classes\Characters\Abigail.cpp" />
     <ClCompile Include="..\Classes\Characters\Elliott.cpp" />
-    <ClCompile Include="..\Classes\Characters\Npc.cpp" />
+    <ClCompile Include="..\Classes\Characters\npcTemplate.cpp" />
     <ClCompile Include="..\Classes\Characters\Player.cpp" />
     <ClCompile Include="..\Classes\Characters\Sam.cpp" />
     <ClCompile Include="..\Classes\Characters\Shane.cpp" />
-    <ClCompile Include="..\Classes\Characters\NpcTemplate.cpp" />
     <ClCompile Include="..\Classes\Farming\Crop.cpp" />
     <ClCompile Include="..\Classes\Farming\States.cpp" />
     <ClCompile Include="..\Classes\Inventory\Chest.cpp" />
@@ -182,8 +181,10 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)\Resources\" /D /E /I /F /Y
     <ClCompile Include="..\Classes\Scenes\MenuScene.cpp" />
     <ClCompile Include="..\Classes\Scenes\NewSelectScene.cpp" />
     <ClCompile Include="..\Classes\Scenes\SaveSelectScene.cpp" />
+    <ClCompile Include="..\Classes\App\SceneRouter.cpp" />
+    <ClCompile Include="..\Classes\App\AudioService.cpp" />
+    <ClCompile Include="..\Classes\App\SceneUIFacade.cpp" />
     <ClCompile Include="..\Classes\Systems\UIManager.cpp" />
-    <ClCompile Include="..\Classes\Systems\System.cpp" />
     <ClCompile Include="..\Classes\World\Map.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -196,11 +197,10 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)\Resources\" /D /E /I /F /Y
     <ClInclude Include="..\Classes\App\ScaleSpriteToReference.h" />
     <ClInclude Include="..\Classes\Characters\Abigail.h" />
     <ClInclude Include="..\Classes\Characters\Elliott.h" />
-    <ClInclude Include="..\Classes\Characters\Npc.h" />
+    <ClInclude Include="..\Classes\Characters\npcTemplate.h" />
     <ClInclude Include="..\Classes\Characters\Player.h" />
     <ClInclude Include="..\Classes\Characters\Sam.h" />
     <ClInclude Include="..\Classes\Characters\Shane.h" />
-    <ClInclude Include="..\Classes\Characters\NpcTemplate.h" />
     <ClInclude Include="..\Classes\Farming\Crop.h" />
     <ClInclude Include="..\Classes\Farming\CropState.h" />
     <ClInclude Include="..\Classes\Inventory\Chest.h" />
@@ -214,8 +214,10 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)\Resources\" /D /E /I /F /Y
     <ClInclude Include="..\Classes\Scenes\MenuScene.h" />
     <ClInclude Include="..\Classes\Scenes\NewSelectScene.h" />
     <ClInclude Include="..\Classes\Scenes\SaveSelectScene.h" />
+    <ClInclude Include="..\Classes\App\SceneRouter.h" />
+    <ClInclude Include="..\Classes\App\AudioService.h" />
+    <ClInclude Include="..\Classes\App\SceneUIFacade.h" />
     <ClInclude Include="..\Classes\Systems\UIManager.h" />
-    <ClInclude Include="..\Classes\Systems\System.h" />
     <ClInclude Include="..\Classes\World\Map.h" />
   </ItemGroup>
   <ItemGroup>

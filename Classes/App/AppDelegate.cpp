@@ -26,6 +26,8 @@
 #include "App/Constant.h"
 #include "Scenes/LoadingScene.h"
 #include "Scenes/CreateErrorScene.h"
+#include "App/AudioService.h"
+#include "App/SceneRouter.h"
 // #define USE_AUDIO_ENGINE 1
 // #define USE_SIMPLE_AUDIO_ENGINE 1
 
@@ -117,23 +119,17 @@ bool AppDelegate::applicationDidFinishLaunching() {
     }
 
     // 加载音乐
-    CocosDenshion::SimpleAudioEngine::getInstance()->preloadEffect("E:/StardewValley/Resources/Stardew Valley Overture.mp3");
+    AudioService::getInstance()->preloadEffect("../Resources/Stardew Valley Overture.mp3");
    
     register_all_packages();
     try {
-        // create a scene. it's an autorelease object
-        auto scene = LoadingScene::createScene();
-
-        // run
-        director->runWithScene(scene);
+        SceneRouter::getInstance()->goTo("Loading");
     }
     catch (const std::exception &e) {
         //捕获异常 记录日志
         CCLOG("Exception caught : %s", e.what());
 
-        //加载备用错误界面
-        auto errorScene = ErrorSceneHelper::createErrorScene(e.what());
-        Director::getInstance()->replaceScene(errorScene);
+        SceneRouter::getInstance()->goToError(e.what());
     }
    
     return true;

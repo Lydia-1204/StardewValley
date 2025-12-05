@@ -9,7 +9,8 @@
 
 #include "Scenes/CreateErrorScene.h"
 
-#include "Scenes/MenuScene.h" // ��Ҫ�������˵�
+#include "Scenes/MenuScene.h"
+#include "App/SceneRouter.h"
 
 USING_NS_CC;
 
@@ -30,13 +31,11 @@ Scene* ErrorSceneHelper::createErrorScene(const std::string& errorMessage) {
         Label::createWithTTF("Return to Main Menu", "fonts/Marker Felt.ttf", 24),
         [](Ref* sender) {
             try {
-                // 返回主菜单
-                auto menuScene = MenuScene::createScene();
-                Director::getInstance()->replaceScene(TransitionFade::create(0.5f, menuScene, Color3B::BLACK));
+                SceneRouter::getInstance()->goTo("Menu");
             }
             catch (const std::exception& e) {
                 CCLOG("Retry failed: %s", e.what());
-                Director::getInstance()->end(); // 无法恢复主界面时直接退出游戏
+                Director::getInstance()->end();
             }
         });
 
