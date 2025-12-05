@@ -13,6 +13,10 @@
 #include "Characters/Player.h"
 #include "Inventory/ItemManager.h"
 #include "Characters/NpcTemplate.h"
+#include "Characters/Elliott.h"
+#include "Characters/Sam.h"
+#include "Characters/Shane.h"
+#include "Characters/Abigail.h"
 #include "World/Map.h"
 #include "Inventory/ToolManager.h"
 
@@ -79,6 +83,10 @@ bool UIManager::init(int selectedCharacter, const std::string& nickname) {
     abigail->setName("abigail");
     this->addChild(shane);
     shane->setName("shane");
+    elliott->usePatrolStrategy();
+    sam->useStandStillStrategy();
+    abigail->usePatrolStrategy();
+    shane->useStandStillStrategy();
     elliott->initialmove();
     sam->initialmove();
     abigail->initialmove();

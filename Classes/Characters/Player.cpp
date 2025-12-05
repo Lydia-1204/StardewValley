@@ -10,6 +10,10 @@
 #include "Inventory/Tool.h"
 #include "Inventory/ToolManager.h"
 #include "Characters/NpcTemplate.h"
+#include "Characters/Elliott.h"
+#include "Characters/Sam.h"
+#include "Characters/Shane.h"
+#include "Characters/Abigail.h"
 #include "World/Map.h"
 #include <random>
 #include <chrono>
@@ -319,19 +323,18 @@ void Player::onMouseDown(Event* event) {
         }
 
 
-        // 获取鼠标点击的位置
-        Vec2 mousePosition = mouseEvent->getLocation();
-        mousePosition.y = MapManager::getInstance()->getCurrentMapSize(1).height - mousePosition.y;
-        mousePosition.y *= -1;
+        Vec2 mousePosInView = mouseEvent->getLocationInView();
+        float screenHeight = Director::getInstance()->getOpenGLView()->getFrameSize().height;
+        Vec2 mousePosBottomLeft = Vec2(mousePosInView.x, screenHeight - mousePosInView.y);
+        Vec2 mousePosInDesign = Director::getInstance()->convertToGL(mousePosBottomLeft);
 
-        // 检查是否点击了 NPC(单击聊天）
+        // 检查是否点击了 NPC（必须点击在 NPC 贴图范围内）
         for (auto npc : npcs) {
             if (!npc) continue;
-
             Rect npcBoundingBox = npc->getBoundingBox();
-            if (getPlayerPosition().distance(npc->getPosition()) < 50.0f && mousePosition.distance(npc->getPosition()) && npc->isOpenDialogueBox == false) {
-                //if(isNearDistance(mousePosition, npc->getPosition(), 40)){
-                CCLOG("click!!!");
+            Vec2 mousePosInParent = npc->getParent()->convertToNodeSpace(mousePosInDesign);
+            if (getPlayerPosition().distance(npc->getPosition()) < 50.0f && npcBoundingBox.containsPoint(mousePosInParent) && !npc->isOpenDialogueBox) {
+                CCLOG("click npc: %s", npc->name.c_str());
                 npc->displayDialogueBox(0);
                 break;
             }
@@ -366,14 +369,14 @@ void Player::onMouseDown(Event* event) {
     }
     //右键
     if (mouseEvent->getMouseButton() == EventMouse::MouseButton::BUTTON_RIGHT) {
-        // 获取鼠标点击的屏幕坐标（这是一个 Vec2 对象）
-        Vec2 mousePosition = mouseEvent->getLocation();
-        mousePosition.y = MapManager::getInstance()->getCurrentMapSize(1).height - mousePosition.y;
-        mousePosition.y *= -1;
+        Vec2 mousePosInView = mouseEvent->getLocationInView();
+        float screenHeight = Director::getInstance()->getOpenGLView()->getFrameSize().height;
+        Vec2 mousePosBottomLeft = Vec2(mousePosInView.x, screenHeight - mousePosInView.y);
+        Vec2 mousePosInDesign = Director::getInstance()->convertToGL(mousePosBottomLeft);
         // 判断是否点击了 NPC
         for (NpcTemplate* npc : npcs) {
-            float distance = mousePosition.distance(npc->getPosition());
-            //if (isNearDistance(mousePosition, npc->getPosition(), 40)) {
+            Vec2 mousePosInParent = npc->getParent()->convertToNodeSpace(mousePosInDesign);
+            float distance = mousePosInParent.distance(npc->getPosition());
             if (distance < 50.0f) {
                 // 点击到了 NPC，显示好感度面板
                 npc->showAffectionBox();
@@ -434,11 +437,9 @@ void Player::onMouseMove(Event* event) {
     for (auto npc : npcs) {
         if (!npc) continue;
 
-        // 获取 NPC 的包围框
         Rect npcWorldBoundingBox = npc->getBoundingBox();
-
-        // 判断鼠标是否在 NPC 包围框内
-        if (npcWorldBoundingBox.containsPoint(mousePosInDesign)) {
+        Vec2 mousePosInParent = npc->getParent()->convertToNodeSpace(mousePosInDesign);
+        if (npcWorldBoundingBox.containsPoint(mousePosInParent)) {
             // 鼠标在NPC上   
             updateDialogPosition(npc);
             float distance = getPlayerPosition().distance(npc->getPosition());
