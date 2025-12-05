@@ -9,12 +9,14 @@
 
 // 创建场景
 #include "Scenes/MenuScene.h"
-#include "Scenes/NewSelectScene.h"        // ����Ϸ����
-#include "Scenes/GameScene.h"    // �浵ѡ�����
+#include "Scenes/NewSelectScene.h"        
+#include "Scenes/GameScene.h"    
 #include "cocos2d.h"
 #include "Scenes/CreateErrorScene.h"
+#include "App/SceneRouter.h"
+#include "App/SceneUIFacade.h"
 #include "ui/CocosGUI.h"
-#include "App/ScaleSpriteToReference.h" //��Է�������
+#include "App/ScaleSpriteToReference.h" 
 USING_NS_CC;
 
 Scene* NewSelectScene::createScene() {
@@ -59,41 +61,29 @@ bool NewSelectScene::init() {
         throw std::runtime_error("Failed to load CharacterSelectBackground.png!");
     }
     // 2. 添加返回按钮
-    auto backButton = MenuItemImage::create(
+    auto backButton = SceneUIFacade::getInstance()->createLabeledButton(
         "../Resources/LooseSprites-73/DialogBoxGreen..png",
-        "../Resources/LooseSprites-73/DialogBoxGreen..png",
+        " Back ",
+        "../Resources/fonts/Marker Felt.ttf",
+        40,
+        screenSize,
+        0.10f,
+        0.10f,
+        Vec2(screenSize.width * 0.1f, screenSize.height * 0.9f),
         [](Ref* sender) {
             try {
-                auto menuScene = MenuScene::createScene();
-                Director::getInstance()->replaceScene(TransitionFade::create(0.5f, menuScene, Color3B::WHITE));
+                SceneRouter::getInstance()->goTo("Menu");
             }
             catch (const std::exception& e) {
-                //捕获异常 记录日志
                 CCLOG("Exception caught : %s", e.what());
-                //加载备用错误界面
-                auto errorScene = ErrorSceneHelper::createErrorScene(e.what());
-                Director::getInstance()->replaceScene(errorScene);
+                SceneRouter::getInstance()->goToError(e.what());
             }
-        });
+        }
+    );
 
     if (!backButton) {
         throw std::runtime_error("Failed to load BackButton resources!");
     }
-    //按钮尺寸
-    const auto buttonSize = backButton->getContentSize();
-
-    // 计算宽度和高度的缩放比例
-    auto scaleX = (screenSize.width / 10) / buttonSize.width;
-    auto scaleY = (screenSize.height / 10) / buttonSize.height;
-    //scale = std::min(scaleX, scaleY);
-
-    backButton->setScale(scaleX, scaleY);
-    backButton->setPosition(Vec2(screenSize.width * 0.1f, screenSize.height * 0.9f));
-
-
-    auto backLabel = Label::createWithTTF(" Back ", "../Resources/fonts/Marker Felt.ttf", 40);
-    backLabel->setPosition(backButton->getContentSize() / 2); // 设置文字居中
-    backButton->addChild(backLabel); // 将文字作为按钮的子节点
    
     // 3. 添加角色 1
     //角色1
@@ -286,15 +276,13 @@ bool NewSelectScene::init() {
 
                     // 进入游戏场景
                     try {
-                        auto gameScene = GameScene::createScene(selectedCharacter, nickname);
-                        Director::getInstance()->replaceScene(TransitionFade::create(0.5f, gameScene, Color3B::BLACK));
+                        SceneRouter::getInstance()->goTo("Game", selectedCharacter, nickname);
                     }
                     catch (const std::exception& e) {
                         //捕获异常 记录日志
                         CCLOG("Exception caught : %s", e.what());
                         //加载备用错误界面
-                        auto errorScene = ErrorSceneHelper::createErrorScene(e.what());
-                        Director::getInstance()->replaceScene(errorScene);
+                        SceneRouter::getInstance()->goToError(e.what());
                     }
                 }
             }
@@ -306,8 +294,7 @@ bool NewSelectScene::init() {
                 //加载备用错误界面
                 nickname.clear();
                 selectedCharacter = -1;
-                auto errorScene = ErrorSceneHelper::createErrorScene(e.what());
-                Director::getInstance()->replaceScene(errorScene);
+                SceneRouter::getInstance()->goToError(e.what());
             }
         }
         };

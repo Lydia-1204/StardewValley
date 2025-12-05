@@ -16,9 +16,6 @@
     <Filter Include="src\Animals">
       <UniqueIdentifier>{7c078dd6-4e1c-47b0-9a31-6fbc9cf38d6c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\Characters">
-      <UniqueIdentifier>{24e5f3db-05ff-4315-9e97-4b3a4a7a4b0d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\Farming">
       <UniqueIdentifier>{a5cd6938-9f64-44a8-9a96-0b7f558bf61c}</UniqueIdentifier>
     </Filter>
@@ -34,6 +31,9 @@
     <Filter Include="src\World">
       <UniqueIdentifier>{7dbd6a2f-2a05-4b4c-8c61-6bc2ce1ad61e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Characters">
+      <UniqueIdentifier>{e4102baa-723c-4289-bae5-7eb5b5491f77}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Classes\Animals\Animal.cpp">
@@ -47,27 +47,6 @@
     </ClCompile>
     <ClCompile Include="..\Classes\App\Main.cpp">
       <Filter>src\App</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Classes\Characters\Abigail.cpp">
-      <Filter>src\Characters</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Classes\Characters\Elliott.cpp">
-      <Filter>src\Characters</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Classes\Characters\Npc.cpp">
-      <Filter>src\Characters</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Classes\Characters\Player.cpp">
-      <Filter>src\Characters</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Classes\Characters\Sam.cpp">
-      <Filter>src\Characters</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Classes\Characters\Shane.cpp">
-      <Filter>src\Characters</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Classes\Characters\NpcTemplate.cpp">
-      <Filter>src\Characters</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\Farming\Crop.cpp">
       <Filter>src\Farming</Filter>
@@ -108,14 +87,29 @@
     <ClCompile Include="..\Classes\Systems\UIManager.cpp">
       <Filter>src\Systems</Filter>
     </ClCompile>
-    <ClCompile Include="..\Classes\Systems\System.cpp">
-      <Filter>src\Systems</Filter>
-    </ClCompile>
     <ClCompile Include="..\Classes\World\Map.cpp">
       <Filter>src\World</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\Farming\States.cpp">
       <Filter>src\Farming</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Characters\Abigail.cpp">
+      <Filter>src\Characters</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Characters\Elliott.cpp">
+      <Filter>src\Characters</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Characters\npcTemplate.cpp">
+      <Filter>src\Characters</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Characters\Player.cpp">
+      <Filter>src\Characters</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Characters\Sam.cpp">
+      <Filter>src\Characters</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Characters\Shane.cpp">
+      <Filter>src\Characters</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -139,27 +133,6 @@
     </ClInclude>
     <ClInclude Include="..\Classes\App\ScaleSpriteToReference.h">
       <Filter>src\App</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Classes\Characters\Abigail.h">
-      <Filter>src\Characters</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Classes\Characters\Elliott.h">
-      <Filter>src\Characters</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Classes\Characters\Npc.h">
-      <Filter>src\Characters</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Classes\Characters\Player.h">
-      <Filter>src\Characters</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Classes\Characters\Sam.h">
-      <Filter>src\Characters</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Classes\Characters\Shane.h">
-      <Filter>src\Characters</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Classes\Characters\NpcTemplate.h">
-      <Filter>src\Characters</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\Farming\Crop.h">
       <Filter>src\Farming</Filter>
@@ -200,14 +173,29 @@
     <ClInclude Include="..\Classes\Systems\UIManager.h">
       <Filter>src\Systems</Filter>
     </ClInclude>
-    <ClInclude Include="..\Classes\Systems\System.h">
-      <Filter>src\Systems</Filter>
-    </ClInclude>
     <ClInclude Include="..\Classes\World\Map.h">
       <Filter>src\World</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\Farming\CropState.h">
       <Filter>src\Farming</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Characters\Abigail.h">
+      <Filter>src\Characters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Characters\Elliott.h">
+      <Filter>src\Characters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Characters\npcTemplate.h">
+      <Filter>src\Characters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Characters\Player.h">
+      <Filter>src\Characters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Characters\Sam.h">
+      <Filter>src\Characters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Characters\Shane.h">
+      <Filter>src\Characters</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

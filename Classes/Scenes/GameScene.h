@@ -76,9 +76,6 @@ public:
     Animal* getPig() { return pig; }
     Animal* getSheep() { return sheep; }
 
-    void pauseGame();                    // 暂停游戏
-    void resumeGame();                   // 恢复游戏
-
     // 容器管理
     void replaceChild(Node* oldChild, Node* newChild);
     GameScene();

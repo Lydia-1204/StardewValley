@@ -10,6 +10,8 @@
 #include "Scenes/MenuScene.h" // �˵�����
 #include "Scenes/CreateErrorScene.h"
 #include "Characters/NpcTemplate.h"
+#include "App/SceneRouter.h"
+#include "App/AudioService.h"
 
 USING_NS_CC;
 
@@ -72,17 +74,13 @@ bool GameScene::init(int& selectedCharacter,const std::string& nickname ) {
         player->setPosition(200, 350);
         this->addChild(player);
         CCLOG("Player created");
-
-
         
         // 初始化 UI 管理器
         uiManager = UIManager::getInstance(selectedCharacter, nickname);
         this->addChild(uiManager->getLayer());
         CCLOG("UIManager created");
-        
 
         //箱子
-        
         iron = Sprite::create("../Resources/boxxx.png");
         if (!iron)
             throw("iron created failed!!");
@@ -90,20 +88,17 @@ bool GameScene::init(int& selectedCharacter,const std::string& nickname ) {
         this->addChild(iron, 20);
         iron->setVisible(false);
         //箱子lei
-
         auto chest = Chest::getInstance();
         if (chest == nullptr) {
             throw std::runtime_error("Chest create failed!!");
             return false;
         }
 
-
         this->addChild(chest);
         chest->isOpen = 0;
         chest->chestSetPosition(Vec2(230, 430));
 
         //工具
-
         toolManager = ToolManager::getInstance(selectedCharacter, nickname);
         this->addChild(toolManager);
         toolManager->addTool(Tool::ToolType::HOE);
@@ -196,7 +191,6 @@ bool GameScene::init(int& selectedCharacter,const std::string& nickname ) {
                 //    });
             }
         }
-      
      
        // 初始化睡眠面板
         sleepPanel = LayerColor::create(Color4B(20, 20, 20, 220)); // 深色且几乎不透明
@@ -251,7 +245,7 @@ bool GameScene::init(int& selectedCharacter,const std::string& nickname ) {
                 }
                 else {
                     sleepPanel->setVisible(true);
-                    Director::getInstance()->pause();
+                    SceneRouter::getInstance()->pause();
                 }
             }
            
@@ -262,8 +256,7 @@ bool GameScene::init(int& selectedCharacter,const std::string& nickname ) {
         //捕获异常 记录日志
         CCLOG("Exception caught : %s", e.what());
         //加载备用错误界面
-        auto errorScene = ErrorSceneHelper::createErrorScene(e.what());
-        Director::getInstance()->replaceScene(errorScene);
+        SceneRouter::getInstance()->goToError(e.what());
     }
 
     initKeyboardListener();
@@ -281,7 +274,6 @@ void GameScene::update(float dt) {
     else{
         iron->setVisible(false);
     }
-    
     //地图切换
     if (mapManager && player&&currentMap) {
        Vec2 direction;
@@ -437,18 +429,6 @@ Player* GameScene::getPlayer() {
     return player;
 }
 
-void GameScene::pauseGame() {
-    // 显示暂停菜单
-    Director::getInstance()->pause();
-    log("Game Paused");
-}
-
-void GameScene::resumeGame() {
-    // 恢复游戏
-    Director::getInstance()->resume();
-    log("Game Resumed");
-}
-
 void GameScene::replaceChild(Node* oldChild, Node* newChild) {
     if (oldChild && newChild) {
         this->removeChild(oldChild);
@@ -484,14 +464,14 @@ void GameScene::initKeyboardListener() {
 void GameScene::togglePause() {
     if (isGamePaused) {
         // 恢复游戏
-        Director::getInstance()->resume();
+        SceneRouter::getInstance()->resume();
         uiManager->hidePausePanel(); // 隐藏暂停面板
         isGamePaused = false;
         CCLOG("Game Resumed");
     }
     else {
         // 暂停游戏
-        Director::getInstance()->pause();
+        SceneRouter::getInstance()->pause();
         uiManager->showPausePanel(); // 显示暂停面板
         isGamePaused = true;
         CCLOG("Game Paused");

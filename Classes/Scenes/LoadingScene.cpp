@@ -9,9 +9,11 @@
 #include "Scenes/LoadingScene.h"
 #include "ui/CocosGUI.h"
 #include "App/Constant.h"
-#include "AudioEngine.h"
+#include "App/AudioService.h"
 #include "Scenes/CreateErrorScene.h"
 #include "Scenes/MenuScene.h"
+#include "App/SceneRouter.h"
+#include "App/SceneUIFacade.h"
 USING_NS_CC;
 using namespace cocos2d::experimental;
 // 创建场景
@@ -27,7 +29,7 @@ Scene* LoadingScene::createScene()
 bool LoadingScene::init()
 {
     //播放音乐
-    AudioEngine::play2d("../Resources/Stardew Valley Overture.mp3", true, 0.7f);
+    AudioService::getInstance()->playBgm("../Resources/Stardew Valley Overture.mp3", true, 0.7f);
     
     // 创建场景
     if (!Scene::init()) {
@@ -38,29 +40,10 @@ bool LoadingScene::init()
     // 获取屏幕尺寸 
     const auto screen_Size = cocos2d::Director::getInstance()->getVisibleSize();
    // 加载背景
-    const auto backGround = Sprite::create("../Resources/LoadingScene.png");
-   
-     //背景尺寸
-    const Size spriteSize = backGround->getContentSize();
-
-    // 计算宽度和高度的缩放比例
-    float scaleX = screen_Size.width / spriteSize.width;
-    float scaleY = screen_Size.height / spriteSize.height;
-
-    // 选择更大的缩放比例，确保图片覆盖整个屏幕
-    float scale = std::max(scaleX, scaleY);
-
- 
-    if (backGround) 
-        // 设置缩放比例
-        backGround->setScale(scale);
-    else {
+    if (!SceneUIFacade::getInstance()->applyBackground(this, "../Resources/LoadingScene.png")) {
         CCLOG("Failed  to load  LoadingScene background image!");
         throw std::runtime_error("Failed to load LoadingScene Image!!");
     }
-    //图片定位
-    backGround->setPosition(Vec2(screen_Size.width / 2, screen_Size.height / 2));
-    this->addChild(backGround);
 
     // 创建ui进度条
     auto LoadingProgressBar = cocos2d::ui::LoadingBar::create("../Resources/LoadingBar.png");
@@ -96,14 +79,10 @@ bool LoadingScene::init()
    //设置计时器
    this->scheduleOnce([](float dt) {
        try {
-       auto transition = cocos2d::TransitionFade::create(SCENE_TRANSITION_DURATION, MenuScene::createScene(), cocos2d::Color3B::WHITE);
-       cocos2d::Director::getInstance()->replaceScene(transition);
-       }catch(const std::exception& e) {
-           //捕获异常 记录日志
+           SceneRouter::getInstance()->goTo("Menu");
+       } catch(const std::exception& e) {
            CCLOG("Exception caught : %s", e.what());
-           //加载备用错误界面
-           auto errorScene = ErrorSceneHelper::createErrorScene(e.what());
-           Director::getInstance()->replaceScene(errorScene);
+           SceneRouter::getInstance()->goToError(e.what());
        }
        }, LOADING_SCENE_DURATION_TIME + SCENE_TRANSITION_DURATION, "StartupSceneToMenuScene");
 

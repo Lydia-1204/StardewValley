@@ -12,6 +12,8 @@
 #include "Scenes/SaveSelectScene.h"    // �浵ѡ�����
 #include "cocos2d.h"
 #include "Scenes/CreateErrorScene.h"
+#include "App/SceneRouter.h"
+#include "App/SceneUIFacade.h"
 USING_NS_CC;
 
 Scene* MenuScene::createScene()
@@ -36,115 +38,83 @@ bool MenuScene::init()
     const auto screenSize = Director::getInstance()->getVisibleSize();
     const Vec2 origin = Director::getInstance()->getVisibleOrigin();
    
-    // 1. 添加背景图
-    auto background = Sprite::create("../Resources/LooseSprites-73/stardewPanorama.png");
 
-    //背景尺寸
-    const Size spriteSize = background->getContentSize();
-
-    // 计算宽度和高度的缩放比例
-    float scaleX =screenSize.width / spriteSize.width;
-    float scaleY = screenSize.height / spriteSize.height;
-
-    // 选择更大的缩放比例，确保图片覆盖整个屏幕
-    float scale = std::max(scaleX, scaleY);
-    
-
-    if (background) {
-        background->setPosition(Vec2(screenSize.width / 2 + origin.x, screenSize.height / 2 + origin.y));
-        background->setScale(scale); // 根据需要调整比例
-        this->addChild(background);
-    }
-    else {
+    if (!SceneUIFacade::getInstance()->applyBackground(this, "../Resources/LooseSprites-73/stardewPanorama.png")) {
         CCLOG("Failed  to load Menu background image!");
         throw std::runtime_error("Failed to load MenuScene Image!!");
         return false;
-    }//图片添加失败抛出异常
+    }
   
     // 2. 添加 New 按钮
-    auto newGameButton = MenuItemImage::create(
+    auto newGameButton = SceneUIFacade::getInstance()->createLabeledButton(
         "../Resources/LooseSprites-73/textBox..png",
-        "../Resources/LooseSprites-73/textBox..png",
+        "NEW GAME",
+        "../Resources/fonts/Marker Felt.ttf",
+        30,
+        screenSize,
+        0.1f,
+        0.1f * 0.8f,
+        Vec2(screenSize.width / 4, screenSize.height / 4),
         [](Ref* sender) {
-            // 切换到 NewSelectScene (新游戏界面)
             try {
-                auto newScene = NewSelectScene::createScene();
-                Director::getInstance()->replaceScene(TransitionFade::create(0.5f, newScene, Color3B::BLACK));
+                SceneRouter::getInstance()->goTo("NewSelect");
             }
             catch (const std::exception& e) {
-                //捕获异常 记录日志
                 CCLOG("Exception caught : %s", e.what());
-                //加载备用错误界面
-                auto errorScene = ErrorSceneHelper::createErrorScene(e.what());
-                Director::getInstance()->replaceScene(errorScene);
-
+                SceneRouter::getInstance()->goToError(e.what());
             }
-        });
+        }
+    );
 
     if (newGameButton == NULL)
         throw std::runtime_error("Failed to generate newGameButton!!");
 
 
-    auto newGameLabel = Label::createWithTTF("NEW GAME", "../Resources/fonts/Marker Felt.ttf", 30);
-    newGameLabel->setPosition(newGameButton->getContentSize() / 2); // 设置文字居中
-    newGameButton->addChild(newGameLabel); // 将文字作为按钮的子节点
-
-    newGameButton->setPosition(Vec2(screenSize.width / 4, screenSize.height / 4 ));
-    //按钮尺寸
-    const auto buttonSize = newGameButton->getContentSize();
-
-    // 计算宽度和高度的缩放比例
-    scaleX = (screenSize.width/10) / buttonSize.width;
-    scaleY = (screenSize.height/10)/ buttonSize.height*0.8;
-   //scale = std::min(scaleX, scaleY);
-
-    newGameButton->setScale(scaleX,scaleY);
+    
     // 3. 添加 Load 按钮
-    auto loadButton = MenuItemImage::create(
+    auto loadButton = SceneUIFacade::getInstance()->createLabeledButton(
         "../Resources/LooseSprites-73/textBox..png",
-        "../Resources/LooseSprites-73/textBox..png",
+        " LOAD ",
+        "../Resources/fonts/Marker Felt.ttf",
+        30,
+        screenSize,
+        0.1f,
+        0.1f * 0.8f,
+        Vec2(screenSize.width / 2, screenSize.height/4),
         [](Ref* sender) {
             try {
-                // 切换到 SaveSelectScene (存档选择界面)
-                auto saveScene = SaveSelectScene::createScene();
-                Director::getInstance()->replaceScene(TransitionFade::create(0.5f, saveScene, Color3B::GRAY));
+                SceneRouter::getInstance()->goTo("SaveSelect");
             }
             catch (const std::exception& e) {
-                //捕获异常 记录日志
                 CCLOG("Exception caught : %s", e.what());
-                //加载备用错误界面
-                auto errorScene = ErrorSceneHelper::createErrorScene(e.what());
-                Director::getInstance()->replaceScene(errorScene);
+                SceneRouter::getInstance()->goToError(e.what());
             }
-        });
+        }
+    );
     if (loadButton == NULL)
         throw std::runtime_error("Failed to generate  loadButton!!");
 
 
-    auto loadGameLabel = Label::createWithTTF(" LOAD ", "../Resources/fonts/Marker Felt.ttf",30);
-    loadGameLabel->setPosition(loadButton->getContentSize() / 2); // 设置文字居中
-    loadButton->addChild(loadGameLabel); // 将文字作为按钮的子节点
-
-    loadButton->setPosition(Vec2(screenSize.width / 2, screenSize.height/4));
-    loadButton->setScale(scaleX, scaleY);
+    
 
     // 4. 添加 Exit 按钮
-    auto exitButton = MenuItemImage::create(
+    auto exitButton = SceneUIFacade::getInstance()->createLabeledButton(
         "../Resources/LooseSprites-73/textBox..png",
-        "../Resources/LooseSprites-73/textBox..png",
+        " EXIT ",
+        "../Resources/fonts/Marker Felt.ttf",
+        30,
+        screenSize,
+        0.1f,
+        0.1f * 0.8f,
+        Vec2(screenSize.width /4*3, screenSize.height / 4),
         [](Ref* sender) {
-            // 退出游戏
             Director::getInstance()->end();
-        });
+        }
+    );
     if (exitButton == NULL)
         throw std::runtime_error("Failed to generate exitButton!!");
 
-    auto exitLabel = Label::createWithTTF(" EXIT ", "../Resources/fonts/Marker Felt.ttf", 30);
-    exitLabel->setPosition(exitButton->getContentSize() / 2); // 设置文字居中
-    exitButton->addChild(exitLabel); // 将文字作为按钮的子节点
-
-    exitButton->setPosition(Vec2(screenSize.width /4*3, screenSize.height / 4));
-    exitButton->setScale(scaleX, scaleY);
+    
 
     // 5. 组合三个图片并 创建移动的图片精灵**
 

@@ -10,7 +10,6 @@
 #define __MENU_SCENE_H__
 
 #include "cocos2d.h"
-#include"SimpleAudioEngine.h"
 /*
  * Class Name:     MenuScene
  * Class Function: 实现菜单场景

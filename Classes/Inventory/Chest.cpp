@@ -23,6 +23,8 @@ Chest* Chest::getInstance( ) {
         }
         else {
             CC_SAFE_DELETE(instance);
+
+            
         }
     }
     return instance;  // 返回唯一实例
