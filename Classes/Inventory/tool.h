@@ -10,45 +10,49 @@
 #define TOOL_H
 #include "cocos2d.h"
 
-
-class Tool : public cocos2d::Sprite {
+class Tool : public cocos2d::Sprite
+{
 public:
     friend class Chest;
-    enum class ToolType {
+    enum class ToolType
+    {
         NONE,
-        HOE, //锄头
-        AXE, //斧头
-        WATERING_CAN, //水壶
-        FISHING_ROD, //鱼竿
-        FERTILIZER,//化肥
-
+        HOE,          // 锄头
+        AXE,          // 斧头
+        WATERING_CAN, // 水壶
+        FISHING_ROD,  // 鱼竿
+        FERTILIZER,   // 化肥
 
         // 升级版*******************//
-        HOEPLUS, //锄头
-        AXEPLUS, //斧头
-        WATERING_CANPLUS, //水壶
-        FISHING_RODPLUS, //鱼竿
-        ANIMALFOOD,//喂食
-
-
-
+        HOEPLUS,          // 锄头
+        AXEPLUS,          // 斧头
+        WATERING_CANPLUS, // 水壶
+        FISHING_RODPLUS,  // 鱼竿
+        ANIMALFOOD,       // 喂食
     };
+
     friend class Player;
-    static Tool* create(ToolType type);
+    friend class ToolManager;
+    friend class ToolFactory;
+
+    static Tool *create(ToolType type);
     bool init(ToolType type);
+
+    // 新增：对象池重置方法
+    void reset();
+
     ToolType getType() const;
-    void usetool();//个性化使用
+    void usetool(); // 个性化使用
     void buytool();
+
     int selectedCharacter;
     std::string nickname;
-    int getPrice() {
+    int price;
 
-        return price;
-    }
 private:
     ToolType type; // 工具类型
-    int price;
+    // 私有构造函数，支持工厂模式
+    Tool();
 };
-
 
 #endif // TOOL_H

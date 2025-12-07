@@ -1,233 +1,376 @@
 /********************************************************************************************************
  * Project Name:  StardewValley
- * File Name:     Item.cpp
- * File Function: 实现Item类与Itemmanager，实现物品的管理 升级
- * Author:        王小萌 2351882
- * Update Date:   2024/12/15
+ * File Name:    ItemManager.cpp
+ * File Function: 实现ItemManager类，使用对象池模式管理物品，配合工厂模式创建物品
+ * Author:       王小萌 2351882
+ * Update Date:  2024/12/21
  *********************************************************************************************************/
-
-
-#include "Inventory/Item.h"
 #include "Inventory/ItemManager.h"
-#include "World/Map.h"
+#include "Inventory/ItemFactory.h"
 #include "Inventory/Chest.h"
-#include "Systems/UIManager.h"
+#include "Characters/Player.h"
+#include "Scenes/GameScene.h"
+
 USING_NS_CC;
 
+ItemManager *ItemManager::_instance = nullptr;
 
-
-ItemManager* ItemManager::instance = nullptr;
-
-
-ItemManager* ItemManager::getInstance(int selectedCharacter, const std::string& nickname) {
-    if (instance == nullptr) {  // 如果实例不存在，则创建
-        instance = new (std::nothrow) ItemManager();
-        if (instance && instance->init(selectedCharacter, nickname)) {
-            instance->autorelease();  // 添加到内存管理系统
-        }
-        else {
-            CC_SAFE_DELETE(instance);
-        }
-    }
-    return instance;  // 返回唯一实例
-}
-
-bool ItemManager::init(int _selectedCharacter, const std::string& _nickname) {
-    if (!Node::init()) {
-        return false;
-    }
-    selectedCharacter = _selectedCharacter;
-    nickname = _nickname;
-    auto visibleSize = Director::getInstance()->getVisibleSize();
-
-    // 物品栏背景
-     /*
-    auto ItemBarBg = Sprite::create("../ResourcesL/ooseSprites-73/DialogBoxGreen..png");
-    ItemBarBg->setPosition(visibleSize.width / 2, visibleSize.height * 0.1);
-    this->addChild(ItemBarBg);*/
-
-    // 初始化物品栏
-    float gridWidth = 32.0f;
-    float gridHeight = 32.0f;
-    float startX = (visibleSize.width - gridWidth * 10) / 2.0f; // 居中物品栏
-    float startY = visibleSize.height * 0.1f+32.0f;
-
-    for (int i = 0; i < 12; i++) {
-        auto grid = Sprite::create("../Resources/tools/tools_bg.png");
-        grid->setPosition(startX + i * gridWidth, startY);
-        this->addChild(grid);
-
-        Items.push_back(nullptr); // 初始化物品栏为空
-    }
-
-    // 选中框
-    selectionBox = Sprite::create("../Resources/tools/tools_selected.png");
-    selectionBox->setVisible(false);
-    this->addChild(selectionBox, 10);
-
-    // 初始化状态
-    selectedItemIndex = -1;
-    //箱子
-    chest = Chest::getInstance();
-
-    // 添加事件监听器
-   // 添加事件监听器
-    auto mouseListener = EventListenerMouse::create();
-    mouseListener->onMouseDown = [=](EventMouse* event) {
-        CCLOG("mouseDown");
-        auto locationInWorld = event->getLocationInView();  // 获取屏幕视图中的坐标
-        auto locationInItemsBg = this->convertToNodeSpace(locationInWorld); // 转换到 Items_bg 的坐标系
-        CCLOG("Mouse position in Items_bg space: %f, %f", locationInItemsBg.x, locationInItemsBg.y);
-
-        // 检测是否点击物品
-
-        CCLOG("Adjusted Mouse Position: %f, %f", locationInItemsBg.x, locationInItemsBg.y);
-
-        // 判断鼠标是否点击物品栏
-
-        int x = 0;
-        for (int i = 0; i < Items.size(); i++) {
-            if (Items[i] && Items[i]->getBoundingBox().containsPoint(locationInItemsBg)) {
-                if (event->getMouseButton() == EventMouse::MouseButton::BUTTON_LEFT) {
-                    CCLOG("Item[%d] selected and used", i);
-                    selectItem(i);  // 选中物品
-                    if (chest->isOpen == 1) {//与箱子交互
-                        chest->addItem(Items[i]);
-                        discardItem();
-                    }
-                    else if (UIManager::getInstance(x, "")->isPriceBoardOpen == 1) {//买卖东西
-
-                        if (Items[i]->getType() != Item::ItemType::GIFT) {
-                            Items[i]->decreaseQuantity(1);
-                            UIManager::getInstance(x, "")->setMoney(Items[i]->price);
-                        }
-                    }
-                    else
-                        useitem();  // 直接使用物品
-                }
-                else if (event->getMouseButton() == EventMouse::MouseButton::BUTTON_RIGHT) {
-                    discardItem();  // 右键丢弃物品
-                }
-                return;
-            }
-        }
-        };
-
-    _eventDispatcher->addEventListenerWithSceneGraphPriority(mouseListener, this);
+ItemManager::ItemManager() : selectedCharacter(1), nickname("guest"), selectedItemIndex(-1), chest(nullptr), player(nullptr), selectionBox(nullptr)
+{
+    preloadPool();
     initKeyboardListener();
-    return true;
 }
 
-int ItemManager::getItemQuantity(Item::ItemType type) {
-    for (auto item : Items) {
-        if (item && item->getType() == type) {
-            return item->getQuantity();
+ItemManager *ItemManager::getInstance(int selectedCharacter, const std::string &nickname)
+{
+    if (_instance == nullptr)
+    {
+        _instance = new ItemManager();
+        _instance->selectedCharacter = selectedCharacter;
+        _instance->nickname = nickname;
+    }
+    return _instance;
+}
+
+ItemManager::~ItemManager()
+{
+    // 清理对象池
+    for (auto item : availablePool)
+    {
+        CC_SAFE_RELEASE(item);
+    }
+    for (auto item : activePool)
+    {
+        CC_SAFE_RELEASE(item);
+    }
+    for (auto item : items)
+    {
+        CC_SAFE_RELEASE(item);
+    }
+    availablePool.clear();
+    activePool.clear();
+    items.clear();
+
+    // 清理UI元素
+    if (selectionBox)
+    {
+        selectionBox->removeFromParent();
+    }
+}
+
+void ItemManager::preloadPool()
+{
+    // 预创建常用物品到对象池
+    expandPool(Item::ItemType::SEED, 10);
+    expandPool(Item::ItemType::FISH, 5);
+    expandPool(Item::ItemType::EGG, 3);
+    expandPool(Item::ItemType::MILK, 3);
+    expandPool(Item::ItemType::WOOL, 2);
+    expandPool(Item::ItemType::BONE, 2);
+    expandPool(Item::ItemType::WOODEN, 2);
+    expandPool(Item::ItemType::FRUIT, 2);
+    expandPool(Item::ItemType::MINERAL, 5);
+    expandPool(Item::ItemType::GIFT, 3);
+    expandPool(Item::ItemType::FAT, 2);
+}
+
+void ItemManager::expandPool(Item::ItemType type, int count)
+{
+    ItemFactory *factory = ItemFactory::getInstance();
+    for (int i = 0; i < count; i++)
+    {
+        Item *item = factory->createItem(type);
+        if (item)
+        {
+            item->retain();
+            item->setVisible(false);
+            availablePool.push_back(item);
         }
     }
-    return 0; // 如果没有找到该类型的物品，返回0
 }
 
-void ItemManager::addItem(Item::ItemType type) {
-   
-    float gridWidth = 32.0f; // 物品栏宽度
-    float startX = (Director::getInstance()->getVisibleSize().width - gridWidth * 10) / 2.0f;
-    float startY = Director::getInstance()->getVisibleSize().height * 0.1f + 32.0f;
-
-    for (int i = 0; i < Items.size(); i++) {
-        if (Items[i] != nullptr && Items[i]->getType() == type) {
-            // 如果物品栏中已经有这个类型的物品，增加数量
-            Items[i]->increaseQuantity(1);
-            if (type == Item::ItemType::MINERAL && Items[i]->getQuantity() >= 30) {
-                Items[i]->price = 60;
-            }
-            else if (type == Item::ItemType::MINERAL && Items[i]->getQuantity() < 30) {
-                Items[i]->price = 80;
-            }
-
-            return;
-        }
-        if (Items[i] == nullptr) {
-            // 如果有空位，创建新物品
-            auto item = Item::create(type);
-            item->setPosition(startX + i * gridWidth, startY);
-            Items[i] = item;
-            this->addChild(Items[i]);
-            auto location = Items[i]->getPosition();
-            CCLOG("Items [%d]: %f,%f", i, location.x, location.y);
-            return;
+Item *ItemManager::getItemFromPool(Item::ItemType type)
+{
+    // 尝试从可用池中找到相同类型的物品
+    for (auto it = availablePool.begin(); it != availablePool.end(); ++it)
+    {
+        if ((*it)->getType() == type)
+        {
+            Item *item = *it;
+            availablePool.erase(it);
+            item->reset();
+            item->type = type; // 恢复类型
+            item->quantity = 1;
+            item->setVisible(true);
+            activePool.push_back(item);
+            return item;
         }
     }
-  
-    CCLOG("ItemBar is full, cannot add more Items.");
-    auto fullLabel = Label::createWithTTF("ItemBar is full!", "fonts/Marker Felt.ttf", 24);
-    fullLabel->setPosition(startX, startY+32.0f);
-    this->addChild(fullLabel);
-    fullLabel->runAction(Sequence::create(FadeOut::create(2.0f), RemoveSelf::create(), nullptr));
+
+    // 如果没有可用的物品，扩展池
+    expandPool(type, 5);
+    return getItemFromPool(type);
 }
 
-void ItemManager::discardItem() {
-    if (selectedItemIndex < 0 || selectedItemIndex >= Items.size() || Items[selectedItemIndex] == nullptr) {
-        CCLOG("No Item selected to discard");
-        return;
-    }
-
-    auto Item = Items[selectedItemIndex];
-    Item->decreaseQuantity(1);
-    if (Item->getQuantity() <= 0) {
-        this->removeChild(Item);
-        Items[selectedItemIndex] = nullptr;
-        selectedItemIndex = -1;
-        selectionBox->setVisible(false);
-    }
-    
-    CCLOG("Item discarded: %d", static_cast<int>(Item->getType()));
-
-}
-void ItemManager::selectItem(int index) {
-    if (index < 0 || index >= Items.size() || Items[index] == nullptr) {
-        CCLOG("Invalid Item selection");
-        return;
-    }
-
-    selectedItemIndex = index;
-    updateSelectionBox();
-    CCLOG("Item selected: %d", index);
-}
-
-void ItemManager::useitem() {
-    if (selectedItemIndex < 0 || selectedItemIndex >= Items.size() || Items[selectedItemIndex] == nullptr) {
-        CCLOG("No Item selected to use");
-        return;
-    }
-
-    auto Item = Items[selectedItemIndex];
-    CCLOG("Using Item: %d", static_cast<int>(Item->getType()));
-    // 添加物品使用逻辑
-    Item->useitem();
-}
-
-void ItemManager::updateSelectionBox() {
-    if (selectedItemIndex < 0 || selectedItemIndex >= Items.size() || Items[selectedItemIndex] == nullptr) {
-        selectionBox->setVisible(false);
-        return;
-    }
-    selectionBox->setVisible(true);
-    selectionBox->setPosition(Items[selectedItemIndex]->getPosition());
-}
-
-void ItemManager::initKeyboardListener() {
-    auto keyboardListener = EventListenerKeyboard::create();
-    keyboardListener->onKeyPressed = [=](EventKeyboard::KeyCode keyCode, Event* event) {
-        switch (keyCode) {
-        case EventKeyboard::KeyCode::KEY_C:
-            useitem(); // 使用当前物品
+void ItemManager::returnItemToPool(Item *item)
+{
+    // 从活动池中移除
+    for (auto it = activePool.begin(); it != activePool.end(); ++it)
+    {
+        if (*it == item)
+        {
+            activePool.erase(it);
             break;
-        case EventKeyboard::KeyCode::KEY_V:
-            discardItem(); // 丢弃当前物品
+        }
+    }
+
+    // 重置并返回到可用池
+    item->reset();
+    availablePool.push_back(item);
+}
+
+void ItemManager::addItem(Item::ItemType type)
+{
+    Item *item = getItemFromPool(type);
+    if (item)
+    {
+        items.push_back(item);
+        this->addChild(item);
+
+        // 设置位置
+        int index = items.size() - 1;
+        float x = 50 + (index % 5) * 60;
+        float y = 500 - (index / 5) * 60;
+        item->setPosition(Vec2(x, y));
+    }
+}
+
+void ItemManager::removeItem(Item *item)
+{
+    if (!item)
+        return;
+
+    // 从items向量中移除
+    for (auto it = items.begin(); it != items.end(); ++it)
+    {
+        if (*it == item)
+        {
+            items.erase(it);
+            break;
+        }
+    }
+
+    // 返回到对象池
+    returnItemToPool(item);
+
+    // 从场景移除
+    if (item->getParent())
+    {
+        item->removeFromParent();
+    }
+
+    updateItemPositions();
+}
+
+void ItemManager::recycleItem(Item *item)
+{
+    returnItemToPool(item);
+
+    // 从items向量中移除
+    for (auto it = items.begin(); it != items.end(); ++it)
+    {
+        if (*it == item)
+        {
+            items.erase(it);
+            break;
+        }
+    }
+
+    // 从场景移除
+    if (item->getParent())
+    {
+        item->removeFromParent();
+    }
+}
+
+void ItemManager::selectItem(int index)
+{
+    if (index >= 0 && index < items.size())
+    {
+        selectedItemIndex = index;
+        updateSelectionBox();
+    }
+}
+
+void ItemManager::useitem()
+{
+    if (selectedItemIndex >= 0 && selectedItemIndex < items.size())
+    {
+        Item *item = items[selectedItemIndex];
+        if (item && item->getQuantity() > 0)
+        {
+            item->useitem();
+            item->decreaseQuantity(1);
+
+            // 如果数量为0，回收物品
+            if (item->getQuantity() <= 0)
+            {
+                recycleItem(item);
+                if (selectedItemIndex >= items.size())
+                {
+                    selectedItemIndex = items.size() - 1;
+                }
+                updateSelectionBox();
+            }
+        }
+    }
+}
+
+void ItemManager::discardItem()
+{
+    if (selectedItemIndex >= 0 && selectedItemIndex < items.size())
+    {
+        Item *item = items[selectedItemIndex];
+        recycleItem(item);
+        selectedItemIndex = -1;
+        updateSelectionBox();
+    }
+}
+
+Item *ItemManager::getItem(int index)
+{
+    if (index >= 0 && index < items.size())
+    {
+        return items[index];
+    }
+    return nullptr;
+}
+
+int ItemManager::getItemCount() const
+{
+    return items.size();
+}
+
+int ItemManager::getItemQuantity(Item::ItemType type)
+{
+    int total = 0;
+    for (auto item : items)
+    {
+        if (item->getType() == type)
+        {
+            total += item->getQuantity();
+        }
+    }
+    return total;
+}
+
+void ItemManager::clearAllItems()
+{
+    // 回收所有物品
+    for (auto item : items)
+    {
+        returnItemToPool(item);
+        if (item->getParent())
+        {
+            item->removeFromParent();
+        }
+    }
+    items.clear();
+    selectedItemIndex = -1;
+    updateSelectionBox();
+}
+
+size_t ItemManager::getPoolSize(Item::ItemType type) const
+{
+    size_t count = 0;
+    for (auto item : availablePool)
+    {
+        if (item->getType() == type)
+        {
+            count++;
+        }
+    }
+    return count;
+}
+
+void ItemManager::updateItemPositions()
+{
+    for (size_t i = 0; i < items.size(); i++)
+    {
+        float x = 50 + (i % 5) * 60;
+        float y = 500 - (i / 5) * 60;
+        items[i]->setPosition(Vec2(x, y));
+    }
+}
+
+void ItemManager::refreshUI()
+{
+    updateItemPositions();
+    for (auto item : items)
+    {
+        item->updateItemUI();
+    }
+}
+
+void ItemManager::updateSelectionBox()
+{
+    if (!selectionBox)
+    {
+        selectionBox = Sprite::create("../Resources/ui/selection.png");
+        if (selectionBox)
+        {
+            this->addChild(selectionBox, -1);
+        }
+    }
+
+    if (selectedItemIndex >= 0 && selectedItemIndex < items.size())
+    {
+        Item *item = items[selectedItemIndex];
+        if (item && selectionBox)
+        {
+            selectionBox->setPosition(item->getPosition());
+            selectionBox->setVisible(true);
+        }
+    }
+    else if (selectionBox)
+    {
+        selectionBox->setVisible(false);
+    }
+}
+
+void ItemManager::initKeyboardListener()
+{
+    auto keyboardListener = EventListenerKeyboard::create();
+
+    keyboardListener->onKeyPressed = [&](EventKeyboard::KeyCode keyCode, Event *event)
+    {
+        switch (keyCode)
+        {
+        case EventKeyboard::KeyCode::KEY_1:
+            selectItem(0);
+            break;
+        case EventKeyboard::KeyCode::KEY_2:
+            selectItem(1);
+            break;
+        case EventKeyboard::KeyCode::KEY_3:
+            selectItem(2);
+            break;
+        case EventKeyboard::KeyCode::KEY_4:
+            selectItem(3);
+            break;
+        case EventKeyboard::KeyCode::KEY_5:
+            selectItem(4);
+            break;
+        case EventKeyboard::KeyCode::KEY_ENTER:
+            useitem();
+            break;
+        case EventKeyboard::KeyCode::KEY_BACKSPACE:
+            discardItem();
             break;
         default:
             break;
         }
-        };
+    };
+
     _eventDispatcher->addEventListenerWithSceneGraphPriority(keyboardListener, this);
 }
