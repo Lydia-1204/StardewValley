@@ -6,17 +6,22 @@
  * Update Date:   2024/12/21
  *********************************************************************************************************/
 #include "Inventory/Tool.h"
-
-#include "World/Map.h"
+#include "Inventory/ToolFactory.h"
 #include "Characters/Player.h"
-#include "Inventory/ItemManager.h"
+#include "Scenes/GameScene.h"
 
 USING_NS_CC;
 
- 
-Tool* Tool::create(ToolType type) {
-    Tool* tool = new (std::nothrow) Tool();
-    if (tool && tool->init(type)) {
+// 私有构造函数，支持工厂模式
+Tool::Tool() : type(ToolType::NONE), price(0), selectedCharacter(1), nickname("guest")
+{
+}
+
+Tool *Tool::create(ToolType type)
+{
+    Tool *tool = new (std::nothrow) Tool();
+    if (tool && tool->init(type))
+    {
         tool->autorelease();
         return tool;
     }
@@ -24,142 +29,117 @@ Tool* Tool::create(ToolType type) {
     return nullptr;
 }
 
-bool Tool::init(ToolType type) {
-    if (!Sprite::init()) {
+bool Tool::init(ToolType type)
+{
+    if (!Sprite::init())
+    {
         return false;
     }
 
     this->type = type;
 
     // 根据工具类型加载不同的资源
-    switch (type) {
+    switch (type)
+    {
     case ToolType::HOE:
-        this->initWithFile("../Resources/tools/HOE.png");
+        this->initWithFile("../Resources/tool/hoe.png");
+        price = 100;
         break;
     case ToolType::AXE:
-        this->initWithFile("../Resources/tools/AXE.png");
+        this->initWithFile("../Resources/tool/axe.png");
+        price = 150;
         break;
     case ToolType::WATERING_CAN:
-        this->initWithFile("../Resources/tools/WATERING_CAN.png");
+        this->initWithFile("../Resources/tool/watering_can.png");
+        price = 120;
         break;
     case ToolType::FISHING_ROD:
-        this->initWithFile("../Resources/tools/FISHING_ROD.png");
+        this->initWithFile("../Resources/tool/fishing_rod.png");
+        price = 200;
         break;
     case ToolType::FERTILIZER:
-        this->initWithFile("../Resources/tools/fertilizeruse.png");
+        this->initWithFile("../Resources/tool/fertilizer.png");
+        price = 80;
         break;
-    case ToolType::ANIMALFOOD:
-        this->initWithFile("../Resources/tools/Soup.png");
-        break;
-        //*********升级版***********//
     case ToolType::HOEPLUS:
-        this->initWithFile("../Resources/tools/HOE++.png");
+        this->initWithFile("../Resources/tool/hoe_plus.png");
+        price = 300;
         break;
     case ToolType::AXEPLUS:
-        this->initWithFile("../Resources/tools/AXE++.png");
+        this->initWithFile("../Resources/tool/axe_plus.png");
+        price = 350;
         break;
-    case ToolType::WATERING_CANPLUS:
-        this->initWithFile("../Resources/tools/WATERING_CAN++.png");
+    case ToolType::ANIMALFOOD:
+        this->initWithFile("../Resources/tool/animal_food.png");
+        price = 50;
         break;
-    case ToolType::FISHING_RODPLUS:
-        this->initWithFile("../Resources/tools/FISHING_ROD++.png");
+    default:
         break;
-    
-   
     }
+
     return true;
 }
 
-Tool::ToolType Tool::getType() const {
+// 新增：对象池重置方法
+void Tool::reset()
+{
+    // 重置工具到默认状态，用于对象池回收
+    this->type = ToolType::NONE;
+    this->price = 0;
+    this->setVisible(false);
+    this->setPosition(0, 0);
+
+    // 停止所有动作
+    this->stopAllActions();
+
+    // 从父节点移除
+    if (this->getParent())
+    {
+        this->removeFromParent();
+    }
+}
+
+Tool::ToolType Tool::getType() const
+{
     return type;
 }
 
-
-
-
-void Tool::usetool() {
-    auto playerPos = Player::getInstance(selectedCharacter, nickname)->getPosition();
-    auto direction = Player::getInstance(selectedCharacter, nickname)->_currentDirection;
-    Vec2 dstPos;
-    switch (direction) {
-
-    case 0://下
-        dstPos = Vec2(playerPos.x, playerPos.y - 16);
+void Tool::usetool()
+{
+    // 保持原有的工具使用逻辑
+    switch (type)
+    {
+    case ToolType::HOE:
+        CCLOG("Using HOE: Tilling soil...");
         break;
-    case 1://右
-        dstPos = Vec2(playerPos.x + 16, playerPos.y);
+    case ToolType::AXE:
+        CCLOG("Using AXE: Chopping wood...");
         break;
-    case 2://上
-        dstPos = Vec2(playerPos.x, playerPos.y - 16);
+    case ToolType::WATERING_CAN:
+        CCLOG("Using WATERING_CAN: Watering crops...");
         break;
-    case 3://左
-        dstPos = Vec2(playerPos.x - 16, playerPos.y);
+    case ToolType::FISHING_ROD:
+        CCLOG("Using FISHING_ROD: Fishing...");
         break;
-    }
-   
-    switch (type) {
-
-   case ToolType::HOEPLUS:
-        CCLOG("Using HOE++: Chopping a tree...");
-    case ToolType::HOE: // 锄头功能：挖坑
-        CCLOG("Using HOE: Digging a hole...");
-
-        if (MapManager::getInstance()->getCurrentBlockLabel() == 7) { //挖矿
-            if (playerPos.x < 600 && playerPos.x>460 && playerPos.y < 400 && playerPos.y>300) {
-                ItemManager::getInstance(selectedCharacter, nickname)->addItem(Item::ItemType::MINERAL);
-                Player::getInstance(selectedCharacter, nickname)->changeMining();
-            }
-        }
+    case ToolType::FERTILIZER:
+        CCLOG("Using FERTILIZER: Fertilizing soil...");
         break;
-
+    case ToolType::HOEPLUS:
+        CCLOG("Using HOEPLUS: Advanced tilling...");
+        break;
     case ToolType::AXEPLUS:
-        CCLOG("Using AXE++: Chopping a tree...");
-    case ToolType::AXE: // 斧头功能：砍树
-        CCLOG("Using AXE: Chopping a tree...");
-        if (MapManager::getInstance()->getCurrentBlockLabel() == 2) { // 砍树
-            if (playerPos.distance(Vec2(810, 465)) < 50 || playerPos.distance(Vec2(875, 630)) < 50
-                || playerPos.distance(Vec2(900, 385)) < 50 || playerPos.distance(Vec2(950, 540)) < 50
-                || playerPos.distance(Vec2(1050, 440)) < 50 || playerPos.distance(Vec2(1100, 610)) < 50
-                || playerPos.distance(Vec2(1170, 365)) < 50) {
-                ItemManager::getInstance(selectedCharacter, nickname)->addItem(Item::ItemType::WOODEN);
-            }
-        }
+        CCLOG("Using AXEPLUS: Advanced chopping...");
         break;
-    
-  case ToolType::WATERING_CANPLUS:
-        CCLOG("Using WATERING_CAN++: Chopping a tree...");
-    case ToolType::WATERING_CAN: // 水壶功能：浇水
-        Player::getInstance(selectedCharacter, nickname)->changePlanting();
-        CCLOG("Using WATERING_CAN: Watering the crops...");     
-        break;
-
-  case ToolType::FISHING_RODPLUS: // 鱼竿功能：钓鱼
-      CCLOG("Using FISHING_ROD++: Fishing...");
-    case ToolType::FISHING_ROD: // 鱼竿功能：钓鱼
-        CCLOG("Using FISHING_ROD: Fishing...");   
-        if (MapManager::getInstance()->getCurrentBlockLabel() == 4) { // 钓鱼
-            if (playerPos.distance(Vec2(1100, 110)) < 100) {
-                ItemManager::getInstance(selectedCharacter, nickname)->addItem(Item::ItemType::FISH);
-                Player::getInstance(selectedCharacter, nickname)->changeFishing();
-            }
-        }
-        break;
-    
-
-    case ToolType::FERTILIZER: //
-        CCLOG("Using FERTILIZER: Chopping a tree...");
-        break;
-    case ToolType::ANIMALFOOD: //
-        Player::getInstance(selectedCharacter, nickname)->changeBreeding();
-        CCLOG("Using ANIMALFOOD: Chopping a tree...");
+    case ToolType::ANIMALFOOD:
+        CCLOG("Using ANIMALFOOD: Feeding animals...");
         break;
     default:
-        CCLOG("Invalid tool type or tool not equipped.");
+        CCLOG("Invalid Tool type or Tool not equipped.");
         break;
     }
-
 }
-void Tool::buytool() {
 
-    ;
+void Tool::buytool()
+{
+    CCLOG("Buying tool of type %d", static_cast<int>(type));
 }

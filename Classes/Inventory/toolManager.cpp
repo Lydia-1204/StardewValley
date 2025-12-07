@@ -1,269 +1,293 @@
 /********************************************************************************************************
  * Project Name:  StardewValley
- * File Name:     tool.cpp
- * File Function: 实现tool类与toolmanager，实现工具的管理 升级
+ * File Name:     toolManager.cpp
+ * File Function: 实现toolManager类，使用对象池模式管理工具
  * Author:        王小萌 2351882
- * Update Date:   2024/12/15
+ * Update Date:   2024/12/21
  *********************************************************************************************************/
 #include "Inventory/ToolManager.h"
-#include "Characters/Player.h"
+#include "Inventory/ToolFactory.h"
 #include "Inventory/Chest.h"
-#include "World/Map.h"
-#include "Systems/UIManager.h"
-#include "Inventory/ItemManager.h"
+#include "Characters/Player.h"
+#include "Scenes/GameScene.h"
+
 USING_NS_CC;
 
-ToolManager* ToolManager::instance = nullptr;
+ToolManager *ToolManager::instance = nullptr;
 
-
-// ----------------------------- ToolManager -----------------------------
-
-ToolManager* ToolManager::getInstance(int selectedCharacter, const std::string& nickname) {
-    if (instance == nullptr) {  // 如果实例不存在，则创建
-        instance = new (std::nothrow) ToolManager();
-        if (instance && instance->init(selectedCharacter, nickname)) {
-            instance->autorelease();  // 添加到内存管理系统
-        }
-        else {
-            CC_SAFE_DELETE(instance);
-        }
-    }
-    return instance;  // 返回唯一实例
+ToolManager::ToolManager() : selectedCharacter(1), nickname("guest"), chest(nullptr),
+                             player(nullptr), selectionBox(nullptr), selectedToolIndex(-1)
+{
+    preloadToolPool();
+    initKeyboardListener();
 }
 
+ToolManager *ToolManager::getInstance(int selectedCharacter, const std::string &nickname)
+{
+    if (instance == nullptr)
+    {
+        instance = new ToolManager();
+        instance->selectedCharacter = selectedCharacter;
+        instance->nickname = nickname;
+    }
+    return instance;
+}
 
-
-
-
-bool ToolManager::init(int _selectedCharacter, const std::string& _nickname) {
-    if (!Node::init()) {
+bool ToolManager::init(int selectedCharacter, const std::string &nickname)
+{
+    if (!Node::init())
+    {
         return false;
     }
-    chest = Chest::getInstance();
-    selectedCharacter = _selectedCharacter;
-    nickname = _nickname;
-    auto visibleSize = Director::getInstance()->getVisibleSize();
 
-    // 工具栏背景
-     /*
-    auto toolBarBg = Sprite::create("../ResourcesL/ooseSprites-73/DialogBoxGreen..png");
-    toolBarBg->setPosition(visibleSize.width / 2, visibleSize.height * 0.1);
-    this->addChild(toolBarBg);*/
+    this->selectedCharacter = selectedCharacter;
+    this->nickname = nickname;
+    this->chest = Chest::getInstance();
+    this->player = Player::getInstance(selectedCharacter, nickname);
 
-    // 初始化工具栏
-    float gridWidth = 32.0f;
-    float gridHeight = 32.0f;
-    float startX = (visibleSize.width - gridWidth * 10) / 2.0f; // 居中工具栏
-    float startY = visibleSize.height * 0.1f;
-
-    for (int i = 0; i < 12; i++) {
-        auto grid = Sprite::create("../Resources/tools/tools_bg.png");
-        grid->setPosition(startX + i * gridWidth, startY);
-        this->addChild(grid);
-
-        tools.push_back(nullptr); // 初始化工具栏为空
-    }
-
-    // 选中框
-    selectionBox = Sprite::create("../Resources/tools/tools_selected.png");
-    selectionBox->setVisible(false);
-    this->addChild(selectionBox, 10);
-
-    // 初始化状态
-    selectedToolIndex = -1;
-
-
-    // 添加事件监听器
-   // 添加事件监听器
-    auto mouseListener = EventListenerMouse::create();
-    mouseListener->onMouseDown = [=](EventMouse* event) {
-    //    CCLOG("mouseDown");
-        auto locationInWorld = event->getLocationInView();  // 获取屏幕视图中的坐标
-        auto locationInToolsBg = this->convertToNodeSpace(locationInWorld); // 转换到 tools_bg 的坐标系
-      //  CCLOG("Mouse position in tools_bg space: %f, %f", locationInToolsBg.x, locationInToolsBg.y);
-
-        // 检测是否点击工具
-
-        // 判断鼠标是否点击工具栏-------------------------------------------
-        for (int i = 0; i < tools.size(); i++) {
-            if (tools[i] && tools[i]->getBoundingBox().containsPoint(locationInToolsBg)) {
-                if (event->getMouseButton() == EventMouse::MouseButton::BUTTON_LEFT) {
-                    CCLOG("Tool[%d] selected and used", i);
-                    selectTool(i);  // 选中工具
-
-                    if (chest->isOpen == 1) {//与箱子交互
-                        chest->addTool(tools[i]);
-                        discardTool();
-                    }
-                    else
-                        useTool();  // 直接使用工具
-                }
-                else if (event->getMouseButton() == EventMouse::MouseButton::BUTTON_RIGHT) {
-                    discardTool();  // 右键丢弃工具
-                }
-                return;
-            }
-        }
-        //买工具------------------------------------------------------------------
-        int x=1;
-        if (locationInWorld.distance(Vec2(270,425)) < 20 ) {
-            if (UIManager::getInstance(x,"")->getMoney() >= 450) {
-                UIManager::getInstance(x, "")->setMoney(-450);
-                this->addTool(Tool::ToolType::HOEPLUS);
-            }
-            
-              else {
-                  auto fullLabel = Label::createWithTTF("money not enough!", "fonts/Marker Felt.ttf", 24);
-                  fullLabel->setPosition(startX, startY + 64.0f);
-                  this->addChild(fullLabel);
-                  fullLabel->runAction(Sequence::create(FadeOut::create(2.0f), RemoveSelf::create(), nullptr));
-              }
-        }
-        else if (locationInWorld.distance(Vec2(270,376)) < 20 ) {
-            if (UIManager::getInstance(x, "")->getMoney() >= 600) {
-                UIManager::getInstance(x, "")->setMoney(-600);
-                this->addTool(Tool::ToolType::FISHING_RODPLUS);
-            }
-            
-            else {
-                auto fullLabel = Label::createWithTTF("money not enough!", "fonts/Marker Felt.ttf", 24);
-                fullLabel->setPosition(startX, startY + 64.0f);
-                this->addChild(fullLabel);
-                fullLabel->runAction(Sequence::create(FadeOut::create(2.0f), RemoveSelf::create(), nullptr));
-            }
-        }
-        else if (locationInWorld.distance(Vec2(270, 316)) < 20) {
-            if (UIManager::getInstance(x, "")->getMoney() >= 500) {
-                UIManager::getInstance(x, "")->setMoney(-500);
-                this->addTool(Tool::ToolType::AXEPLUS);
-            }
-            
-            else {
-                auto fullLabel = Label::createWithTTF("money not enough!", "fonts/Marker Felt.ttf", 24);
-                fullLabel->setPosition(startX, startY + 64.0f);
-                this->addChild(fullLabel);
-                fullLabel->runAction(Sequence::create(FadeOut::create(2.0f), RemoveSelf::create(), nullptr));
-            }
-        }
-        else if (locationInWorld.distance(Vec2(270, 265)) < 20 ) {
-            if (UIManager::getInstance(x, "")->getMoney() >= 300) {
-                UIManager::getInstance(x, "")->setMoney(-300);
-                this->addTool(Tool::ToolType::WATERING_CANPLUS);
-            }
-            
-             else {
-                 auto fullLabel = Label::createWithTTF("money not enough!", "fonts/Marker Felt.ttf", 24);
-                 fullLabel->setPosition(startX, startY + 64.0f);
-                 this->addChild(fullLabel);
-                 fullLabel->runAction(Sequence::create(FadeOut::create(2.0f), RemoveSelf::create(), nullptr));
-             }
-        }
-        else if (locationInWorld.distance(Vec2(270, 206)) < 20 ) {
-            if (UIManager::getInstance(x, "")->getMoney() >= 300) {
-                UIManager::getInstance(x, "")->setMoney(-300);
-                ItemManager::getInstance(1, " ")->addItem(Item::ItemType::GIFT);
-            }
-            
-              else {
-                  auto fullLabel = Label::createWithTTF("money not enough!", "fonts/Marker Felt.ttf", 24);
-                  fullLabel->setPosition(startX, startY + 64.0f);
-                  this->addChild(fullLabel);
-                  fullLabel->runAction(Sequence::create(FadeOut::create(2.0f), RemoveSelf::create(), nullptr));
-              }
-        }
-    };
-
-    _eventDispatcher->addEventListenerWithSceneGraphPriority(mouseListener, this);
-    initKeyboardListener();
     return true;
-
 }
 
-void ToolManager::addTool(Tool::ToolType type) {
-    float gridWidth = 32.0f;//工具栏宽度
-    float startX = (Director::getInstance()->getVisibleSize().width - gridWidth * 10) / 2.0f;
-    float startY = Director::getInstance()->getVisibleSize().height * 0.1f;
-    for (int i = 0; i < tools.size(); i++) {
-        if (tools[i] == nullptr) {
-            auto tool = Tool::create(type);
+ToolManager::~ToolManager()
+{
+    // 清理对象池
+    for (auto tool : availablePool)
+    {
+        CC_SAFE_RELEASE(tool);
+    }
+    for (auto tool : activePool)
+    {
+        CC_SAFE_RELEASE(tool);
+    }
+    for (auto tool : tools)
+    {
+        CC_SAFE_RELEASE(tool);
+    }
+    availablePool.clear();
+    activePool.clear();
+    tools.clear();
 
+    // 清理UI元素
+    if (selectionBox)
+    {
+        selectionBox->removeFromParent();
+    }
+}
 
-            tool->setPosition(startX + i * gridWidth, startY);
-            tools[i] = tool;
-            this->addChild(tools[i]);
-            auto location = tools[i]->getPosition();
-            CCLOG("tools [%d]: %f,%f", i, location.x, location.y);
-            return;
+void ToolManager::preloadToolPool()
+{
+    // 预创建常用工具到对象池
+    expandToolPool(Tool::ToolType::HOE, 3);
+    expandToolPool(Tool::ToolType::AXE, 3);
+    expandToolPool(Tool::ToolType::WATERING_CAN, 2);
+    expandToolPool(Tool::ToolType::FISHING_ROD, 2);
+    expandToolPool(Tool::ToolType::FERTILIZER, 2);
+    expandToolPool(Tool::ToolType::HOEPLUS, 1);
+    expandToolPool(Tool::ToolType::AXEPLUS, 1);
+    expandToolPool(Tool::ToolType::ANIMALFOOD, 2);
+}
+
+void ToolManager::expandToolPool(Tool::ToolType type, int count)
+{
+    ToolFactory *factory = ToolFactory::getInstance();
+    for (int i = 0; i < count; i++)
+    {
+        Tool *tool = factory->createTool(type);
+        if (tool)
+        {
+            tool->retain();
+            tool->setVisible(false);
+            availablePool.push_back(tool);
         }
     }
-    CCLOG("ToolBar is full, cannot add more tools.");
-    auto fullLabel = Label::createWithTTF("ToolBar is full!", "fonts/Marker Felt.ttf", 24);
-    fullLabel->setPosition(startX, startY + 64.0f);
-    this->addChild(fullLabel);
-    fullLabel->runAction(Sequence::create(FadeOut::create(2.0f), RemoveSelf::create(), nullptr));
 }
 
-
-void ToolManager::selectTool(int index) {
-    if (index < 0 || index >= tools.size() || tools[index] == nullptr) {
-        CCLOG("Invalid tool selection");
-        return;
+Tool *ToolManager::getToolFromPool(Tool::ToolType type)
+{
+    // 尝试从可用池中找到相同类型的工具
+    for (auto it = availablePool.begin(); it != availablePool.end(); ++it)
+    {
+        if ((*it)->getType() == type)
+        {
+            Tool *tool = *it;
+            availablePool.erase(it);
+            tool->reset();
+            tool->type = type; // 恢复类型
+            tool->setVisible(true);
+            activePool.push_back(tool);
+            return tool;
+        }
     }
 
-    selectedToolIndex = index;
-    updateSelectionBox();
-    CCLOG("Tool selected: %d", index);
+    // 如果没有可用的工具，扩展池
+    expandToolPool(type, 3);
+    return getToolFromPool(type);
 }
 
-void ToolManager::useTool() {
-    if (selectedToolIndex < 0 || selectedToolIndex >= tools.size() || tools[selectedToolIndex] == nullptr) {
-        CCLOG("No tool selected to use");
-        return;
-    }
-
-    auto tool = tools[selectedToolIndex];
-    CCLOG("Using tool: %d", static_cast<int>(tool->getType()));
-    // 添加工具使用逻辑
-    tool->usetool();
-}
-
-void ToolManager::discardTool() {
-    if (selectedToolIndex < 0 || selectedToolIndex >= tools.size() || tools[selectedToolIndex] == nullptr) {
-        CCLOG("No tool selected to discard");
-        return;
-    }
-
-    auto tool = tools[selectedToolIndex];
-    this->removeChild(tool);
-    tools[selectedToolIndex] = nullptr;
-    selectedToolIndex = -1;
-    selectionBox->setVisible(false);
-    CCLOG("Tool discarded: %d", static_cast<int>(tool->getType()));
-
-}
-
-void ToolManager::updateSelectionBox() {
-    if (selectedToolIndex < 0 || selectedToolIndex >= tools.size() || tools[selectedToolIndex] == nullptr) {
-        selectionBox->setVisible(false);
-        return;
-    }
-    selectionBox->setVisible(true);
-    selectionBox->setPosition(tools[selectedToolIndex]->getPosition());
-}
-
-void ToolManager::initKeyboardListener() {
-    auto keyboardListener = EventListenerKeyboard::create();
-    keyboardListener->onKeyPressed = [=](EventKeyboard::KeyCode keyCode, Event* event) {
-        switch (keyCode) {
-        case EventKeyboard::KeyCode::KEY_C:
-            useTool(); // 使用当前工具
+void ToolManager::returnToolToPool(Tool *tool)
+{
+    // 从活动池中移除
+    for (auto it = activePool.begin(); it != activePool.end(); ++it)
+    {
+        if (*it == tool)
+        {
+            activePool.erase(it);
             break;
-        case EventKeyboard::KeyCode::KEY_V:
-            discardTool(); // 丢弃当前工具
+        }
+    }
+
+    // 重置并返回到可用池
+    tool->reset();
+    availablePool.push_back(tool);
+}
+
+void ToolManager::addTool(Tool::ToolType type)
+{
+    Tool *tool = getToolFromPool(type);
+    if (tool)
+    {
+        tools.push_back(tool);
+        this->addChild(tool);
+
+        // 设置位置
+        int index = tools.size() - 1;
+        float x = 50 + (index % 5) * 60;
+        float y = 400 - (index / 5) * 60;
+        tool->setPosition(Vec2(x, y));
+    }
+}
+
+void ToolManager::recycleTool(Tool *tool)
+{
+    returnToolToPool(tool);
+
+    // 从tools向量中移除
+    for (auto it = tools.begin(); it != tools.end(); ++it)
+    {
+        if (*it == tool)
+        {
+            tools.erase(it);
+            break;
+        }
+    }
+
+    // 从场景移除
+    if (tool->getParent())
+    {
+        tool->removeFromParent();
+    }
+}
+
+void ToolManager::selectTool(int index)
+{
+    if (index >= 0 && index < tools.size())
+    {
+        selectedToolIndex = index;
+        updateSelectionBox();
+    }
+}
+
+void ToolManager::useTool()
+{
+    if (selectedToolIndex >= 0 && selectedToolIndex < tools.size())
+    {
+        Tool *tool = tools[selectedToolIndex];
+        if (tool)
+        {
+            tool->usetool();
+
+            // 如果需要，可以添加使用后的逻辑
+            // 例如：耐久度减少等
+        }
+    }
+}
+
+void ToolManager::discardTool()
+{
+    if (selectedToolIndex >= 0 && selectedToolIndex < tools.size())
+    {
+        Tool *tool = tools[selectedToolIndex];
+        recycleTool(tool);
+        selectedToolIndex = -1;
+        updateSelectionBox();
+    }
+}
+
+void ToolManager::clearAllTools()
+{
+    // 回收所有工具
+    for (auto tool : tools)
+    {
+        returnToolToPool(tool);
+        if (tool->getParent())
+        {
+            tool->removeFromParent();
+        }
+    }
+    tools.clear();
+    selectedToolIndex = -1;
+    updateSelectionBox();
+}
+
+void ToolManager::updateSelectionBox()
+{
+    if (!selectionBox)
+    {
+        selectionBox = Sprite::create("../Resources/ui/selection.png");
+        if (selectionBox)
+        {
+            this->addChild(selectionBox, -1);
+        }
+    }
+
+    if (selectedToolIndex >= 0 && selectedToolIndex < tools.size())
+    {
+        Tool *tool = tools[selectedToolIndex];
+        if (tool && selectionBox)
+        {
+            selectionBox->setPosition(tool->getPosition());
+            selectionBox->setVisible(true);
+        }
+    }
+    else if (selectionBox)
+    {
+        selectionBox->setVisible(false);
+    }
+}
+
+void ToolManager::initKeyboardListener()
+{
+    auto keyboardListener = EventListenerKeyboard::create();
+
+    keyboardListener->onKeyPressed = [&](EventKeyboard::KeyCode keyCode, Event *event)
+    {
+        switch (keyCode)
+        {
+        case EventKeyboard::KeyCode::KEY_1:
+            selectTool(0);
+            break;
+        case EventKeyboard::KeyCode::KEY_2:
+            selectTool(1);
+            break;
+        case EventKeyboard::KeyCode::KEY_3:
+            selectTool(2);
+            break;
+        case EventKeyboard::KeyCode::KEY_4:
+            selectTool(3);
+            break;
+        case EventKeyboard::KeyCode::KEY_5:
+            selectTool(4);
+            break;
+        case EventKeyboard::KeyCode::KEY_Q:
+            useTool();
+            break;
+        case EventKeyboard::KeyCode::KEY_R:
+            discardTool();
             break;
         default:
             break;
         }
-        };
+    };
+
     _eventDispatcher->addEventListenerWithSceneGraphPriority(keyboardListener, this);
 }

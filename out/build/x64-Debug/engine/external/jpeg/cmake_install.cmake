@@ -1,8 +1,8 @@
-# Install script for directory: E:/Development/StardewValley/cocos2d/external/jpeg
+# Install script for directory: D:/1-wxmmxw/StardewValley/cocos2d/external/jpeg
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
-  set(CMAKE_INSTALL_PREFIX "E:/Development/StardewValley/out/install/x64-Debug")
+  set(CMAKE_INSTALL_PREFIX "D:/1-wxmmxw/StardewValley/out/install/x64-Debug")
 endif()
 string(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 
@@ -32,9 +32,3 @@ if(NOT DEFINED CMAKE_CROSSCOMPILING)
   set(CMAKE_CROSSCOMPILING "FALSE")
 endif()
 
-string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
-       "${CMAKE_INSTALL_MANIFEST_FILES}")
-if(CMAKE_INSTALL_LOCAL_ONLY)
-  file(WRITE "E:/Development/StardewValley/out/build/x64-Debug/engine/external/jpeg/install_local_manifest.txt"
-     "${CMAKE_INSTALL_MANIFEST_CONTENT}")
-endif()
