@@ -55,3 +55,5 @@ cocos2d/**/Release.win32/
 cocos2d/**/ipch/
 cocos2d/**/*.pch
 cocos2d/**/*.pdb
+
+.vscode/
