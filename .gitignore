@@ -1,0 +1,21 @@
+# Ignore everything by default
+*
+
+# Allow only these source files
+!Chest.cpp
+!Chest.h
+!ItemFactory.cpp
+!ItemFactory.h
+!ToolFactory.cpp
+!ToolFactory.h
+!item.cpp
+!item.h
+!itemManager.cpp
+!itemManager.h
+!tool.cpp
+!tool.h
+!toolManager.cpp
+!toolManager.h
+
+# Allow git files
+!.gitignore
