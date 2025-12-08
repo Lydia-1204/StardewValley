@@ -1,21 +1,21 @@
-# Ignore everything by default
+# Ignore everything
 *
 
-# Allow only these source files
-!Chest.cpp
-!Chest.h
-!ItemFactory.cpp
-!ItemFactory.h
-!ToolFactory.cpp
-!ToolFactory.h
-!item.cpp
-!item.h
-!itemManager.cpp
-!itemManager.h
-!tool.cpp
-!tool.h
-!toolManager.cpp
-!toolManager.h
+# Allow dirs you want
+!/
 
-# Allow git files
+# Allow source files
+!*.cpp
+!*.h
+
+# But explicitly ignore build results
+build/
+x64/
+Debug/
+Release/
+*.exe
+*.dll
+*.pdb
+
+# Allow gitignore
 !.gitignore
