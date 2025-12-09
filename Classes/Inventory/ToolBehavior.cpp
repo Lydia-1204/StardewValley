@@ -25,6 +25,13 @@ struct PlayerContext
     Vec2 targetPosition;
 };
 
+const std::vector<Vec2> &treePositions()
+{
+    static const std::vector<Vec2> positions = {
+        {810, 465}, {875, 630}, {900, 385}, {950, 540}, {1050, 440}, {1100, 610}, {1170, 365}};
+    return positions;
+}
+
 Vec2 computeTargetPosition(const Vec2 &playerPos, int direction)
 {
     switch (direction)
@@ -81,11 +88,22 @@ Tool::ToolType normalizeToolType(Tool::ToolType type)
 }
 } // namespace
 
+void IToolBehavior::useAt(Tool &tool, const cocos2d::Vec2 &)
+{
+    use(tool);
+}
+
 void HoeBehavior::use(Tool &tool)
 {
     const auto ctx = makePlayerContext(tool);
+    useAt(tool, ctx.targetPosition);
+}
 
-    CCLOG("Using HOE: Digging a hole...");
+void HoeBehavior::useAt(Tool &tool, const cocos2d::Vec2 &targetPos)
+{
+    const auto ctx = makePlayerContext(tool);
+
+    CCLOG("Using HOE: Digging a hole at (%0.1f, %0.1f)...", targetPos.x, targetPos.y);
 
     if (MapManager::getInstance()->getCurrentBlockLabel() == 7)
     {
@@ -101,13 +119,18 @@ void AxeBehavior::use(Tool &tool)
 {
     const auto ctx = makePlayerContext(tool);
 
+    useAt(tool, ctx.targetPosition);
+}
+
+void AxeBehavior::useAt(Tool &tool, const cocos2d::Vec2 &)
+{
+    const auto ctx = makePlayerContext(tool);
+
     CCLOG("Using AXE: Chopping a tree...");
 
     if (MapManager::getInstance()->getCurrentBlockLabel() == 2)
     {
-        const std::vector<Vec2> treePositions = {
-            {810, 465}, {875, 630}, {900, 385}, {950, 540}, {1050, 440}, {1100, 610}, {1170, 365}};
-        if (isNearAny(ctx.position, treePositions, 50.0f))
+        if (isNearAny(ctx.position, treePositions(), 50.0f))
         {
             ItemManager::getInstance(tool.selectedCharacter, tool.nickname)->addItem(Item::ItemType::WOODEN);
         }
@@ -194,20 +217,50 @@ PowerUpDecorator::PowerUpDecorator(ToolBehaviorPtr baseBehavior) : ToolDecorator
 
 void PowerUpDecorator::use(Tool &tool)
 {
-    ToolDecorator::use(tool);
+    if (!baseBehavior)
+    {
+        return;
+    }
 
     switch (tool.getType())
     {
     case Tool::ToolType::HOEPLUS:
-        CCLOG("Power-up HOE++ effect applied.");
+    {
+        const auto ctx = makePlayerContext(tool);
+        const float step = 16.0f; // tile size
+        for (int dx = -1; dx <= 1; ++dx)
+        {
+            for (int dy = -1; dy <= 1; ++dy)
+            {
+                const Vec2 target = ctx.targetPosition + Vec2(dx * step, dy * step);
+                baseBehavior->useAt(tool, target);
+            }
+        }
+        CCLOG("Power-up HOE++ 3x3 effect applied.");
         break;
+    }
     case Tool::ToolType::AXEPLUS:
-        CCLOG("Power-up AXE++ effect applied.");
+    {
+        ToolDecorator::use(tool);
+
+        const auto ctx = makePlayerContext(tool);
+        if (MapManager::getInstance()->getCurrentBlockLabel() == 2 && isNearAny(ctx.position, treePositions(), 50.0f))
+        {
+            ItemManager::getInstance(tool.selectedCharacter, tool.nickname)->addItem(Item::ItemType::WOODEN);
+            CCLOG("Power-up AXE++ extra wood drop.");
+        }
+        else
+        {
+            CCLOG("Power-up AXE++ effect applied (no extra drop outside tree range).");
+        }
         break;
+    }
     case Tool::ToolType::FISHING_RODPLUS:
+        ToolDecorator::use(tool);
         CCLOG("Power-up FISHING_ROD++ effect applied.");
         break;
     default:
+        ToolDecorator::use(tool);
         CCLOG("Power-up effect applied.");
         break;
     }
@@ -217,7 +270,37 @@ WideRangeDecorator::WideRangeDecorator(ToolBehaviorPtr baseBehavior) : ToolDecor
 
 void WideRangeDecorator::use(Tool &tool)
 {
-    ToolDecorator::use(tool);
+    if (!baseBehavior)
+    {
+        return;
+    }
 
-    CCLOG("Wide-range effect applied for PLUS tool.");
+    switch (tool.getType())
+    {
+    case Tool::ToolType::WATERING_CANPLUS:
+    {
+        const auto ctx = makePlayerContext(tool);
+        const float step = 16.0f;
+        // Water a 3-wide line perpendicular to facing direction (simple widen effect)
+        for (int offset = -1; offset <= 1; ++offset)
+        {
+            Vec2 target = ctx.targetPosition;
+            if (ctx.direction == 0 || ctx.direction == 2)
+            {
+                target.x += offset * step;
+            }
+            else
+            {
+                target.y += offset * step;
+            }
+            baseBehavior->useAt(tool, target);
+        }
+        CCLOG("Wide-range WATERING_CAN++ multi-tile effect applied.");
+        break;
+    }
+    default:
+        ToolDecorator::use(tool);
+        CCLOG("Wide-range effect applied for PLUS tool.");
+        break;
+    }
 }

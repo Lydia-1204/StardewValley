@@ -20,18 +20,21 @@ class IToolBehavior
 public:
     virtual ~IToolBehavior() = default;
     virtual void use(Tool &tool) = 0;
+    virtual void useAt(Tool &tool, const cocos2d::Vec2 &targetPos);
 };
 
 class HoeBehavior : public IToolBehavior
 {
 public:
     void use(Tool &tool) override;
+    void useAt(Tool &tool, const cocos2d::Vec2 &targetPos) override;
 };
 
 class AxeBehavior : public IToolBehavior
 {
 public:
     void use(Tool &tool) override;
+    void useAt(Tool &tool, const cocos2d::Vec2 &targetPos) override;
 };
 
 class WateringCanBehavior : public IToolBehavior

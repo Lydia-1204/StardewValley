@@ -275,7 +275,7 @@ void GameScene::update(float dt) {
         iron->setVisible(false);
     }
     //地图切换
-    if (mapManager && player&&currentMap) {
+    if (mapManager && player) {
        Vec2 direction;
       
       // CCLOG("player position %f,%f", player->getPlayerPosition().x, player->getPlayerPosition().y);
