@@ -4,36 +4,26 @@
  * File Function: 实现item类，实现物品的创造使用
  * Author:        王小萌 2351882
  * Update Date:   2024/12/21
+ * Refactor:      Items System Refactoring (Factory & Object Pool)
  *********************************************************************************************************/
 #include "Inventory/Item.h"
-#include "Inventory/ItemFactory.h"
+#include "Inventory/ItemFactory.h" // 引入工厂类
 #include "Farming/Crop.h"
 #include "World/Map.h"
 #include "Scenes/GameScene.h"
 #include "Characters/NpcTemplate.h"
+
 #include "Characters/Elliott.h"
 #include "Characters/Sam.h"
 #include "Characters/Shane.h"
 #include "Characters/Abigail.h"
+// ---------------------------------------------------------
 
 USING_NS_CC;
 
-// 私有构造函数，支持工厂模式
-Item::Item() : type(ItemType::NONE), quantity(0), quantityLabel(nullptr), itemSprite(nullptr), price(0), selectedCharacter(1), nickname("guest")
-{
-}
-
 Item *Item::create(ItemType type)
 {
-    Item *item = new (std::nothrow) Item();
-
-    if (item && item->init(type))
-    {
-        item->autorelease();
-        return item;
-    }
-    CC_SAFE_DELETE(item);
-    return nullptr;
+    return ItemFactory::getInstance()->createItem(type);
 }
 
 bool Item::init(ItemType type)
@@ -44,95 +34,34 @@ bool Item::init(ItemType type)
     }
 
     this->type = type;
-    quantity = 1;
-    // 根据工具类型加载不同的资源
-    switch (type)
-    {
-    case ItemType::SEED:
-        this->initWithFile("../Resources/item/seed.png");
-        price = 100;
-        break;
-    case ItemType::FISH:
-        this->initWithFile("../Resources/item/fish.png");
-        price = 300;
-        break;
-    case ItemType::EGG:
-        this->initWithFile("../Resources/item/egg.png");
-        price = 100;
-        break;
-    case ItemType::MILK:
-        this->initWithFile("../Resources/item/milk.png");
-        price = 200;
-        break;
-    case ItemType::BONE:
-        this->initWithFile("../Resources/item/bone.png");
-        price = 150;
-        break;
-    case ItemType::WOOL:
-        this->initWithFile("../Resources/item/wool.png");
-        price = 250;
-        break;
-    case ItemType::WOODEN:
-        this->initWithFile("../Resources/item/wooden.png");
-        price = 200;
-        break;
-    case ItemType::FRUIT:
-        this->initWithFile("../Resources/item/fruit.png");
-        price = 300;
-        break;
-    case ItemType::MINERAL:
-        this->initWithFile("../Resources/item/mineral.png");
-        price = 80;
-        break;
-    case ItemType::FAT:
-        this->initWithFile("../Resources/item/fat.png");
-        price = 200;
-        break;
-    case ItemType::GIFT:
-        this->initWithFile("../Resources/item/gift.png");
-        price = 300;
-        break;
-    default:
-        break;
-    }
+    this->quantity = 1;
+
+    ItemFactory::getInstance()->configureItem(this, type);
+
     quantityLabel = Label::createWithTTF("0", "../Resources/fonts/arial.ttf", 18);
     quantityLabel->setColor(Color3B::BLACK);
     quantityLabel->setPosition(this->getContentSize().width, this->getContentSize().height);
     this->addChild(quantityLabel, 10);
-    updateItemUI(); // 初始更新UI
+    updateItemUI();
     return true;
 }
 
-// 新增：对象池重置方法
-void Item::reset()
+void Item::reset(ItemType newType)
 {
-    // 重置物品到默认状态，用于对象池回收
-    this->type = ItemType::NONE;
-    this->quantity = 0;
-    this->price = 0;
-    this->setVisible(false);
-    this->setPosition(0, 0);
+    this->type = newType;
+    this->quantity = 1;
+    this->setVisible(true);
+    this->setOpacity(255);
+    this->setScale(1.0f);
+    this->setRotation(0.0f);
+
+    ItemFactory::getInstance()->configureItem(this, newType);
 
     if (quantityLabel)
     {
-        quantityLabel->setString("0");
+        quantityLabel->setPosition(this->getContentSize().width, this->getContentSize().height);
     }
-
-    // 停止所有动作
-    this->stopAllActions();
-
-    // 从父节点移除（如果有的话）
-    if (this->getParent())
-    {
-        this->removeFromParent();
-    }
-
-    // 清理物品精灵
-    if (itemSprite)
-    {
-        itemSprite->removeFromParent();
-        itemSprite = nullptr;
-    }
+    updateItemUI();
 }
 
 Item::ItemType Item::getType() const
@@ -145,8 +74,10 @@ void Item::useitem()
     auto playerPos = Player::getInstance(selectedCharacter, nickname)->getPosition();
     auto direction = Player::getInstance(selectedCharacter, nickname)->_currentDirection;
     Vec2 dstPos;
+
     // 获取所有 NPC
     std::vector<NpcTemplate *> npcs;
+    // 确保这些 NPC 类有 getInstance 方法。
     npcs.push_back(Elliott::getInstance());
     npcs.push_back(Sam::getInstance());
     npcs.push_back(Shane::getInstance());
@@ -167,55 +98,56 @@ void Item::useitem()
         dstPos = Vec2(playerPos.x - 16, playerPos.y);
         break;
     }
+
     switch (type)
     {
-    case ItemType::FISH: //
+    case ItemType::FISH:
         CCLOG("Using FISH: ...");
         displayItemAbovePlayer(Player::getInstance(1, " "), "../Resources/item/fish.png");
         break;
 
-    case ItemType::SEED: // 种树
+    case ItemType::SEED:
         CCLOG("Using SEED: Chopping a tree...");
         displayItemAbovePlayer(Player::getInstance(1, " "), "../Resources/item/seed.png");
         break;
 
-    case ItemType::EGG: //
+    case ItemType::EGG:
         CCLOG("Using EGG: ...");
         displayItemAbovePlayer(Player::getInstance(1, " "), "../Resources/item/egg.png");
         break;
 
-    case ItemType::MILK: //
+    case ItemType::MILK:
         CCLOG("Using MILK: ...");
         displayItemAbovePlayer(Player::getInstance(1, " "), "../Resources/item/milk.png");
         break;
-    case ItemType::BONE: //
+    case ItemType::BONE:
         CCLOG("Using BONE: ...");
         displayItemAbovePlayer(Player::getInstance(1, " "), "../Resources/item/bone.png");
         break;
-    case ItemType::WOOL: //
+    case ItemType::WOOL:
         CCLOG("Using WOOL: ...");
         displayItemAbovePlayer(Player::getInstance(1, " "), "../Resources/item/wool.png");
         break;
-    case ItemType::WOODEN: //
+    case ItemType::WOODEN:
         CCLOG("Using WOODEN: ...");
         displayItemAbovePlayer(Player::getInstance(1, " "), "../Resources/item/wooden.png");
         break;
-    case ItemType::FRUIT: //
+    case ItemType::FRUIT:
         CCLOG("Using FRUIT: ...");
         displayItemAbovePlayer(Player::getInstance(1, " "), "../Resources/item/fruit.png");
         break;
-    case ItemType::MINERAL: //
+    case ItemType::MINERAL:
         CCLOG("Using MINERAL: ...");
         displayItemAbovePlayer(Player::getInstance(1, " "), "../Resources/item/mineral.png");
         break;
-    case ItemType::FAT: //
+    case ItemType::FAT:
         CCLOG("Using FAT: ...");
         displayItemAbovePlayer(Player::getInstance(1, " "), "../Resources/item/fat.png");
         break;
-    case ItemType::GIFT: //
+    case ItemType::GIFT:
         for (auto npc : npcs)
         {
-            if (playerPos.distance(npc->getNpcsPosition()) < 50)
+            if (npc && playerPos.distance(npc->getNpcsPosition()) < 50)
             {
                 npc->setAffection(npc->getAffection() + 10);
                 decreaseQuantity(1);
@@ -235,7 +167,6 @@ void Item::increaseQuantity(int amout)
     quantity += amout;
     updateItemUI();
 }
-
 void Item::decreaseQuantity(int amout)
 {
     if (quantity > 0)
@@ -252,7 +183,6 @@ int Item::getQuantity() const
 void Item::updateItemUI()
 {
     quantityLabel->setString(StringUtils::format("%d", quantity));
-    // 如果数量为0，可以选择隐藏物品或数量标签
     if (quantity == 0)
     {
         this->setVisible(false);
@@ -266,11 +196,10 @@ void Item::updateItemUI()
 int Item::getPrice()
 {
     return price;
-}
+};
 
 void Item::displayItemAbovePlayer(Player *player, const std::string &itemImagePath)
 {
-    // 创建物品图标
     itemSprite = Sprite::create(itemImagePath);
     if (!itemSprite)
     {
@@ -278,17 +207,14 @@ void Item::displayItemAbovePlayer(Player *player, const std::string &itemImagePa
         return;
     }
 
-    // 设置物品图标位置（人物正上方）
     auto playerPos = player->getPosition();
-    itemSprite->setPosition(playerPos.x, playerPos.y + 20); // 正上方 32 像素
-    player->getParent()->addChild(itemSprite, 10);          // 添加到 Player 的父节点
+    itemSprite->setPosition(playerPos.x, playerPos.y + 20);
+    player->getParent()->addChild(itemSprite, 10);
 
-    // 创建动画：向上移动 + 渐隐消失
-    auto moveBy = MoveBy::create(5.0f, Vec2(1, 0)); // 向上移动 16 像素
-    auto fadeOut = FadeOut::create(1.0f);           // 渐隐
-    auto removeSelf = RemoveSelf::create();         // 动画完成后移除
+    auto moveBy = MoveBy::create(5.0f, Vec2(1, 0));
+    auto fadeOut = FadeOut::create(1.0f);
+    auto removeSelf = RemoveSelf::create();
     auto sequence = Sequence::create(Spawn::create(moveBy, fadeOut, nullptr), removeSelf, nullptr);
 
-    // 运行动画
     itemSprite->runAction(sequence);
 }
