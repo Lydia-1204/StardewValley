@@ -105,6 +105,7 @@ void Chest::setupItemsAndTools() {
         case 2: tool = Tool::create(Tool::ToolType::WATERING_CAN); break;
         case 3: tool = Tool::create(Tool::ToolType::FISHING_ROD); break;
         }
+        tool->setOwnerContext(1, "nickname");
         chestTools.push_back(tool);
         auto toolPosition = Vec2(toolBarBg->getPositionX() - bgWidth / 2 + 16 + i * gridWidth,
             toolBarBg->getPositionY() + bgHeight / 2 - gridWidth + 16);
@@ -217,6 +218,7 @@ void Chest::addTool(Tool* tool) {
     for (int i = 0; i < 28; i++) {
         if (i==chestTools.size()) {
             auto newtool = Tool::create(tool->getType());
+            newtool->setOwnerContext(1, "nickname");
             int x = i / 7;
             int y = i % 7;
             chestTools.push_back(newtool);

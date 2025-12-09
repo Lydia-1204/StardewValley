@@ -9,6 +9,14 @@
 #ifndef TOOL_H
 #define TOOL_H
 #include "cocos2d.h"
+#include <memory>
+
+class IToolBehavior;
+struct IToolBehaviorDeleter
+{
+    void operator()(IToolBehavior *ptr) const;
+};
+using ToolBehaviorPtr = std::unique_ptr<IToolBehavior, IToolBehaviorDeleter>;
 
 
 class Tool : public cocos2d::Sprite {
@@ -36,9 +44,12 @@ public:
     friend class Player;
     static Tool* create(ToolType type);
     bool init(ToolType type);
+    ~Tool();
     ToolType getType() const;
     void usetool();//个性化使用
     void buytool();
+    void setBehavior(ToolBehaviorPtr newBehavior);
+    void setOwnerContext(int ownerSelectedCharacter, const std::string& ownerNickname);
     int selectedCharacter;
     std::string nickname;
     int getPrice() {
@@ -48,6 +59,7 @@ public:
 private:
     ToolType type; // 工具类型
     int price;
+    ToolBehaviorPtr behavior;
 };
 
 
