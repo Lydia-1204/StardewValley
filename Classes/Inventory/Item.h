@@ -1,10 +1,4 @@
-/********************************************************************************************************
- * Project Name:  StardewValley
- * File Name:    item.h
- * File Function: 实现Item类声明，实现物品的的创造使用
- * Author:        王小萌 2351882
- * Update Date:   2024/12/21
- *********************************************************************************************************/
+// --- START OF FILE Inventory/Item.h ---
 #pragma once
 #ifndef ITEM_H
 #define ITEM_H
@@ -12,10 +6,14 @@
 #include "Characters/Player.h"
 
 class GameScene;
+class ItemFactory; // 前向声明
+
 class Item : public cocos2d::Sprite
 {
 public:
     friend class Chest;
+    friend class ItemFactory; // 允许工厂访问私有成员
+
     enum class ItemType
     {
         NONE,
@@ -30,17 +28,17 @@ public:
         MINERAL, // 矿石
         GIFT,    // 礼物
         FAT,     // 油脂
-        // 添加其他工具类型
     };
+
     friend class player;
     friend class ItemManager;
-    friend class ItemFactory;
 
     static Item *create(ItemType type);
+
     bool init(ItemType type);
 
-    // 新增：对象池重置方法
-    void reset();
+    // 对象池模式：重置物品状态
+    void reset(ItemType type);
 
     ItemType getType() const; // 获得类型
     void useitem();           // 个性化使用
@@ -55,15 +53,12 @@ public:
     int price;
 
 private:
-    ItemType type; // 工具类型
+    ItemType type; // 物品类型
     int quantity;  // 数量
     int getPrice();
     cocos2d::Label *quantityLabel; // 数字标签
     void displayItemAbovePlayer(Player *player, const std::string &itemImagePath);
     cocos2d::Sprite *itemSprite;
-
-    // 私有构造函数，支持工厂模式
-    Item();
 };
 
 #endif // ITEM_H

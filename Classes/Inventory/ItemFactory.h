@@ -1,44 +1,37 @@
+// --- START OF FILE Inventory/ItemFactory.h ---
 #pragma once
 #ifndef ITEMFACTORY_H
 #define ITEMFACTORY_H
 
-#include "Item.h"
-#include <functional>
-#include <unordered_map>
+#include "cocos2d.h"
+#include "Inventory/Item.h"
+#include <map>
+#include <string>
+
+// 定义物品的基本数据结构
+struct ItemData
+{
+    std::string texturePath;
+    int price;
+};
 
 class ItemFactory
 {
 public:
-    // 获取单例实例
     static ItemFactory *getInstance();
 
-    // 创建指定类型的物品
+    // 创建一个新的 Item 对象
     Item *createItem(Item::ItemType type);
 
-    // 预加载物品到对象池
-    void preloadItems(Item::ItemType type, int count);
-
-    // 清理工厂资源
-    void cleanup();
+    // 配置现有的 Item 对象 (用于初始化或重置)
+    void configureItem(Item *item, Item::ItemType type);
 
 private:
-    ItemFactory();
-    ~ItemFactory();
+    ItemFactory(); // 私有构造函数
+    static ItemFactory *instance;
+    std::map<Item::ItemType, ItemData> itemRegistry; // 注册表，代替 switch-case
 
-    // 禁用拷贝构造和赋值
-    ItemFactory(const ItemFactory &) = delete;
-    ItemFactory &operator=(const ItemFactory &) = delete;
-
-    static ItemFactory *_instance;
-
-    // 注册所有物品类型的创建函数
-    void registerCreators();
-
-    // 创建函数映射表
-    std::unordered_map<Item::ItemType, std::function<Item *()>> _creators;
-
-    // 对象池支持
-    std::unordered_map<Item::ItemType, std::vector<Item *>> _itemPools;
+    void initRegistry(); // 初始化注册表
 };
 
 #endif // ITEMFACTORY_H

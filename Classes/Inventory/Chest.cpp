@@ -1,501 +1,321 @@
 /********************************************************************************************************
  * Project Name:  StardewValley
- * File Name:    Chest.cpp
- * File Function: 实现Chest类，使用工厂模式和对象池管理箱子物品存储
- * Author:       王小萌 2351882
- * Update Date:  2024/12/21
+ * File Name:    item.h
+ * File Function: 实现Chest类实现，实现工具箱的的创造使用
+ * Author:        王小萌 2351882
+ * Update Date:   2024/12/22
  *********************************************************************************************************/
 #include "Inventory/Chest.h"
-#include "Inventory/ItemFactory.h"
+#include "Inventory/ToolManager.h"
 #include "Inventory/ItemManager.h"
-#include "Inventory/Tool.h"
-#include "Characters/Player.h"
-#include "Scenes/GameScene.h"
 
 USING_NS_CC;
+Chest* Chest::instance = nullptr;
 
-Chest *Chest::_instance = nullptr;
 
-Chest::Chest() : isOpen(false), chestPosition(Vec2::ZERO), chestSprite(nullptr),
-                 chestPanel(nullptr), itemFactory(nullptr), itemManager(nullptr)
-{
-    itemFactory = ItemFactory::getInstance();
-    itemManager = ItemManager::getInstance();
-    initializeChestSlots();
-    initializeToolGrids();
-    preloadChestPool();
-}
-
-Chest *Chest::getInstance()
-{
-    if (_instance == nullptr)
-    {
-        _instance = new Chest();
-        _instance->autorelease();
-    }
-    return _instance;
-}
-
-Chest::~Chest()
-{
-    // 清理存储的物品
-    clearChest();
-
-    // 清理工具
-    for (auto tool : chestTools)
-    {
-        CC_SAFE_RELEASE(tool);
-    }
-    chestTools.clear();
-
-    // 清理UI元素
-    if (chestSprite)
-    {
-        chestSprite->removeFromParent();
-    }
-    if (chestPanel)
-    {
-        chestPanel->removeFromParent();
-    }
-    for (auto slot : itemSlots)
-    {
-        if (slot)
-        {
-            slot->removeFromParent();
+Chest* Chest::getInstance( ) {
+    if (instance == nullptr) {  // 如果实例不存在，则创建
+        instance = new (std::nothrow) Chest();
+        if (instance && instance->init( )) {
+            instance->autorelease();  // 添加到内存管理系统
+            instance->setupItemsAndTools();  // 初始化箱子物品和工具
+            instance->initMouseListener();//监听事件
+        }
+        else {
+            CC_SAFE_DELETE(instance);
         }
     }
-    for (auto grid : toolgrids)
-    {
-        if (grid)
-        {
-            grid->removeFromParent();
+    return instance;  // 返回唯一实例
+}
+
+
+
+void Chest::setupItemsAndTools() {
+    // 获取屏幕的可见尺寸
+    auto visibleSize = Director::getInstance()->getVisibleSize();
+
+    // 计算背景精灵的大小，为屏幕的八分之一
+    auto bgWidth = visibleSize.width / 5.6f;
+    auto bgHeight = visibleSize.height / 5.6f;
+
+    // 计算每个格子的宽度
+    float gridWidth = 32.0f;
+    float gridHeight = 32.0f;
+    // 创建物品栏背景精灵
+    itemBarBg = Sprite::create("../Resources/tools/Chest_bg..png");
+    itemBarBg->setScaleX(bgWidth / itemBarBg->getContentSize().width);
+    itemBarBg->setScaleY(bgHeight / itemBarBg->getContentSize().height);
+
+    Size mapSize = MapManager::getInstance()->getCurrentMapSize(1);
+    itemBarBg->setPosition(mapSize.width / 2, 0);
+    //itemBarBg->setPosition(Vec2(visibleSize.width / 2 - bgWidth / 2, visibleSize.height / 2));
+    this->addChild(itemBarBg, 1);
+
+    // 创建工具栏背景精灵
+    toolBarBg = Sprite::create("../Resources/tools/Chest_bg..png");
+    toolBarBg->setScaleX(bgWidth / toolBarBg->getContentSize().width);
+    toolBarBg->setScaleY(bgHeight / toolBarBg->getContentSize().height);
+    toolBarBg->setPosition(mapSize.width / 2+ gridWidth*7, 0);
+    this->addChild(toolBarBg, 1);
+    //工具格
+    for (int i = 0; i < 4; i++)
+        for (int j = 0; j < 7; j++) {
+            itemgrids[i][j] = Sprite::create("../Resources/tools/tools_bg.png");
+            itemgrids[i][j]->setPosition(itemBarBg->getPositionX() - bgWidth / 2 + 16 + j * gridWidth,
+                itemBarBg->getPositionY() + bgHeight / 2 - gridWidth - i * gridWidth + 16);
+            this->addChild(itemgrids[i][j], 2);
         }
-    }
-    itemSlots.clear();
-    toolgrids.clear();
-
-    // 清理单例
-    if (_instance)
-    {
-        _instance = nullptr;
-    }
-}
-
-void Chest::openChest()
-{
-    if (isOpen)
-        return;
-
-    isOpen = true;
-    showChestContents();
-
-    // 创建箱子精灵
-    if (!chestSprite)
-    {
-        chestSprite = Sprite::create("../Resources/box_open.png");
-        if (chestSprite)
-        {
-            chestSprite->setPosition(chestPosition);
-            this->addChild(chestSprite, 20);
+    // 初始化物品和工具，并放置在相应的背景精灵上
+    for (int i = 0; i < 7; i++) {
+        Item* item;
+        switch (i) {
+        case 0: item = Item::create(Item::ItemType::SEED); break;
+        case 1: item = Item::create(Item::ItemType::FISH); break;
+        case 2: item = Item::create(Item::ItemType::FRUIT); break;
+        case 3: item = Item::create(Item::ItemType::BONE); break;
+        case 4: item = Item::create(Item::ItemType::WOOL); break;
+        case 5: item = Item::create(Item::ItemType::WOODEN); break;
+        case 6: item = Item::create(Item::ItemType::EGG); break;
         }
+        chestItems.push_back(item);
+        // 根据背景精灵的位置和格子的大小计算物品的位置
+        auto itemPosition = Vec2(itemBarBg->getPositionX() - bgWidth / 2 + 16 + i * gridWidth,
+            itemBarBg->getPositionY() + bgHeight / 2 - gridWidth + 16);
+        item->setPosition(itemPosition);
+        this->addChild(item, 3);
+        addItem(item);
     }
 
-    CCLOG("Chest opened at position (%.1f, %.1f)", chestPosition.x, chestPosition.y);
-}
 
-void Chest::closeChest()
-{
-    if (!isOpen)
-        return;
+    //工具格
+    for (int i = 0; i < 4; i++)
+        for (int j = 0; j < 7; j++) {
+            toolgrids[i][j] = Sprite::create("../Resources/tools/tools_bg.png");
 
-    isOpen = false;
-    hideChestContents();
-
-    // 更换为关闭的箱子精灵
-    if (chestSprite)
-    {
-        chestSprite->setTexture("../Resources/boxxx.png");
-    }
-
-    CCLOG("Chest closed");
-}
-
-void Chest::chestSetPosition(const Vec2 &position)
-{
-    chestPosition = position;
-    if (chestSprite)
-    {
-        chestSprite->setPosition(position);
-    }
-}
-
-Vec2 Chest::getChestPosition() const
-{
-    return chestPosition;
-}
-
-bool Chest::storeItem(Item::ItemType type, int quantity)
-{
-    if (quantity <= 0)
-        return false;
-
-    // 从ItemManager获取物品
-    Item *itemToStore = nullptr;
-    for (int i = 0; i < quantity; i++)
-    {
-        itemToStore = itemManager->getItemFromPool(type);
-        if (itemToStore)
-        {
-            itemToStore->reset();
-            itemToStore->type = type;
-            itemToStore->quantity = 1;
-            storedItems[type].push_back(itemToStore);
+            toolgrids[i][j]->setPosition(toolBarBg->getPositionX() - bgWidth / 2 + 16 + j * gridWidth,
+                toolBarBg->getPositionY() + bgHeight / 2 - gridWidth - i * gridWidth + 16);
+            this->addChild(toolgrids[i][j], 2);
         }
-    }
-
-    if (itemToStore)
-    {
-        updateChestUI();
-        CCLOG("Stored %d items of type %d in chest", quantity, static_cast<int>(type));
-        return true;
-    }
-
-    return false;
-}
-
-Item *Chest::retrieveItem(Item::ItemType type)
-{
-    auto it = storedItems.find(type);
-    if (it != storedItems.end() && !it->second.empty())
-    {
-        Item *item = it->second.back();
-        it->second.pop_back();
-
-        // 如果该类型物品为空，删除映射
-        if (it->second.empty())
-        {
-            storedItems.erase(it);
+    // 初始化工具
+    for (int i = 0; i < 4; i++) {
+        Tool* tool;
+        switch (i) {
+        case 0: tool = Tool::create(Tool::ToolType::HOE); break;
+        case 1: tool = Tool::create(Tool::ToolType::AXE); break;
+        case 2: tool = Tool::create(Tool::ToolType::WATERING_CAN); break;
+        case 3: tool = Tool::create(Tool::ToolType::FISHING_ROD); break;
         }
-
-        updateChestUI();
-        CCLOG("Retrieved item of type %d from chest", static_cast<int>(type));
-        return item;
+        chestTools.push_back(tool);
+        auto toolPosition = Vec2(toolBarBg->getPositionX() - bgWidth / 2 + 16 + i * gridWidth,
+            toolBarBg->getPositionY() + bgHeight / 2 - gridWidth + 16);
+        tool->setPosition(toolPosition);
+        this->addChild(tool, 2);
     }
+    //标签
+    itemLabel = Label::createWithSystemFont("Items", "../Resources/fonts/Marker Felt.ttf", 20);
+    itemLabel->setTextColor(Color4B::WHITE);
+    itemLabel->setPosition(Vec2(itemBarBg->getPositionX(), itemBarBg->getPositionY()-32.0*2));  // 调整位置
+    this->addChild(itemLabel, 4);
 
-    return nullptr;
+    // 工具栏标签
+   toolLabel = Label::createWithSystemFont("Tools", "../Resources/fonts/Marker Felt.ttf", 20);
+    toolLabel->setTextColor(Color4B::WHITE);
+    toolLabel->setPosition(Vec2(toolBarBg->getPositionX() , toolBarBg->getPositionY() - 32.0 * 2));  // 调整位置
+    this->addChild(toolLabel, 4);
+
+    this->setVisible(false);
 }
 
-bool Chest::hasItem(Item::ItemType type, int quantity)
-{
-    auto it = storedItems.find(type);
-    if (it != storedItems.end())
-    {
-        return it->second.size() >= static_cast<size_t>(quantity);
+
+void Chest::showItemsAndTools() {
+    // 显示箱子中的物品
+    for (auto& item : chestItems) {
+        item->setVisible(true);  // 显示物品
+        itemBarBg->setVisible(true);
+        for (int i = 0; i < 4; i++)
+            for (int j = 0; j < 7; j++)
+                itemgrids[i][j]->setVisible(true);
     }
-    return false;
+    for (auto& tool : chestTools) {
+        tool->setVisible(true);  // 显示工具
+        toolBarBg->setVisible(true);
+        for (int i = 0; i < 4; i++)
+            for (int j = 0; j < 7; j++)
+               toolgrids[i][j]->setVisible(true);
+    }
 }
 
-int Chest::getItemCount(Item::ItemType type)
-{
-    auto it = storedItems.find(type);
-    if (it != storedItems.end())
-    {
-        return static_cast<int>(it->second.size());
-    }
-    return 0;
-}
+// 初始化鼠标点击监听器
+void Chest::initMouseListener() {
+    // 添加鼠标监听器
+    auto mouseListener = EventListenerMouse::create();
+    mouseListener->onMouseDown = [=](EventMouse* event) {
+        auto locationInWorld = event->getLocationInView();  // 获取屏幕视图中的坐标
+        auto locationInChest = this->convertToNodeSpace(locationInWorld);  // 转换到箱子节点的坐标系
 
-void Chest::addTool(Tool *tool)
-{
-    if (!tool)
-        return;
-
-    // 查找空位或相同类型的工具
-    for (int i = 0; i < 28; i++)
-    {
-        if (i == chestTools.size())
-        {
-            auto newTool = Tool::create(tool->getType());
-            chestTools.push_back(newTool);
-
-            // 设置位置（修正后的代码）
-            if (i < toolgrids.size())
-            {
-                int x = i / 7;
-                int y = i % 7;
-                newTool->setPosition(toolgrids[x][y].getPosition()); // 使用 . 而不是 ->
+        // 检查是否点击了物品格子
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 7; j++) {
+                if (itemgrids[i][j]->getBoundingBox().containsPoint(locationInChest)) {
+                    if (i * 7 + j < chestItems.size()) {  // 如果该格子有物品
+                        onItemClicked(chestItems[i * 7 + j]);  // 触发物品点击事件
+                    }
+                    return;
+                }
             }
+        }
 
-            this->addChild(newTool, 2);
-            CCLOG("Tool added to chest at index %d", i);
+        // 检查是否点击了工具格子
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 7; j++) {
+                if (toolgrids[i][j]->getBoundingBox().containsPoint(locationInChest)) {
+                    if (i * 7 + j < chestTools.size()) {  // 如果该格子有工具
+                        onToolClicked(chestTools[i * 7 + j]);  // 触发工具点击事件
+                    }
+                    return;
+                }
+            }
+        }
+        };
+    //*******关闭按钮**********//
+    auto closeItem = MenuItemImage::create(
+        "../Resources/closeChest.png", // 正常状态
+        "../Resources/closeChest.png", // 被点击状态
+        CC_CALLBACK_1(Chest::closeChest, this)); // 按钮点击事件
+
+
+    closeItem->setPosition(Vec2(toolgrids[0][6]->getPositionX() + 10.0f, toolgrids[0][6]->getPositionY() + 10.0f));  // 工具栏右上角
+    auto menu = Menu::create(closeItem, nullptr);
+    menu->setPosition(Vec2::ZERO);  // 设置菜单位置
+    this->addChild(menu, 5);
+    _eventDispatcher->addEventListenerWithSceneGraphPriority(mouseListener, this);
+}
+
+void Chest::addItem(Item* item) {
+    for (int i = 0; i < 28; i++) {
+        if (i< chestItems.size()&&chestItems[i] && chestItems[i]->getType() == item-> getType()) {
+            // 如果物品栏中已经有这个类型的物品，增加数量
+            chestItems[i]->increaseQuantity(1);
+            return;
+        }
+        if (i == chestItems.size()) {
+            // 如果有空位，创建新物品
+            auto itemnew = Item::create(item->getType());
+            int x = i / 7;
+            int y = i % 7;
+            itemnew->setPosition(itemgrids[x][y]->getPosition());
+            chestItems.push_back( itemnew);
+            this->addChild(chestItems[i],2);
+            auto location = chestItems[i]->getPosition();
+            CCLOG("Items [%d]: %f,%f", i, location.x, location.y);
             return;
         }
     }
 }
-
-void Chest::removeTool(Tool *tool)
-{
-    if (!tool)
-        return;
-
-    for (auto it = chestTools.begin(); it != chestTools.end(); ++it)
-    {
-        if (*it == tool)
-        {
-            chestTools.erase(it);
-            if (tool->getParent())
-            {
-                tool->removeFromParent();
-            }
-            CCLOG("Tool removed from chest");
+void Chest::addTool(Tool* tool) {
+  
+    for (int i = 0; i < 28; i++) {
+        if (i==chestTools.size()) {
+            auto newtool = Tool::create(tool->getType());
+            int x = i / 7;
+            int y = i % 7;
+            chestTools.push_back(newtool);
+            chestTools[i]->setPosition(toolgrids[x][y]->getPosition());
+            this->addChild(chestTools[i],2);
+            //chestTools[i]->setVisible(true);
+            auto location = chestTools[i]->getPosition();
+            CCLOG("tools [%d]: %f,%f", i, location.x, location.y);
             return;
         }
     }
+   
 }
 
-void Chest::storeAllItems()
-{
-    // 将ItemManager中所有物品存入箱子
-    int itemCount = itemManager->getItemCount();
-    for (int i = 0; i < itemCount; i++)
-    {
-        Item *item = itemManager->getItem(i);
-        if (item)
-        {
-            storeItem(item->getType(), item->getQuantity());
+
+// 物品点击事件
+void Chest::onItemClicked(Item* item) {
+   
+    
+    if (item->getQuantity() > 0)
+            ItemManager::getInstance(1, "nickname")->addItem(item->getType());
+    // 从箱子里取出物品并加入玩家物品栏
+        item->decreaseQuantity(1);  // 减少物品数量
+        if (item->getQuantity() == 0) {
+            item->setVisible(false);
         }
-    }
-
-    // 清空ItemManager
-    itemManager->clearAllItems();
-
-    CCLOG("Stored all items from ItemManager to chest");
+    // 将物品添加到玩家物品栏
+     
+    CCLOG("Item added to player inventory");
 }
 
-void Chest::retrieveAllItems()
-{
-    // 将箱子中所有物品取出到ItemManager
-    for (auto &pair : storedItems)
-    {
-        for (auto item : pair.second)
-        {
-            itemManager->addItem(item->getType());
+// 工具点击事件
+void Chest::onToolClicked(Tool* tool) {
+
+    tool->setVisible(false);  // 减少工具数量
+    // 将工具添加到玩家的工具栏
+        ToolManager::getInstance(1, "nickname")->addTool(tool->getType());
+    CCLOG("Tool added to player toolbar");
+}
+
+void Chest::chestSetPosition(const Vec2& position) {
+    this->setPosition(position);
+}
+/*
+void Chest::closeChest() {
+    if (isOpen) {
+        isOpen = false;
+        CCLOG("Chest closed");
+        // 隐藏箱子中的物品和工具
+        for (auto& item : chestItems) {
+            item->setVisible(false);
+            itemBarBg->setVisible(false);
+            for (int i = 0; i < 7; i++)
+                for (int j = 0; j < 4; j++)
+                    itemgrids[i][j]->setVisible(false);
         }
-    }
-
-    // 清空箱子
-    clearChest();
-
-    CCLOG("Retrieved all items from chest to ItemManager");
-}
-
-void Chest::toggleChest()
-{
-    if (isOpen)
-    {
-        closeChest();
-    }
-    else
-    {
-        openChest();
-    }
-}
-
-void Chest::updateChestUI()
-{
-    if (!isOpen)
-        return;
-
-    // 更新物品槽位显示
-    int slotIndex = 0;
-    for (auto &pair : storedItems)
-    {
-        for (auto item : pair.second)
-        {
-            if (slotIndex < itemSlots.size())
-            {
-                updateSlotDisplay(slotIndex, item);
-                slotIndex++;
-            }
-        }
-    }
-
-    // 隐藏未使用的槽位
-    for (int i = slotIndex; i < itemSlots.size(); i++)
-    {
-        if (itemSlots[i])
-        {
-            itemSlots[i]->setVisible(false);
+        for (auto& tool : chestTools) {
+            tool->setVisible(false);
+            toolBarBg->setVisible(false);
+            for (int i = 0; i < 7; i++)
+                for (int j = 0; j < 4; j++)
+                    toolgrids[i][j]->setVisible(false);
         }
     }
 }
+*/
 
-void Chest::showChestContents()
-{
-    if (!chestPanel)
-    {
-        chestPanel = LayerColor::create(Color4B(50, 50, 50, 200));
-        chestPanel->setPosition(Vec2(100, 100));
-        chestPanel->setContentSize(Size(600, 400));
-        this->addChild(chestPanel, 25);
-    }
-
-    chestPanel->setVisible(true);
-    updateChestUI();
-}
-
-void Chest::hideChestContents()
-{
-    if (chestPanel)
-    {
-        chestPanel->setVisible(false);
+void Chest::openChest() {
+    if (!isOpen) {
+        isOpen = true;
+        CCLOG("Chest opened");
+        this->setVisible(true);
+        //showItemsAndTools();  // 显示物品和工具
     }
 }
 
-void Chest::preloadChestPool()
-{
-    // 预加载常用物品到箱子池
-    std::vector<Item::ItemType> commonTypes = {
-        Item::ItemType::SEED,
-        Item::ItemType::FISH,
-        Item::ItemType::EGG,
-        Item::ItemType::MILK,
-        Item::ItemType::WOOL,
-        Item::ItemType::BONE,
-        Item::ItemType::WOODEN,
-        Item::ItemType::FRUIT,
-        Item::ItemType::MINERAL,
-        Item::ItemType::GIFT,
-        Item::ItemType::FAT};
-
-    for (auto type : commonTypes)
-    {
-        for (int i = 0; i < 5; i++)
-        {
-            Item *item = itemFactory->createItem(type);
-            if (item)
-            {
-                item->retain();
-                item->setVisible(false);
-                activeChestItems.push_back(item);
-            }
+void Chest::closeChest(Ref* sender) {
+    if (isOpen) {
+        isOpen = false;
+        CCLOG("Chest closed");
+        this->setVisible(false);
+        /*
+        // 隐藏箱子中的物品和工具
+        for (auto& item : chestItems) {
+            item->setVisible(false);
+            itemBarBg->setVisible(false);
+            for (int i = 0; i < 4; i++)
+                for (int j = 0; j < 7; j++)
+                    itemgrids[i][j]->setVisible(false);
         }
-    }
-}
-
-void Chest::clearChest()
-{
-    // 回收所有存储的物品
-    for (auto &pair : storedItems)
-    {
-        for (auto item : pair.second)
-        {
-            item->reset();
-            activeChestItems.push_back(item);
+        for (auto& tool : chestTools) {
+            tool->setVisible(false);
+            toolBarBg->setVisible(false);
+            for (int i = 0; i < 4; i++)
+                for (int j = 0; j <7; j++)
+                    toolgrids[i][j]->setVisible(false);
         }
-        pair.second.clear();
-    }
-    storedItems.clear();
-
-    updateChestUI();
-    CCLOG("Chest cleared");
-}
-
-size_t Chest::getChestSize() const
-{
-    size_t total = 0;
-    for (const auto &pair : storedItems)
-    {
-        total += pair.second.size();
-    }
-    return total;
-}
-
-Item *Chest::getItemFromChestPool(Item::ItemType type)
-{
-    // 尝试从activeChestItems中找到相同类型的物品
-    for (auto it = activeChestItems.begin(); it != activeChestItems.end(); ++it)
-    {
-        if ((*it)->getType() == type)
-        {
-            Item *item = *it;
-            activeChestItems.erase(it);
-            item->reset();
-            item->type = type;
-            item->quantity = 1;
-            item->setVisible(true);
-            return item;
-        }
-    }
-
-    // 如果没有找到，创建新的
-    return itemFactory->createItem(type);
-}
-
-void Chest::returnItemToChestPool(Item *item)
-{
-    if (item)
-    {
-        item->reset();
-        activeChestItems.push_back(item);
-    }
-}
-
-void Chest::initializeChestSlots()
-{
-    // 创建物品槽位
-    for (int i = 0; i < 20; i++)
-    { // 5x4 网格
-        Sprite *slot = Sprite::create("../Resources/ui/item_slot.png");
-        if (slot)
-        {
-            float x = 150 + (i % 5) * 80;
-            float y = 350 - (i / 5) * 80;
-            slot->setPosition(Vec2(x, y));
-            slot->setVisible(false);
-            itemSlots.push_back(slot);
-        }
-    }
-}
-
-void Chest::initializeToolGrids()
-{
-    // 创建工具槽位网格
-    for (int i = 0; i < 28; i++)
-    { // 7x4 网格
-        Sprite *grid = Sprite::create("../Resources/ui/tool_grid.png");
-        if (grid)
-        {
-            float x = 150 + (i % 7) * 60;
-            float y = 350 - (i / 7) * 60;
-            grid->setPosition(Vec2(x, y));
-            grid->setVisible(false);
-            toolgrids.push_back(grid);
-        }
-    }
-}
-
-void Chest::updateSlotDisplay(int slotIndex, Item *item)
-{
-    if (slotIndex >= 0 && slotIndex < itemSlots.size() && item)
-    {
-        Sprite *slot = itemSlots[slotIndex];
-        if (slot)
-        {
-            // 显示物品图标
-            slot->setTexture(item->getTexture());
-            slot->setVisible(true);
-
-            // 更新数量标签
-            auto label = static_cast<Label *>(slot->getChildByTag(100));
-            if (!label)
-            {
-                label = Label::createWithTTF("1", "../Resources/fonts/arial.ttf", 16);
-                label->setColor(Color3B::WHITE);
-                label->setPosition(Vec2(slot->getContentSize().width - 10, slot->getContentSize().height - 10));
-                slot->addChild(label, 1, 100);
-            }
-            label->setString(StringUtils::format("%d", item->getQuantity()));
-        }
+        */
+       // itemLabel->setVisible(false);
+       // toolLabel->setVisible(false);
     }
 }

@@ -1,246 +1,65 @@
-/********************************************************************************************************
- * Project Name:  StardewValley
- * File Name:    ItemFactory.cpp
- * File Function: 实现ItemFactory类，使用工厂模式创建物品，消除switch-case语句
- * Author:       王小萌 2351882
- * Update Date:  2024/12/21
- *********************************************************************************************************/
+// --- START OF FILE Inventory/ItemFactory.cpp ---
 #include "Inventory/ItemFactory.h"
-#include "Inventory/Item.h"
 
-USING_NS_CC;
-
-ItemFactory *ItemFactory::_instance = nullptr;
+ItemFactory *ItemFactory::instance = nullptr;
 
 ItemFactory *ItemFactory::getInstance()
 {
-    if (_instance == nullptr)
+    if (instance == nullptr)
     {
-        _instance = new ItemFactory();
+        instance = new ItemFactory();
     }
-    return _instance;
+    return instance;
 }
 
 ItemFactory::ItemFactory()
 {
-    registerCreators();
+    initRegistry();
 }
 
-ItemFactory::~ItemFactory()
+void ItemFactory::initRegistry()
 {
-    cleanup();
-}
-
-void ItemFactory::registerCreators()
-{
-    // 注册种子创建器
-    _creators[Item::ItemType::SEED] = []() -> Item *
-    {
-        Item *item = new Item();
-        if (item && item->init(Item::ItemType::SEED))
-        {
-            item->autorelease();
-            return item;
-        }
-        CC_SAFE_DELETE(item);
-        return nullptr;
-    };
-
-    // 注册鱼肉创建器
-    _creators[Item::ItemType::FISH] = []() -> Item *
-    {
-        Item *item = new Item();
-        if (item && item->init(Item::ItemType::FISH))
-        {
-            item->autorelease();
-            return item;
-        }
-        CC_SAFE_DELETE(item);
-        return nullptr;
-    };
-
-    // 注册鸡蛋创建器
-    _creators[Item::ItemType::EGG] = []() -> Item *
-    {
-        Item *item = new Item();
-        if (item && item->init(Item::ItemType::EGG))
-        {
-            item->autorelease();
-            return item;
-        }
-        CC_SAFE_DELETE(item);
-        return nullptr;
-    };
-
-    // 注册牛奶创建器
-    _creators[Item::ItemType::MILK] = []() -> Item *
-    {
-        Item *item = new Item();
-        if (item && item->init(Item::ItemType::MILK))
-        {
-            item->autorelease();
-            return item;
-        }
-        CC_SAFE_DELETE(item);
-        return nullptr;
-    };
-
-    // 注册骨头创建器
-    _creators[Item::ItemType::BONE] = []() -> Item *
-    {
-        Item *item = new Item();
-        if (item && item->init(Item::ItemType::BONE))
-        {
-            item->autorelease();
-            return item;
-        }
-        CC_SAFE_DELETE(item);
-        return nullptr;
-    };
-
-    // 注册羊毛创建器
-    _creators[Item::ItemType::WOOL] = []() -> Item *
-    {
-        Item *item = new Item();
-        if (item && item->init(Item::ItemType::WOOL))
-        {
-            item->autorelease();
-            return item;
-        }
-        CC_SAFE_DELETE(item);
-        return nullptr;
-    };
-
-    // 注册木头创建器
-    _creators[Item::ItemType::WOODEN] = []() -> Item *
-    {
-        Item *item = new Item();
-        if (item && item->init(Item::ItemType::WOODEN))
-        {
-            item->autorelease();
-            return item;
-        }
-        CC_SAFE_DELETE(item);
-        return nullptr;
-    };
-
-    // 注册南瓜创建器
-    _creators[Item::ItemType::FRUIT] = []() -> Item *
-    {
-        Item *item = new Item();
-        if (item && item->init(Item::ItemType::FRUIT))
-        {
-            item->autorelease();
-            return item;
-        }
-        CC_SAFE_DELETE(item);
-        return nullptr;
-    };
-
-    // 注册矿石创建器
-    _creators[Item::ItemType::MINERAL] = []() -> Item *
-    {
-        Item *item = new Item();
-        if (item && item->init(Item::ItemType::MINERAL))
-        {
-            item->autorelease();
-            return item;
-        }
-        CC_SAFE_DELETE(item);
-        return nullptr;
-    };
-
-    // 注册礼物创建器
-    _creators[Item::ItemType::GIFT] = []() -> Item *
-    {
-        Item *item = new Item();
-        if (item && item->init(Item::ItemType::GIFT))
-        {
-            item->autorelease();
-            return item;
-        }
-        CC_SAFE_DELETE(item);
-        return nullptr;
-    };
-
-    // 注册油脂创建器
-    _creators[Item::ItemType::FAT] = []() -> Item *
-    {
-        Item *item = new Item();
-        if (item && item->init(Item::ItemType::FAT))
-        {
-            item->autorelease();
-            return item;
-        }
-        CC_SAFE_DELETE(item);
-        return nullptr;
-    };
-
-    // 注册空类型创建器
-    _creators[Item::ItemType::NONE] = []() -> Item *
-    {
-        Item *item = new Item();
-        if (item && item->init(Item::ItemType::NONE))
-        {
-            item->autorelease();
-            return item;
-        }
-        CC_SAFE_DELETE(item);
-        return nullptr;
-    };
+    // 使用 Map 消除 switch-case
+    // 可以在这里添加新物品
+    itemRegistry[Item::ItemType::SEED] = {"../Resources/item/seed.png", 100};
+    itemRegistry[Item::ItemType::FISH] = {"../Resources/item/fish.png", 300};
+    itemRegistry[Item::ItemType::EGG] = {"../Resources/item/egg.png", 100};
+    itemRegistry[Item::ItemType::MILK] = {"../Resources/item/milk.png", 200};
+    itemRegistry[Item::ItemType::BONE] = {"../Resources/item/bone.png", 150};
+    itemRegistry[Item::ItemType::WOOL] = {"../Resources/item/wool.png", 250};
+    itemRegistry[Item::ItemType::WOODEN] = {"../Resources/item/wooden.png", 200};
+    itemRegistry[Item::ItemType::FRUIT] = {"../Resources/item/fruit.png", 300};
+    itemRegistry[Item::ItemType::MINERAL] = {"../Resources/item/mineral.png", 80};
+    itemRegistry[Item::ItemType::FAT] = {"../Resources/item/fat.png", 200};
+    itemRegistry[Item::ItemType::GIFT] = {"../Resources/item/gift.png", 300};
 }
 
 Item *ItemFactory::createItem(Item::ItemType type)
 {
-    auto it = _creators.find(type);
-    if (it != _creators.end())
+    Item *item = new (std::nothrow) Item();
+    if (item && item->init(type))
     {
-        return it->second();
+        item->autorelease();
+        return item;
     }
-    CCLOG("ItemFactory: Unknown item type %d", static_cast<int>(type));
+    CC_SAFE_DELETE(item);
     return nullptr;
 }
 
-void ItemFactory::preloadItems(Item::ItemType type, int count)
+void ItemFactory::configureItem(Item *item, Item::ItemType type)
 {
-    auto it = _itemPools.find(type);
-    if (it == _itemPools.end())
+    // 查找配置
+    auto it = itemRegistry.find(type);
+    if (it != itemRegistry.end())
     {
-        _itemPools[type] = std::vector<Item *>();
+        const ItemData &data = it->second;
+        // 设置纹理和价格
+        item->setTexture(it->second.texturePath);
+        item->price = data.price;
     }
-
-    for (int i = 0; i < count; i++)
+    else
     {
-        Item *item = createItem(type);
-        if (item)
-        {
-            item->retain();
-            item->setVisible(false);
-            _itemPools[type].push_back(item);
-        }
-    }
-}
-
-void ItemFactory::cleanup()
-{
-    // 清理对象池
-    for (auto &pair : _itemPools)
-    {
-        for (auto item : pair.second)
-        {
-            CC_SAFE_RELEASE(item);
-        }
-        pair.second.clear();
-    }
-    _itemPools.clear();
-
-    // 清理创建器映射
-    _creators.clear();
-
-    // 清理单例实例
-    if (_instance)
-    {
-        delete _instance;
-        _instance = nullptr;
+        // 默认处理或错误处理
+        CCLOG("ItemFactory: Warning, type not found in registry.");
     }
 }

@@ -8,50 +8,43 @@
 *.opendb
 *.ipch
 *.log
-
 # 预编译头/临时文件
 **/Debug.win32/*.pch
 *.FileListAbsolute.txt
-
 # Visual Studio工程文件（可自动生成）
 *.sln
 *.vcxproj
 *.vcxproj.filters
 *.vcxproj.user
-
 # 本地构建配置
 proj.win32/build-cfg.json
 **/CMakeCache.txt
 **/CMakeFiles/
-
 # MSBuild/VS输出目录
 **/Debug.win32/
 **/Release.win32/
 proj.win32/Debug/
 proj.win32/Release/
 proj.win32/out/
-
 # CMake/cocos构建目录
 /build/
 proj.win32/Debug.win32/
 proj.win32/Release.win32/
-
 # 需要纳入版本控制的 VS 解决方案与配置
 !proj.win32/StardewValley0.sln
 !proj.win32/StardewValley0.vcxproj
 !proj.win32/StardewValley0.vcxproj.filters
 !proj.win32/StardewValley0.vcxproj.user
 !proj.win32/build-cfg.json
-
 # 重新纳入 cocos2d 目录（除其 .vs 外）
 !cocos2d/
 !cocos2d/**
 cocos2d/.vs/
 cocos2d/.vs/**
-
 # 但继续忽略 cocos2d 内部的编译输出（可自动生成）
 cocos2d/**/Debug.win32/
 cocos2d/**/Release.win32/
 cocos2d/**/ipch/
 cocos2d/**/*.pch
 cocos2d/**/*.pdb
+.vscode/
