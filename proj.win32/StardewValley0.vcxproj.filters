@@ -69,6 +69,9 @@
     <ClCompile Include="..\Classes\Inventory\Tool.cpp">
       <Filter>src\Inventory</Filter>
     </ClCompile>
+    <ClCompile Include="..\Classes\Inventory\ToolBehavior.cpp">
+      <Filter>src\Inventory</Filter>
+    </ClCompile>
     <ClCompile Include="..\Classes\Inventory\ToolManager.cpp">
       <Filter>src\Inventory</Filter>
     </ClCompile>
@@ -156,6 +159,9 @@
       <Filter>src\Inventory</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\Inventory\Tool.h">
+      <Filter>src\Inventory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Inventory\ToolBehavior.h">
       <Filter>src\Inventory</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\Inventory\ToolManager.h">

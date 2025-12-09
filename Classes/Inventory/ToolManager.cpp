@@ -187,6 +187,8 @@ void ToolManager::addTool(Tool::ToolType type) {
         if (tools[i] == nullptr) {
             auto tool = Tool::create(type);
 
+            tool->setOwnerContext(selectedCharacter, nickname);
+
 
             tool->setPosition(startX + i * gridWidth, startY);
             tools[i] = tool;
