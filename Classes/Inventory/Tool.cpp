@@ -12,7 +12,27 @@
 #include "Characters/Player.h"
 #include "Inventory/ItemManager.h"
 
+#include <utility>
+
 USING_NS_CC;
+
+namespace
+{
+ToolBehaviorPtr wrapPlusDecorators(ToolBehaviorPtr baseBehavior, Tool::ToolType type)
+{
+    switch (type)
+    {
+    case Tool::ToolType::HOEPLUS:
+    case Tool::ToolType::AXEPLUS:
+    case Tool::ToolType::FISHING_RODPLUS:
+        return ToolBehaviorPtr(new PowerUpDecorator(std::move(baseBehavior)));
+    case Tool::ToolType::WATERING_CANPLUS:
+        return ToolBehaviorPtr(new WideRangeDecorator(std::move(baseBehavior)));
+    default:
+        return baseBehavior;
+    }
+}
+} // namespace
 
 Tool *Tool::create(ToolType type)
 {
@@ -38,7 +58,8 @@ bool Tool::init(ToolType type)
     // 使用工厂配置贴图，替代 switch-case
     ToolFactory::getInstance()->configureTool(this, type);
 
-    behavior = makeToolBehavior(type);
+    auto baseBehavior = makeToolBehavior(type);
+    behavior = wrapPlusDecorators(std::move(baseBehavior), type);
 
     return true;
 }

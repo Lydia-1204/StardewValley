@@ -11,6 +11,7 @@
 #include "World/Map.h"
 
 #include <vector>
+#include <utility>
 
 using cocos2d::Vec2;
 
@@ -61,16 +62,29 @@ bool isNearAny(const Vec2 &playerPos, const std::vector<Vec2> &targets, float ra
     }
     return false;
 }
+
+Tool::ToolType normalizeToolType(Tool::ToolType type)
+{
+    switch (type)
+    {
+    case Tool::ToolType::HOEPLUS:
+        return Tool::ToolType::HOE;
+    case Tool::ToolType::AXEPLUS:
+        return Tool::ToolType::AXE;
+    case Tool::ToolType::WATERING_CANPLUS:
+        return Tool::ToolType::WATERING_CAN;
+    case Tool::ToolType::FISHING_RODPLUS:
+        return Tool::ToolType::FISHING_ROD;
+    default:
+        return type;
+    }
+}
 } // namespace
 
 void HoeBehavior::use(Tool &tool)
 {
     const auto ctx = makePlayerContext(tool);
 
-    if (type == Tool::ToolType::HOEPLUS)
-    {
-        CCLOG("Using HOE++: Digging a hole...");
-    }
     CCLOG("Using HOE: Digging a hole...");
 
     if (MapManager::getInstance()->getCurrentBlockLabel() == 7)
@@ -87,10 +101,6 @@ void AxeBehavior::use(Tool &tool)
 {
     const auto ctx = makePlayerContext(tool);
 
-    if (type == Tool::ToolType::AXEPLUS)
-    {
-        CCLOG("Using AXE++: Chopping a tree...");
-    }
     CCLOG("Using AXE: Chopping a tree...");
 
     if (MapManager::getInstance()->getCurrentBlockLabel() == 2)
@@ -108,10 +118,6 @@ void WateringCanBehavior::use(Tool &tool)
 {
     const auto ctx = makePlayerContext(tool);
 
-    if (type == Tool::ToolType::WATERING_CANPLUS)
-    {
-        CCLOG("Using WATERING_CAN++: Watering the crops...");
-    }
     ctx.player->changePlanting();
     CCLOG("Using WATERING_CAN: Watering the crops...");
 }
@@ -120,10 +126,6 @@ void FishingRodBehavior::use(Tool &tool)
 {
     const auto ctx = makePlayerContext(tool);
 
-    if (type == Tool::ToolType::FISHING_RODPLUS)
-    {
-        CCLOG("Using FISHING_ROD++: Fishing...");
-    }
     CCLOG("Using FISHING_ROD: Fishing...");
 
     if (MapManager::getInstance()->getCurrentBlockLabel() == 4)
@@ -155,20 +157,18 @@ void NullBehavior::use(Tool &)
 
 ToolBehaviorPtr makeToolBehavior(Tool::ToolType type)
 {
-    switch (type)
+    const auto normalizedType = normalizeToolType(type);
+
+    switch (normalizedType)
     {
     case Tool::ToolType::HOE:
-    case Tool::ToolType::HOEPLUS:
-        return ToolBehaviorPtr(new HoeBehavior(type));
+        return ToolBehaviorPtr(new HoeBehavior());
     case Tool::ToolType::AXE:
-    case Tool::ToolType::AXEPLUS:
-        return ToolBehaviorPtr(new AxeBehavior(type));
+        return ToolBehaviorPtr(new AxeBehavior());
     case Tool::ToolType::WATERING_CAN:
-    case Tool::ToolType::WATERING_CANPLUS:
-        return ToolBehaviorPtr(new WateringCanBehavior(type));
+        return ToolBehaviorPtr(new WateringCanBehavior());
     case Tool::ToolType::FISHING_ROD:
-    case Tool::ToolType::FISHING_RODPLUS:
-        return ToolBehaviorPtr(new FishingRodBehavior(type));
+        return ToolBehaviorPtr(new FishingRodBehavior());
     case Tool::ToolType::FERTILIZER:
         return ToolBehaviorPtr(new FertilizerBehavior());
     case Tool::ToolType::ANIMALFOOD:
@@ -176,4 +176,48 @@ ToolBehaviorPtr makeToolBehavior(Tool::ToolType type)
     default:
         return ToolBehaviorPtr(new NullBehavior());
     }
+}
+
+// Decorator implementations
+
+ToolDecorator::ToolDecorator(ToolBehaviorPtr baseBehavior) : baseBehavior(std::move(baseBehavior)) {}
+
+void ToolDecorator::use(Tool &tool)
+{
+    if (baseBehavior)
+    {
+        baseBehavior->use(tool);
+    }
+}
+
+PowerUpDecorator::PowerUpDecorator(ToolBehaviorPtr baseBehavior) : ToolDecorator(std::move(baseBehavior)) {}
+
+void PowerUpDecorator::use(Tool &tool)
+{
+    ToolDecorator::use(tool);
+
+    switch (tool.getType())
+    {
+    case Tool::ToolType::HOEPLUS:
+        CCLOG("Power-up HOE++ effect applied.");
+        break;
+    case Tool::ToolType::AXEPLUS:
+        CCLOG("Power-up AXE++ effect applied.");
+        break;
+    case Tool::ToolType::FISHING_RODPLUS:
+        CCLOG("Power-up FISHING_ROD++ effect applied.");
+        break;
+    default:
+        CCLOG("Power-up effect applied.");
+        break;
+    }
+}
+
+WideRangeDecorator::WideRangeDecorator(ToolBehaviorPtr baseBehavior) : ToolDecorator(std::move(baseBehavior)) {}
+
+void WideRangeDecorator::use(Tool &tool)
+{
+    ToolDecorator::use(tool);
+
+    CCLOG("Wide-range effect applied for PLUS tool.");
 }
