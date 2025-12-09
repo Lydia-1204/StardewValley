@@ -20,46 +20,33 @@ class IToolBehavior
 public:
     virtual ~IToolBehavior() = default;
     virtual void use(Tool &tool) = 0;
+    virtual void useAt(Tool &tool, const cocos2d::Vec2 &targetPos);
 };
 
 class HoeBehavior : public IToolBehavior
 {
 public:
-    explicit HoeBehavior(Tool::ToolType type) : type(type) {}
     void use(Tool &tool) override;
-
-private:
-    Tool::ToolType type;
+    void useAt(Tool &tool, const cocos2d::Vec2 &targetPos) override;
 };
 
 class AxeBehavior : public IToolBehavior
 {
 public:
-    explicit AxeBehavior(Tool::ToolType type) : type(type) {}
     void use(Tool &tool) override;
-
-private:
-    Tool::ToolType type;
+    void useAt(Tool &tool, const cocos2d::Vec2 &targetPos) override;
 };
 
 class WateringCanBehavior : public IToolBehavior
 {
 public:
-    explicit WateringCanBehavior(Tool::ToolType type) : type(type) {}
     void use(Tool &tool) override;
-
-private:
-    Tool::ToolType type;
 };
 
 class FishingRodBehavior : public IToolBehavior
 {
 public:
-    explicit FishingRodBehavior(Tool::ToolType type) : type(type) {}
     void use(Tool &tool) override;
-
-private:
-    Tool::ToolType type;
 };
 
 class FertilizerBehavior : public IToolBehavior
@@ -77,6 +64,33 @@ public:
 class NullBehavior : public IToolBehavior
 {
 public:
+    void use(Tool &tool) override;
+};
+
+// Decorator base class
+class ToolDecorator : public IToolBehavior
+{
+public:
+    explicit ToolDecorator(ToolBehaviorPtr baseBehavior);
+    void use(Tool &tool) override;
+
+protected:
+    ToolBehaviorPtr baseBehavior;
+};
+
+// Provides enhanced power effect for PLUS tools
+class PowerUpDecorator : public ToolDecorator
+{
+public:
+    explicit PowerUpDecorator(ToolBehaviorPtr baseBehavior);
+    void use(Tool &tool) override;
+};
+
+// Provides wider range effect for PLUS tools
+class WideRangeDecorator : public ToolDecorator
+{
+public:
+    explicit WideRangeDecorator(ToolBehaviorPtr baseBehavior);
     void use(Tool &tool) override;
 };
 
