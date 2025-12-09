@@ -228,15 +228,16 @@ void PowerUpDecorator::use(Tool &tool)
     {
         const auto ctx = makePlayerContext(tool);
         const float step = 16.0f; // tile size
-        for (int dx = -1; dx <= 1; ++dx)
+        // 作用在前向方向一条线上的 3 格
+        std::vector<Vec2> targets = {
+            ctx.targetPosition,
+            ctx.targetPosition + Vec2(step, 0),
+            ctx.targetPosition - Vec2(step, 0)};
+        for (const auto &target : targets)
         {
-            for (int dy = -1; dy <= 1; ++dy)
-            {
-                const Vec2 target = ctx.targetPosition + Vec2(dx * step, dy * step);
-                baseBehavior->useAt(tool, target);
-            }
+            baseBehavior->useAt(tool, target);
         }
-        CCLOG("Power-up HOE++ 3x3 effect applied.");
+        CCLOG("Power-up HOE++ triple-hit effect applied (3 tiles).");
         break;
     }
     case Tool::ToolType::AXEPLUS:
@@ -256,9 +257,21 @@ void PowerUpDecorator::use(Tool &tool)
         break;
     }
     case Tool::ToolType::FISHING_RODPLUS:
+    {
         ToolDecorator::use(tool);
-        CCLOG("Power-up FISHING_ROD++ effect applied.");
+
+        const auto ctx = makePlayerContext(tool);
+        if (MapManager::getInstance()->getCurrentBlockLabel() == 4 && ctx.position.distance(Vec2(1100, 110)) < 100)
+        {
+            ItemManager::getInstance(tool.selectedCharacter, tool.nickname)->addItem(Item::ItemType::FISH);
+            CCLOG("Power-up FISHING_ROD++ extra fish caught.");
+        }
+        else
+        {
+            CCLOG("Power-up FISHING_ROD++ effect applied (extra fish skipped: not near water).");
+        }
         break;
+    }
     default:
         ToolDecorator::use(tool);
         CCLOG("Power-up effect applied.");
@@ -281,21 +294,22 @@ void WideRangeDecorator::use(Tool &tool)
     {
         const auto ctx = makePlayerContext(tool);
         const float step = 16.0f;
-        // Water a 3-wide line perpendicular to facing direction (simple widen effect)
-        for (int offset = -1; offset <= 1; ++offset)
+        // 双倍面积：在原本目标与一侧偏移各浇一次
+        std::vector<float> offsets = {0.0f, step};
+        for (float offset : offsets)
         {
             Vec2 target = ctx.targetPosition;
             if (ctx.direction == 0 || ctx.direction == 2)
             {
-                target.x += offset * step;
+                target.x += offset;
             }
             else
             {
-                target.y += offset * step;
+                target.y += offset;
             }
             baseBehavior->useAt(tool, target);
         }
-        CCLOG("Wide-range WATERING_CAN++ multi-tile effect applied.");
+        CCLOG("Wide-range WATERING_CAN++ double-area effect applied (2 tiles).");
         break;
     }
     default:
