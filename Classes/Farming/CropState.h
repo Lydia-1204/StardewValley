@@ -16,23 +16,28 @@ class CropState
 public:
     virtual ~CropState() {}
 
-    // 进入该状态时触发（如：换图片）
-    virtual void enter(Crop *crop) = 0;
+    
 
-    // 每一帧的更新逻辑（对应原本的 update）
-    virtual void execute(Crop *crop, float dt) = 0;
+    // 【使用状态模式重构】状态行为接口：进入状态
+    virtual void enter(Crop* crop) = 0;
 
-    // 离开该状态时触发
-    virtual void exit(Crop *crop) = 0;
+    // 【使用状态模式重构】状态行为接口：每帧逻辑更新
+    virtual void execute(Crop* crop, float dt) = 0;
 
-    // 处理点击事件（浇水、收获、施肥）
-    virtual void onClick(Crop *crop, EventMouse *event) = 0;
+    // 【使用状态模式重构】状态行为接口：离开状态
+    virtual void exit(Crop* crop) = 0;
 
-    // 生长周期触发（对应原本的 grow）
-    virtual void grow(Crop *crop) = 0;
+    // 【使用状态模式重构】状态行为接口：处理交互事件
+    virtual void onClick(Crop* crop, EventMouse* event) = 0;
+
+    // 【使用状态模式重构】状态行为接口：处理生长逻辑
+    virtual void grow(Crop* crop) = 0;
 };
 
-// ================= 具体状态定义 =================
+// ==========================================
+// 【使用状态模式重构】具体状态类 (Concrete States)
+// 作用：实现不同状态下特有的行为逻辑，替代原有的 if-else/switch 分支
+// ==========================================
 
 // 1. 种子状态
 class SeedState : public CropState

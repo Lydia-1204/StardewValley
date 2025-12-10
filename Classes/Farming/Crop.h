@@ -13,7 +13,10 @@
 USING_NS_CC;
 
 class GameScene;
-
+// ==========================================
+// 【使用状态模式重构】Context 类 (上下文环境)
+// 作用：维护一个具体状态的实例，将与状态相关的行为委托给当前状态对象处理
+// ==========================================
 class Crop : public Sprite {
 public:
     Crop();
@@ -32,6 +35,10 @@ public:
     void fertilize();
 
     // 状态机相关
+    // ==========================================
+    // 【使用状态模式重构】状态转换方法
+    // 作用：允许在运行时切换当前作物的状态
+    // ==========================================
     void changeState(CropState* newState);
 
     // 工具方法
@@ -46,13 +53,21 @@ public:
     using TextureChangedCallback = std::function<void(const std::string&)>;
     void setTextureChangedCallback(const TextureChangedCallback& callback);
 
-    // 声明友元，让状态类可以直接访问 Crop 的私有数据（简化代码）
+    
+    // ==========================================
+    // 【使用状态模式重构】友元声明
+    // 作用：允许具体状态类访问 Context 的私有数据，减少 Getter/Setter 的冗余
+    // ==========================================
+
     friend class SeedState;
     friend class GrowingState;
     friend class MatureState;
     friend class DeadState;
 
 private:
+    // ==========================================
+    // 【使用状态模式重构】持有抽象状态接口的指针
+    // ==========================================
     CropState* m_state; // 当前状态指针
 
     GameScene* gameScene;

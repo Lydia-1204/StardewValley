@@ -23,7 +23,9 @@ bool isFertilizer()
 }
 
 // ================= SeedState (种子) =================
-
+// ==========================================
+// 【使用状态模式重构】SeedState (种子状态) 具体实现
+// ==========================================
 void SeedState::enter(Crop *crop)
 {
     CCLOG("Enter SeedState");
@@ -71,7 +73,9 @@ void SeedState::grow(Crop *crop)
 }
 
 // ================= GrowingState (生长中) =================
-
+// ==========================================
+// 【使用状态模式重构】GrowingState (生长状态) 具体实现
+// ==========================================
 void GrowingState::enter(Crop *crop)
 {
     CCLOG("Enter GrowingState");
@@ -139,7 +143,9 @@ void GrowingState::grow(Crop *crop)
 }
 
 // ================= MatureState (成熟) =================
-
+// ==========================================
+// 【使用状态模式重构】MatureState (成熟状态) 具体实现
+// ==========================================
 void MatureState::enter(Crop *crop)
 {
     CCLOG("Enter MatureState");
@@ -189,7 +195,9 @@ void MatureState::grow(Crop *crop)
 }
 
 // ================= DeadState (枯死) =================
-
+// ==========================================
+// 【使用状态模式重构】DeadState (枯死) 具体实现
+// ==========================================
 void DeadState::enter(Crop *crop)
 {
     CCLOG("Enter DeadState");
