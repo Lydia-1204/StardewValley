@@ -114,8 +114,13 @@ bool ItemManager::init(int _selectedCharacter, const std::string &_nickname)
     return true;
 }
 
-// ---------------------- 对象池逻辑实现 ----------------------
-
+/* --------------------------------------------------------------------------
+ * 【使用对象池模式重构】获取对象逻辑
+ * 说明：优先检查池中是否有空闲对象。
+ *       如果有：取出 -> 重置状态(reset) -> 恢复引用计数(autorelease) -> 返回。
+ *       如果没有：才调用工厂创建新对象。
+ *       既结合工厂模式重置旧对象，又遵循了 Cocos 的内存管理机制。
+ * -------------------------------------------------------------------------- */
 Item *ItemManager::getPooledItem(Item::ItemType type)
 {
     if (!itemPool.empty())
@@ -136,6 +141,11 @@ Item *ItemManager::getPooledItem(Item::ItemType type)
     }
 }
 
+/* --------------------------------------------------------------------------
+ * 【使用对象池模式重构】回收对象逻辑
+ * 说明：不销毁对象，而是将其移出场景并存入池中。
+ *       item->retain() 是防止 Cocos 自动回收的关键步骤。
+ * -------------------------------------------------------------------------- */
 void ItemManager::returnItemToPool(Item *item)
 {
     if (!item)
@@ -147,8 +157,6 @@ void ItemManager::returnItemToPool(Item *item)
 
     CCLOG("ItemManager: Item returned to pool. Pool size: %d", (int)itemPool.size());
 }
-
-// -----------------------------------------------------------
 
 int ItemManager::getItemQuantity(Item::ItemType type)
 {
@@ -205,6 +213,11 @@ void ItemManager::addItem(Item::ItemType type)
     fullLabel->runAction(Sequence::create(FadeOut::create(2.0f), RemoveSelf::create(), nullptr));
 }
 
+/* --------------------------------------------------------------------------
+ * 【使用对象池模式重构】替换销毁逻辑
+ * 说明：原代码使用 removeChild/delete，现改为回收至对象池。
+ * 当物品数量归零时，不再直接销毁内存，而是调用 returnItemToPool。将其回收到池中，完成“闭环”管理。
+ * -------------------------------------------------------------------------- */
 void ItemManager::discardItem()
 {
     if (selectedItemIndex < 0 || selectedItemIndex >= (int)Items.size() || Items[selectedItemIndex] == nullptr)

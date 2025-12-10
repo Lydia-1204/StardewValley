@@ -19,8 +19,11 @@ ItemFactory::ItemFactory()
 
 void ItemFactory::initRegistry()
 {
-    // 使用 Map 消除 switch-case
-    // 可以在这里添加新物品
+    /* --------------------------------------------------------------------------
+     * 【使用工厂模式重构】
+     * 说明：使用 Map 注册表替代了原 Item.cpp 中的 switch-case 硬编码，新增物品只需在此注册表中添加一行配置。
+     *       将物品的属性配置（资源路径、价格等）与 Item 类的业务逻辑完全分离，符合开闭原则（OCP）。
+     * -------------------------------------------------------------------------- */
     itemRegistry[Item::ItemType::SEED] = {"../Resources/item/seed.png", 100};
     itemRegistry[Item::ItemType::FISH] = {"../Resources/item/fish.png", 300};
     itemRegistry[Item::ItemType::EGG] = {"../Resources/item/egg.png", 100};
