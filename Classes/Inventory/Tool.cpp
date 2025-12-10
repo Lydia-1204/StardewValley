@@ -18,6 +18,7 @@ USING_NS_CC;
 
 namespace
 {
+// 装饰器模式：在基础策略外包裹 PLUS 专用装饰器。
 ToolBehaviorPtr wrapPlusDecorators(ToolBehaviorPtr baseBehavior, Tool::ToolType type)
 {
     switch (type)
@@ -58,6 +59,7 @@ bool Tool::init(ToolType type)
     // 使用工厂配置贴图，替代 switch-case
     ToolFactory::getInstance()->configureTool(this, type);
 
+    // 策略（基础）+ 装饰器（PLUS）的组合（Strategy + Decorator）
     auto baseBehavior = makeToolBehavior(type);
     behavior = wrapPlusDecorators(std::move(baseBehavior), type);
 

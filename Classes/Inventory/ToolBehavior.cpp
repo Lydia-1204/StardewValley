@@ -183,6 +183,8 @@ ToolBehaviorPtr makeToolBehavior(Tool::ToolType type)
     const auto normalizedType = normalizeToolType(type);
 
     switch (normalizedType)
+    // 策略选择（Strategy）：根据工具类型创建对应的基础行为实现（工厂方法）
+    // 返回的是基础行为对象，后续可由装饰器在外层进行包装扩展
     {
     case Tool::ToolType::HOE:
         return ToolBehaviorPtr(new HoeBehavior());
@@ -200,18 +202,24 @@ ToolBehaviorPtr makeToolBehavior(Tool::ToolType type)
         return ToolBehaviorPtr(new NullBehavior());
     }
 }
+        // 基础策略实现：锄头的单格挖掘逻辑，仅作用于指定目标格
+        // 装饰器（如 HOEPLUS 的 PowerUpDecorator）会通过多次调用此函数来实现范围或多次命中效果
 
 // Decorator implementations
 
 ToolDecorator::ToolDecorator(ToolBehaviorPtr baseBehavior) : baseBehavior(std::move(baseBehavior)) {}
+    // 基础策略实现：斧头的单格/单次斩树逻辑
+    // 不在这里添加 PLUS 行为，AXEPLUS 的额外掉落由 PowerUpDecorator 在外层实现
 
 void ToolDecorator::use(Tool &tool)
 {
+    // 装饰器基类实现：默认将调用委托给被装饰的基础行为，保持行为链的传递
     if (baseBehavior)
     {
         baseBehavior->use(tool);
     }
 }
+        // 基础策略实现：浇水对单格生效。WideRangeDecorator 可在外层调用 useAt/或多次触发此逻辑以实现多格浇水（范围扩展）
 
 PowerUpDecorator::PowerUpDecorator(ToolBehaviorPtr baseBehavior) : ToolDecorator(std::move(baseBehavior)) {}
 
@@ -222,8 +230,11 @@ void PowerUpDecorator::use(Tool &tool)
         return;
     }
 
+        // 基础策略实现：钓鱼的单次检测/掉落逻辑。FISHING_RODPLUS 的额外掉落通过装饰器（PowerUpDecorator）在外层实现，不修改此处核心实现
+    // 装饰器实现入口：根据工具的具体 PLUS 类型在外层添加额外效果
     switch (tool.getType())
     {
+    // HOEPLUS 扩展：通过多次调用基础 useAt 实现多格/多次命中效果
     case Tool::ToolType::HOEPLUS:
     {
         const auto ctx = makePlayerContext(tool);
@@ -240,6 +251,7 @@ void PowerUpDecorator::use(Tool &tool)
         CCLOG("Power-up HOE++ triple-hit effect applied (3 tiles).");
         break;
     }
+    // AXEPLUS 扩展：在基础掉落之外增加一次木材掉落（不改变基础判定）
     case Tool::ToolType::AXEPLUS:
     {
         ToolDecorator::use(tool);
@@ -256,6 +268,7 @@ void PowerUpDecorator::use(Tool &tool)
         }
         break;
     }
+    // FISHING_RODPLUS 扩展：在成功钓鱼时额外增加一条鱼
     case Tool::ToolType::FISHING_RODPLUS:
     {
         ToolDecorator::use(tool);
@@ -292,6 +305,7 @@ void WideRangeDecorator::use(Tool &tool)
     {
     case Tool::ToolType::WATERING_CANPLUS:
     {
+        // WATERING_CANPLUS 扩展：扩大浇水范围，外层装饰器负责多格触发
         const auto ctx = makePlayerContext(tool);
         const float step = 16.0f;
         // 双倍面积：在原本目标与一侧偏移各浇一次
