@@ -88,6 +88,9 @@ bool Crop::init(const std::string& nickname) {
     schedule(CC_SCHEDULE_SELECTOR(Crop::update), 1.0f / 60.0f);
 
     // 4. 【核心】设置初始状态为种子状态
+    // ==========================================
+    // 【使用状态模式重构】设置初始状态
+    // ==========================================
     changeState(new SeedState());
 
     return true;
@@ -98,7 +101,10 @@ void Crop::getGameScene(GameScene* scene) {
 }
 
 // ================= 状态机核心逻辑 =================
-
+// ==========================================
+// 【使用状态模式重构】实现状态切换逻辑
+// 作用：处理旧状态的清理(Exit)和新状态的初始化(Enter)
+// ==========================================
 void Crop::changeState(CropState* newState) {
     // 1. 退出旧状态
     if (m_state) {
@@ -139,6 +145,10 @@ void Crop::update(float dt) {
     }
 
     // 3. 【核心】委托给当前状态处理每帧逻辑 (检查枯死等)
+    // ==========================================
+    // 【使用状态模式重构】行为委托 (Delegation)
+    // 作用：将每帧的更新逻辑委托给当前状态对象处理
+    // ==========================================
     if (m_state) {
         m_state->execute(this, dt);
     }
@@ -164,6 +174,10 @@ void Crop::onMouseDown(EventMouse* event) {
         playerPos.distance(this->getPosition()) < 30) {
 
         // 【核心】委托给当前状态处理交互
+        // ==========================================
+        // 【使用状态模式重构】行为委托 (Delegation)
+        // 作用：将点击交互逻辑委托给当前状态对象，消除原来的 if(state == xxx) 判断
+        // ==========================================
         if (m_state) {
             m_state->onClick(this, mouseEvent);
         }
