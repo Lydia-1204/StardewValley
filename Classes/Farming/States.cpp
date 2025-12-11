@@ -4,138 +4,177 @@
 #include "Inventory/ItemManager.h"
 #include "Scenes/GameScene.h"
 
-// ¸¨Öúºê£ºÅĞ¶Ï¹¤¾ßÀàĞÍ
-bool isWateringCan() {
-    ToolManager* tm = ToolManager::getInstance(1, "guest");
-    if (!tm || tm->selectedToolIndex < 0 || tm->selectedToolIndex >= tm->tools.size()) return false;
+// è¾…åŠ©å®ï¼šåˆ¤æ–­å·¥å…·ç±»å‹
+bool isWateringCan()
+{
+    ToolManager *tm = ToolManager::getInstance(1, "guest");
+    if (!tm || tm->selectedToolIndex < 0 || tm->selectedToolIndex >= tm->tools.size())
+        return false;
     auto type = tm->tools[tm->selectedToolIndex]->getType();
     return (type == Tool::ToolType::WATERING_CAN || type == Tool::ToolType::WATERING_CANPLUS);
 }
 
-bool isFertilizer() {
-    ToolManager* tm = ToolManager::getInstance(1, "guest");
-    if (!tm || tm->selectedToolIndex < 0 || tm->selectedToolIndex >= tm->tools.size()) return false;
+bool isFertilizer()
+{
+    ToolManager *tm = ToolManager::getInstance(1, "guest");
+    if (!tm || tm->selectedToolIndex < 0 || tm->selectedToolIndex >= tm->tools.size())
+        return false;
     return tm->tools[tm->selectedToolIndex]->getType() == Tool::ToolType::FERTILIZER;
 }
 
-// ================= SeedState (ÖÖ×Ó) =================
-
-void SeedState::enter(Crop* crop) {
+// ================= SeedState (ç§å­) =================
+// ==========================================
+// ã€ä½¿ç”¨çŠ¶æ€æ¨¡å¼é‡æ„ã€‘SeedState (ç§å­çŠ¶æ€) å…·ä½“å®ç°
+// ==========================================
+void SeedState::enter(Crop *crop)
+{
     CCLOG("Enter SeedState");
     crop->changeTexture(crop->stageTextures[0]); // seed.png
 }
 
-void SeedState::execute(Crop* crop, float dt) {
-    // ¼ì²éÊÇ·ñ¿İËÀ
-    if (crop->lastWateredTime >= 150) {
+void SeedState::execute(Crop *crop, float dt)
+{
+    // æ£€æŸ¥æ˜¯å¦æ¯æ­»
+    if (crop->lastWateredTime >= 150)
+    {
         crop->changeState(new DeadState());
     }
 }
 
-void SeedState::onClick(Crop* crop, EventMouse* event) {
-    if (event->getMouseButton() == EventMouse::MouseButton::BUTTON_LEFT) {
-        if (isWateringCan()) {
+void SeedState::onClick(Crop *crop, EventMouse *event)
+{
+    if (event->getMouseButton() == EventMouse::MouseButton::BUTTON_LEFT)
+    {
+        if (isWateringCan())
+        {
             crop->water();
         }
     }
-    else if (event->getMouseButton() == EventMouse::MouseButton::BUTTON_RIGHT) {
-        if (isFertilizer()) {
+    else if (event->getMouseButton() == EventMouse::MouseButton::BUTTON_RIGHT)
+    {
+        if (isFertilizer())
+        {
             crop->fertilize();
         }
     }
 }
 
-void SeedState::exit(Crop* crop) {}
+void SeedState::exit(Crop *crop) {}
 
-void SeedState::grow(Crop* crop) {
-    if (crop->watered) {
+void SeedState::grow(Crop *crop)
+{
+    if (crop->watered)
+    {
         crop->newAge += crop->age;
-        crop->watered = false; // ÏûºÄË®·Ö
-        // ÖÖ×Ó³É³¤ºó½øÈëÉú³¤ÆÚ
+        crop->watered = false; // æ¶ˆè€—æ°´åˆ†
+        // ç§å­æˆé•¿åè¿›å…¥ç”Ÿé•¿æœŸ
         crop->changeState(new GrowingState());
     }
 }
 
-// ================= GrowingState (Éú³¤ÖĞ) =================
-
-void GrowingState::enter(Crop* crop) {
+// ================= GrowingState (ç”Ÿé•¿ä¸­) =================
+// ==========================================
+// ã€ä½¿ç”¨çŠ¶æ€æ¨¡å¼é‡æ„ã€‘GrowingState (ç”Ÿé•¿çŠ¶æ€) å…·ä½“å®ç°
+// ==========================================
+void GrowingState::enter(Crop *crop)
+{
     CCLOG("Enter GrowingState");
-    // ¸ù¾İ newAge ¼ÆËãµ±Ç°ÌùÍ¼
+    // æ ¹æ® newAge è®¡ç®—å½“å‰è´´å›¾
     int stage = (crop->newAge / 10) % crop->stageTextures.size();
-    // ±£»¤·ÀÖ¹Ô½½ç
-    if (stage > 0 && stage < crop->stageTextures.size()) {
+    // ä¿æŠ¤é˜²æ­¢è¶Šç•Œ
+    if (stage > 0 && stage < crop->stageTextures.size())
+    {
         crop->changeTexture(crop->stageTextures[stage]);
     }
 }
 
-void GrowingState::execute(Crop* crop, float dt) {
-    // ¼ì²éÊÇ·ñ¿İËÀ
-    if (crop->lastWateredTime >= 150) {
+void GrowingState::execute(Crop *crop, float dt)
+{
+    // æ£€æŸ¥æ˜¯å¦æ¯æ­»
+    if (crop->lastWateredTime >= 150)
+    {
         crop->changeState(new DeadState());
     }
 }
 
-void GrowingState::onClick(Crop* crop, EventMouse* event) {
-    // ÓëÖÖ×Ó½×¶ÎÏàÍ¬µÄ½»»¥Âß¼­
-    if (event->getMouseButton() == EventMouse::MouseButton::BUTTON_LEFT) {
-        if (isWateringCan()) {
+void GrowingState::onClick(Crop *crop, EventMouse *event)
+{
+    // ä¸ç§å­é˜¶æ®µç›¸åŒçš„äº¤äº’é€»è¾‘
+    if (event->getMouseButton() == EventMouse::MouseButton::BUTTON_LEFT)
+    {
+        if (isWateringCan())
+        {
             crop->water();
         }
     }
-    else if (event->getMouseButton() == EventMouse::MouseButton::BUTTON_RIGHT) {
-        if (isFertilizer()) {
+    else if (event->getMouseButton() == EventMouse::MouseButton::BUTTON_RIGHT)
+    {
+        if (isFertilizer())
+        {
             crop->fertilize();
         }
     }
 }
 
-void GrowingState::exit(Crop* crop) {}
+void GrowingState::exit(Crop *crop) {}
 
-void GrowingState::grow(Crop* crop) {
-    if (crop->watered) {
+void GrowingState::grow(Crop *crop)
+{
+    if (crop->watered)
+    {
         crop->newAge += crop->age;
         crop->watered = false;
 
         int stage = (crop->newAge / 10) % crop->stageTextures.size();
         CCLOG("Growing Stage: %d", stage);
 
-        // ¸üĞÂÌùÍ¼
-        if (stage < crop->stageTextures.size()) {
+        // æ›´æ–°è´´å›¾
+        if (stage < crop->stageTextures.size())
+        {
             crop->changeTexture(crop->stageTextures[stage]);
         }
 
-        // ÅĞ¶ÏÊÇ·ñ³ÉÊì (¼ÙÉè index 6 ÊÇ mature)
-        if (stage >= 6) {
+        // åˆ¤æ–­æ˜¯å¦æˆç†Ÿ (å‡è®¾ index 6 æ˜¯ mature)
+        if (stage >= 6)
+        {
             crop->changeState(new MatureState());
         }
     }
 }
 
-// ================= MatureState (³ÉÊì) =================
-
-void MatureState::enter(Crop* crop) {
+// ================= MatureState (æˆç†Ÿ) =================
+// ==========================================
+// ã€ä½¿ç”¨çŠ¶æ€æ¨¡å¼é‡æ„ã€‘MatureState (æˆç†ŸçŠ¶æ€) å…·ä½“å®ç°
+// ==========================================
+void MatureState::enter(Crop *crop)
+{
     CCLOG("Enter MatureState");
-    // È·±£ÏÔÊ¾³ÉÊìÍ¼Æ¬
+    // ç¡®ä¿æ˜¾ç¤ºæˆç†Ÿå›¾ç‰‡
     crop->changeTexture("../Resources/mature.png");
 
-    // ÏÔÊ¾³ÉÊìÌáÊ¾Í¼±ê (¸´ÓÃÔ­ÓĞÂß¼­)
-    Sprite* matureSprite = Sprite::create("../Resources/mature_.png");
-    if (matureSprite) {
+    // æ˜¾ç¤ºæˆç†Ÿæç¤ºå›¾æ ‡ (å¤ç”¨åŸæœ‰é€»è¾‘)
+    Sprite *matureSprite = Sprite::create("../Resources/mature_.png");
+    if (matureSprite)
+    {
         matureSprite->setPosition(crop->getContentSize().width / 2, crop->getContentSize().height + 20);
         crop->addChild(matureSprite, 1, "matureSprite");
         crop->scheduleOnce(CC_SCHEDULE_SELECTOR(Crop::removeSprite), 2.0f);
     }
 }
 
-void MatureState::execute(Crop* crop, float dt) {
-    // ³ÉÊìºóÍ¨³£²»ÔÙ¿İËÀ£¬»òÕßÂß¼­²»Í¬
+void MatureState::execute(Crop *crop, float dt)
+{
+    // æˆç†Ÿåé€šå¸¸ä¸å†æ¯æ­»ï¼Œæˆ–è€…é€»è¾‘ä¸åŒ
 }
 
-void MatureState::onClick(Crop* crop, EventMouse* event) {
-    if (event->getMouseButton() == EventMouse::MouseButton::BUTTON_LEFT) {
-        // ÊÕ»ñÂß¼­
-        if (crop->getSceneRef()) {
-            // ¡¾ĞŞÕı¡¿ÕâÀï±ØĞë°Ñ crop ×Ô¼º´«½øÈ¥£¬·ñÔò GameScene ²»ÖªµÀÒªÉ¾³ıË­
+void MatureState::onClick(Crop *crop, EventMouse *event)
+{
+    if (event->getMouseButton() == EventMouse::MouseButton::BUTTON_LEFT)
+    {
+        // æ”¶è·é€»è¾‘
+        if (crop->getSceneRef())
+        {
+            // ã€ä¿®æ­£ã€‘è¿™é‡Œå¿…é¡»æŠŠ crop è‡ªå·±ä¼ è¿›å»ï¼Œå¦åˆ™ GameScene ä¸çŸ¥é“è¦åˆ é™¤è°
             crop->getSceneRef()->removeCrop(crop);
 
             ItemManager::getInstance(1, "")->addItem(Item::ItemType::FRUIT);
@@ -144,56 +183,68 @@ void MatureState::onClick(Crop* crop, EventMouse* event) {
     }
 }
 
-void MatureState::exit(Crop* crop) {
-    // ÇåÀí³ÉÊìÍ¼±ê
+void MatureState::exit(Crop *crop)
+{
+    // æ¸…ç†æˆç†Ÿå›¾æ ‡
     crop->removeChildByName("matureSprite");
 }
 
-void MatureState::grow(Crop* crop) {
-    // ³ÉÊìºó²»ÔÙÉú³¤
+void MatureState::grow(Crop *crop)
+{
+    // æˆç†Ÿåä¸å†ç”Ÿé•¿
 }
 
-// ================= DeadState (¿İËÀ) =================
-
-void DeadState::enter(Crop* crop) {
+// ================= DeadState (æ¯æ­») =================
+// ==========================================
+// ã€ä½¿ç”¨çŠ¶æ€æ¨¡å¼é‡æ„ã€‘DeadState (æ¯æ­») å…·ä½“å®ç°
+// ==========================================
+void DeadState::enter(Crop *crop)
+{
     CCLOG("Enter DeadState");
     crop->changeTexture("../Resources/dead.png");
 
-    // Ô­Âß¼­ÖĞµÄ deadSprite
+    // åŸé€»è¾‘ä¸­çš„ deadSprite
     crop->deadSprite = Sprite::create("../Resources/dead.png");
-    if (crop->deadSprite) {
+    if (crop->deadSprite)
+    {
         crop->deadSprite->setPosition(Vec2(10, 10));
         crop->addChild(crop->deadSprite);
     }
 
-    // ÖØÖÃÒÆ³ı¼ÆÊıÆ÷
+    // é‡ç½®ç§»é™¤è®¡æ•°å™¨
     crop->deadTimes = 0;
 }
 
-void DeadState::execute(Crop* crop, float dt) {
-    // Ã¿Ò»Ö¡ÀÛ¼Ó¼ÆÊı£¬Ä£ÄâÔ­À´µÄ timer++ Âß¼­
-    // ÎªÁË¸üÆ½»¬£¬¿ÉÒÔÊ¹ÓÃÊ±¼äÀÛ¼Ó¶ø²»ÊÇÖ¡Êı
+void DeadState::execute(Crop *crop, float dt)
+{
+    // æ¯ä¸€å¸§ç´¯åŠ è®¡æ•°ï¼Œæ¨¡æ‹ŸåŸæ¥çš„ timer++ é€»è¾‘
+    // ä¸ºäº†æ›´å¹³æ»‘ï¼Œå¯ä»¥ä½¿ç”¨æ—¶é—´ç´¯åŠ è€Œä¸æ˜¯å¸§æ•°
     crop->deadTimes++;
 
-    if (crop->deadTimes > 500) { // ±£³ÖÔ­À´µÄãĞÖµ
+    if (crop->deadTimes > 500)
+    { // ä¿æŒåŸæ¥çš„é˜ˆå€¼
         CCLOG("Removing dead crop");
-        if (crop->deadSprite) {
+        if (crop->deadSprite)
+        {
             crop->deadSprite->removeFromParentAndCleanup(true);
             crop->deadSprite = nullptr;
         }
-        if (crop->getSceneRef()) {
+        if (crop->getSceneRef())
+        {
             crop->getSceneRef()->removeCrop(crop);
         }
     }
 }
 
-void DeadState::onClick(Crop* crop, EventMouse* event) {
-    // ¿İËÀ×´Ì¬ÏÂ¿ÉÒÔÌí¼Ó²ù³ıÂß¼­ (Èç¹ûĞèÒª)
-    // Ä¿Ç°¸ù¾İÔ­´úÂë£¬´Ë´¦ÎŞ½»»¥
+void DeadState::onClick(Crop *crop, EventMouse *event)
+{
+    // æ¯æ­»çŠ¶æ€ä¸‹å¯ä»¥æ·»åŠ é“²é™¤é€»è¾‘ (å¦‚æœéœ€è¦)
+    // ç›®å‰æ ¹æ®åŸä»£ç ï¼Œæ­¤å¤„æ— äº¤äº’
 }
 
-void DeadState::exit(Crop* crop) {}
+void DeadState::exit(Crop *crop) {}
 
-void DeadState::grow(Crop* crop) {
-    // ËÀÁË¾Í²»ÄÜ³¤ÁË
+void DeadState::grow(Crop *crop)
+{
+    // æ­»äº†å°±ä¸èƒ½é•¿äº†
 }

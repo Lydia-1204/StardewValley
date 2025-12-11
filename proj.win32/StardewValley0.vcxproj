@@ -158,6 +158,9 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)\Resources\" /D /E /I /F /Y
     </PreLinkEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\Classes\Inventory\ItemFactory.cpp" />
+    <ClCompile Include="..\Classes\Inventory\ToolFactory.cpp" />  
+    <ClCompile Include="..\Classes\Inventory\ToolBehavior.cpp" />
     <ClCompile Include="..\Classes\Animals\Animal.cpp" />
     <ClCompile Include="..\Classes\Animals\AnimalManager.cpp" />
     <ClCompile Include="..\Classes\App\AppDelegate.cpp" />
@@ -188,6 +191,9 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)\Resources\" /D /E /I /F /Y
     <ClCompile Include="..\Classes\World\Map.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\Classes\Inventory\ItemFactory.h" />
+    <ClInclude Include="..\Classes\Inventory\ToolFactory.h" />
+    <ClInclude Include="..\Classes\Inventory\ToolBehavior.h" />
     <ClInclude Include="..\Classes\Animals\Animal.h" />
     <ClInclude Include="..\Classes\Animals\AnimalManager.h" />
     <ClInclude Include="..\Classes\App\AppDelegate.h" />

@@ -4,73 +4,83 @@
 
 #include "cocos2d.h"
 
-// Ç°ÏòÉùÃ÷£¬·ÀÖ¹Ñ­»·ÒıÓÃ
+// å‰å‘å£°æ˜ï¼Œé˜²æ­¢å¾ªç¯å¼•ç”¨
 class Crop;
 class GameScene;
 
 USING_NS_CC;
 
-// ³éÏó×´Ì¬»ùÀà
-class CropState {
+// æŠ½è±¡çŠ¶æ€åŸºç±»
+class CropState
+{
 public:
     virtual ~CropState() {}
 
-    // ½øÈë¸Ã×´Ì¬Ê±´¥·¢£¨Èç£º»»Í¼Æ¬£©
+    
+
+    // ã€ä½¿ç”¨çŠ¶æ€æ¨¡å¼é‡æ„ã€‘çŠ¶æ€è¡Œä¸ºæ¥å£ï¼šè¿›å…¥çŠ¶æ€
     virtual void enter(Crop* crop) = 0;
 
-    // Ã¿Ò»Ö¡µÄ¸üĞÂÂß¼­£¨¶ÔÓ¦Ô­±¾µÄ update£©
+    // ã€ä½¿ç”¨çŠ¶æ€æ¨¡å¼é‡æ„ã€‘çŠ¶æ€è¡Œä¸ºæ¥å£ï¼šæ¯å¸§é€»è¾‘æ›´æ–°
     virtual void execute(Crop* crop, float dt) = 0;
 
-    // Àë¿ª¸Ã×´Ì¬Ê±´¥·¢
+    // ã€ä½¿ç”¨çŠ¶æ€æ¨¡å¼é‡æ„ã€‘çŠ¶æ€è¡Œä¸ºæ¥å£ï¼šç¦»å¼€çŠ¶æ€
     virtual void exit(Crop* crop) = 0;
 
-    // ´¦Àíµã»÷ÊÂ¼ş£¨½½Ë®¡¢ÊÕ»ñ¡¢Ê©·Ê£©
+    // ã€ä½¿ç”¨çŠ¶æ€æ¨¡å¼é‡æ„ã€‘çŠ¶æ€è¡Œä¸ºæ¥å£ï¼šå¤„ç†äº¤äº’äº‹ä»¶
     virtual void onClick(Crop* crop, EventMouse* event) = 0;
 
-    // Éú³¤ÖÜÆÚ´¥·¢£¨¶ÔÓ¦Ô­±¾µÄ grow£©
+    // ã€ä½¿ç”¨çŠ¶æ€æ¨¡å¼é‡æ„ã€‘çŠ¶æ€è¡Œä¸ºæ¥å£ï¼šå¤„ç†ç”Ÿé•¿é€»è¾‘
     virtual void grow(Crop* crop) = 0;
 };
 
-// ================= ¾ßÌå×´Ì¬¶¨Òå =================
+// ==========================================
+// ã€ä½¿ç”¨çŠ¶æ€æ¨¡å¼é‡æ„ã€‘å…·ä½“çŠ¶æ€ç±» (Concrete States)
+// ä½œç”¨ï¼šå®ç°ä¸åŒçŠ¶æ€ä¸‹ç‰¹æœ‰çš„è¡Œä¸ºé€»è¾‘ï¼Œæ›¿ä»£åŸæœ‰çš„ if-else/switch åˆ†æ”¯
+// ==========================================
 
-// 1. ÖÖ×Ó×´Ì¬
-class SeedState : public CropState {
+// 1. ç§å­çŠ¶æ€
+class SeedState : public CropState
+{
 public:
-    void enter(Crop* crop) override;
-    void execute(Crop* crop, float dt) override;
-    void exit(Crop* crop) override;
-    void onClick(Crop* crop, EventMouse* event) override;
-    void grow(Crop* crop) override;
+    void enter(Crop *crop) override;
+    void execute(Crop *crop, float dt) override;
+    void exit(Crop *crop) override;
+    void onClick(Crop *crop, EventMouse *event) override;
+    void grow(Crop *crop) override;
 };
 
-// 2. Éú³¤ÖĞ×´Ì¬
-class GrowingState : public CropState {
+// 2. ç”Ÿé•¿ä¸­çŠ¶æ€
+class GrowingState : public CropState
+{
 public:
-    void enter(Crop* crop) override;
-    void execute(Crop* crop, float dt) override;
-    void exit(Crop* crop) override;
-    void onClick(Crop* crop, EventMouse* event) override;
-    void grow(Crop* crop) override;
+    void enter(Crop *crop) override;
+    void execute(Crop *crop, float dt) override;
+    void exit(Crop *crop) override;
+    void onClick(Crop *crop, EventMouse *event) override;
+    void grow(Crop *crop) override;
 };
 
-// 3. ³ÉÊì×´Ì¬
-class MatureState : public CropState {
+// 3. æˆç†ŸçŠ¶æ€
+class MatureState : public CropState
+{
 public:
-    void enter(Crop* crop) override;
-    void execute(Crop* crop, float dt) override;
-    void exit(Crop* crop) override;
-    void onClick(Crop* crop, EventMouse* event) override;
-    void grow(Crop* crop) override;
+    void enter(Crop *crop) override;
+    void execute(Crop *crop, float dt) override;
+    void exit(Crop *crop) override;
+    void onClick(Crop *crop, EventMouse *event) override;
+    void grow(Crop *crop) override;
 };
 
-// 4. ¿İËÀ×´Ì¬
-class DeadState : public CropState {
+// 4. æ¯æ­»çŠ¶æ€
+class DeadState : public CropState
+{
 public:
-    void enter(Crop* crop) override;
-    void execute(Crop* crop, float dt) override;
-    void exit(Crop* crop) override;
-    void onClick(Crop* crop, EventMouse* event) override;
-    void grow(Crop* crop) override;
+    void enter(Crop *crop) override;
+    void execute(Crop *crop, float dt) override;
+    void exit(Crop *crop) override;
+    void onClick(Crop *crop, EventMouse *event) override;
+    void grow(Crop *crop) override;
 };
 
 #endif // CROP_STATE_H

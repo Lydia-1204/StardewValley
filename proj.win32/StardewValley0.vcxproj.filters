@@ -51,6 +51,12 @@
     <ClCompile Include="..\Classes\Farming\Crop.cpp">
       <Filter>src\Farming</Filter>
     </ClCompile>
+    <ClCompile Include="..\Classes\Inventory\ItemFactory.cpp">
+      <Filter>src\Inventory</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Inventory\ToolFactory.cpp">  
+      <Filter>src\Inventory</Filter> 
+    </ClCompile>
     <ClCompile Include="..\Classes\Inventory\Chest.cpp">
       <Filter>src\Inventory</Filter>
     </ClCompile>
@@ -61,6 +67,9 @@
       <Filter>src\Inventory</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\Inventory\Tool.cpp">
+      <Filter>src\Inventory</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Inventory\ToolBehavior.cpp">
       <Filter>src\Inventory</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\Inventory\ToolManager.cpp">
@@ -111,6 +120,9 @@
     <ClCompile Include="..\Classes\Characters\Shane.cpp">
       <Filter>src\Characters</Filter>
     </ClCompile>
+    <ClCompile Include="..\Classes\App\SceneRouter.cpp" />
+    <ClCompile Include="..\Classes\App\AudioService.cpp" />
+    <ClCompile Include="..\Classes\App\SceneUIFacade.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Classes\Animals\Animal.h">
@@ -147,6 +159,9 @@
       <Filter>src\Inventory</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\Inventory\Tool.h">
+      <Filter>src\Inventory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Inventory\ToolBehavior.h">
       <Filter>src\Inventory</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\Inventory\ToolManager.h">
@@ -197,6 +212,10 @@
     <ClInclude Include="..\Classes\Characters\Shane.h">
       <Filter>src\Characters</Filter>
     </ClInclude>
+    <ClInclude Include="..\Classes\Inventory\ItemFactory.h" />
+    <ClInclude Include="..\Classes\App\SceneRouter.h" />
+    <ClInclude Include="..\Classes\App\AudioService.h" />
+    <ClInclude Include="..\Classes\App\SceneUIFacade.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="game.rc">
